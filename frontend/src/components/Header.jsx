@@ -6,7 +6,7 @@ import Logo from "../assets/images/logo.png";
 
 export const Header = () => {
   return (
-    <header className="bg-[#2E1A0F] text-white p-2 flex justify-between items-center top-0 w-full shadow-md ">
+    <header className="fixed z-50 bg-[#2E1A0F] text-white p-2 flex justify-between items-center top-0 w-full shadow-md ">
       <div > {/* Push logo to right (avoid sidebar overlap) */}
         <img src={Logo} alt="Logo" className="w-70 h-20" />
       </div>
