@@ -1,7 +1,9 @@
 import React from "react";
-import { FaHome, FaGlobe, FaPlus, FaHandsHelping } from "react-icons/fa";
+import { FaHome, FaPlus} from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useNavigate, useLocation } from "react-router-dom";
+import { GiRead } from "react-icons/gi";
+import { TbWorldSearch } from "react-icons/tb";
 
 const SidebarIcon = ({ icon, onClick, isActive, title }) => {
   return (
@@ -48,7 +50,7 @@ export const SideBar = () => {
           title="Home"
         />
         <SidebarIcon
-          icon={<FaGlobe size={20} />}
+          icon={<TbWorldSearch size={20} />}
           onClick={() => navigate("/explore")}
           isActive={location.pathname === "/explore"}
           title="Explore"
@@ -60,7 +62,7 @@ export const SideBar = () => {
           title="Create"
         />
         <SidebarIcon
-          icon={<FaHandsHelping size={20} />}
+          icon={<GiRead size={20} />}
           onClick={() => navigate("/help")}
           isActive={location.pathname === "/help"}
           title="Help"
