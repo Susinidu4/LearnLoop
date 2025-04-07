@@ -12,7 +12,7 @@ const GlobalStyle = {
     remarkTopic: "block mb-2 text-[20px]",
   
     // Button Styles
-    buttonPrimary: "px-5 py-1.5 bg-[#8B5E3C] text-black border-2 border-[#543310] rounded-full hover:bg-[#543310] hover:text-white hover:border-[#8B5E3C] transition-all duration-300 shadow-sm",
+    buttonPrimary: "px-5 py-1.5  w-48 bg-[#8B5E3C] text-black border-2 border-[#543310] rounded-full hover:bg-[#543310] hover:text-white hover:border-[#8B5E3C] transition-all duration-300 shadow-sm",
     buttonSecondary: "bg-gradient-to-r from-[#543310] to-[#8b5e3c] text-white px-6 py-2 rounded-full shadow-lg hover:scale-105 transition",
 
     // Input Styles
@@ -20,7 +20,8 @@ const GlobalStyle = {
     remark: "px-5 py-1 opacity-80 border-2 border-[#543310] border-opacity-30 rounded-lg text-gray-600 w-2/4 ",
   
     // Select/Dropdown Styles
-    selectBox: "py-1 border-2 opacity-80 border-[#543310] rounded-lg text-left w-full max-w-40 sm:max-w-48 md:max-w-56 lg:max-w-64 focus:bg-[#F7EDE5] focus:border-[#2F1B06]",
+    selectBox: "py-1 border-2 opacity-80 border-[#543310] rounded-lg text-left w-full focus:bg-[#F7EDE5] focus:border-[#2F1B06]",
+
   
     // Card Styles
     cardContainer: "p-4 rounded-lg shadow-xl mb-6 bg-[#CFB397] bg-opacity-15 w-6/12",

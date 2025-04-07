@@ -83,8 +83,8 @@ export const SideBar = () => {
         />
         <SidebarIcon
           icon={<FaPlus size={20} />}
-          onClick={() => navigate("/create")}
-          isActive={location.pathname === "/create"}
+          onClick={() => navigate("/addpost")}
+          isActive={location.pathname === "/addpost"}
           title="Create"
         />
         <SidebarIcon
