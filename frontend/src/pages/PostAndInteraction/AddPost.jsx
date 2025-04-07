@@ -70,13 +70,13 @@ export const AddPost = () => {
               {/* Description */}
               <label className="text-[#4A2E16] font-medium mb-1">Description</label>
               <textarea
-                className="w-full p-3 rounded-lg border border-[#A57B5B] focus:outline-none mb-4"
+                className="w-[850px] p-3 rounded-lg border border-[#A57B5B] focus:outline-none mb-4"
                 rows="4"
               ></textarea>
-                <br/>
+              <br/>
               {/* Category Dropdown */}
               <label className="text-[#4A2E16] font-medium mb-1">Category</label>
-              <div className="w-full mb-4">
+              <div className="w-[850px] mb-4 h-14">
                 <select
                   value={category}
                   onChange={handleCategoryChange}
@@ -92,7 +92,7 @@ export const AddPost = () => {
               <br/>
               {/* Snap Upload */}
               <label className="text-[#4A2E16] font-medium mb-1">Snaps</label>
-              <div className="w-full mb-4">
+              <div className="w-[850px] mb-4">
                 <label htmlFor="file-upload" className="cursor-pointer w-full">
                   <input
                     id="file-upload"
@@ -115,18 +115,16 @@ export const AddPost = () => {
                 </label>
                 {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
               </div>
-            <br/>
-            <br/>
+              <br/>
               {/* Post Button */}
-              <div className="flex gap-4">
-                <button className="mt-4 bg-[#4A2E16] text-white px-6 py-2 rounded-full w-full font-semibold">
-                  Post
-                </button>
-              </div>
+                <div className="flex gap-4">
+                  <button className={GlobalStyle.buttonPrimary}>Post</button>
+                </div>
+              
             </div>
 
             {/* Image in fixed position */}
-            <div className="absolute bottom-[5px] right-[-40px] mb-4 mr-4 z-10">
+            <div className="absolute bottom-[5px] right-[-2px] mb-4 mr-4 z-10">
               <img
                 src={postGirl}
                 alt="Post Girl"

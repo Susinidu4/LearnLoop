@@ -4,10 +4,9 @@ import { Home } from "./pages/Home";
 import { PrototypeA } from "./assets/prototype/PrototypeA";
 import { MdAddToPhotos } from "react-icons/md";
 
-// oshini
-import { AddPost } from "./pages/PostAndInteraction/AddPost";
-
-
+//Oshi
+import{ AddPost } from "./pages/PostAndInteraction/AddPost"
+import{UserViewPost} from "./pages/PostAndInteraction/UserViewPost"
 
 function App() {
   return (
@@ -16,9 +15,10 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/prototypeA" element={<PrototypeA/>} />
 
-         {/* oshini */}
+        {/* oshi */}
         <Route path="/addpost" element={<AddPost/>}/>
-
+        <Route path="/userviewpost" element={<UserViewPost/>}/>
+        
       </Routes>
     </BrowserRouter>
   );

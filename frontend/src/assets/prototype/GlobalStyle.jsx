@@ -12,7 +12,7 @@ const GlobalStyle = {
     remarkTopic: "block mb-2 text-[20px]",
   
     // Button Styles
-    buttonPrimary: "px-5 py-1.5 bg-[#8B5E3C] text-black border-2 border-[#543310] rounded-full hover:bg-[#543310] hover:text-white hover:border-[#8B5E3C] transition-all duration-300 shadow-sm",
+    buttonPrimary: "px-5 py-1.5  w-48 bg-[#8B5E3C] text-black border-2 border-[#543310] rounded-full hover:bg-[#543310] hover:text-white hover:border-[#8B5E3C] transition-all duration-300 shadow-sm",
     buttonSecondary: "bg-gradient-to-r from-[#543310] to-[#8b5e3c] text-white px-6 py-2 rounded-full shadow-lg hover:scale-105 transition",
 
     // Input Styles
