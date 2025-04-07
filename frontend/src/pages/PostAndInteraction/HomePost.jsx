@@ -4,7 +4,7 @@ import { SideBar } from "../../components/SideBar";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import { Pencil, Trash2 } from "lucide-react";
 
-export const UserViewPost = () => {
+export const HomePost = () => {
   const handleLikeClick = () => {
     alert("Like button clicked");
   };
@@ -27,15 +27,11 @@ export const UserViewPost = () => {
                   <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
                   <span className="text-black font-semibold">Kavishka Perera</span>
                 </div>
-                <div className="flex gap-3">
-                  <Pencil className="text-black cursor-pointer" />
-                  <Trash2 className="text-black cursor-pointer" />
-                </div>
               </div>
               <br/>
               {/* Description */}
               <p className="text-sm text-black mb-4 leading-5 max-w-[600px]">
-                riptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionD
+                riptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDriptionDescriptionDe<br/>scriptionDescriptionDescriptionDescriptionDescriptionDDescriptionDescriptionD
               </p>
               <br/><br/>
               {/* Image grid - Centered */}
