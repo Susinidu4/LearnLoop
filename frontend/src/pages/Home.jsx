@@ -15,6 +15,7 @@ export const Home = () => {
             <h1 className={GlobalStyle.headingLarge}>Welcome to the Home Page</h1>
             {/* Your content goes here */}
             
+            
           </main>
         </div>
       </div>
