@@ -9,6 +9,8 @@ import{ AddPost } from "./pages/PostAndInteraction/AddPost"
 import{UserViewPost} from "./pages/PostAndInteraction/UserViewPost"
 import { HomePost } from "./pages/PostAndInteraction/HomePost";
 
+
+
 function App() {
   return (
     <BrowserRouter>
@@ -20,6 +22,7 @@ function App() {
         <Route path="/addpost" element={<AddPost/>}/>
         <Route path="/userviewpost" element={<UserViewPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
+        
         
       </Routes>
     </BrowserRouter>

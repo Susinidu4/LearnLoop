@@ -20,7 +20,8 @@ const GlobalStyle = {
     remark: "px-5 py-1 opacity-80 border-2 border-[#543310] border-opacity-30 rounded-lg text-gray-600 w-2/4 ",
   
     // Select/Dropdown Styles
-    selectBox: "py-1 border-2 opacity-80 border-[#543310] rounded-lg text-left w-full max-w-40 sm:max-w-48 md:max-w-56 lg:max-w-64 focus:bg-[#F7EDE5] focus:border-[#2F1B06]",
+    selectBox: "py-1 border-2 opacity-80 border-[#543310] rounded-lg text-left w-full focus:bg-[#F7EDE5] focus:border-[#2F1B06]",
+
   
     // Card Styles
     cardContainer: "p-4 rounded-lg shadow-xl mb-6 bg-[#CFB397] bg-opacity-15 w-6/12",

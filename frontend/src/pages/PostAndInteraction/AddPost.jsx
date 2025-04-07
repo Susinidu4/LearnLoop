@@ -62,25 +62,31 @@ export const AddPost = () => {
             {/* Centered container for the form */}
             <div className="relative flex flex-col bg-[#C8A381] p-6 rounded-2xl shadow-lg w-[950px] h-[600px] mx-auto">
               {/* User Info */}
-              <div className="flex items-center mb-4">
-                <div className="w-10 h-10 bg-[#B68B62] rounded-full"></div>
-                <span className="ml-3 font-semibold text-[#4A2E16]">Kavishka Perera</span>
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
+                  <h1 className={GlobalStyle.headingMedium}>Kavishka Perera</h1>
+                </div>
               </div>
               <br/>
               {/* Description */}
-              <label className="text-[#4A2E16] font-medium mb-1">Description</label>
-              <textarea
-                className="w-[850px] p-3 rounded-lg border border-[#A57B5B] focus:outline-none mb-4"
-                rows="4"
-              ></textarea>
+              <div className="mb-6 w-[850px]">
+                <label className={GlobalStyle.remarkTopic}>Description</label>
+                <textarea
+                  type="text"
+                  placeholder=""
+                  className={`${GlobalStyle.inputText} w-full`}
+                  rows="3"
+                ></textarea>
+              </div>
               <br/>
               {/* Category Dropdown */}
-              <label className="text-[#4A2E16] font-medium mb-1">Category</label>
-              <div className="w-[850px] mb-4 h-14">
+              <div className="w-[850px] mb-4">
+                <label className={GlobalStyle.remarkTopic}>Category</label>
                 <select
+                  className={`${GlobalStyle.selectBox} w-full`}
                   value={category}
                   onChange={handleCategoryChange}
-                  className="w-full p-3 rounded-lg border-2 border-[#A57B5B] focus:outline-none"
                 >
                   <option value="">Select a category</option>
                   <option value="coding">Coding</option>
@@ -91,8 +97,8 @@ export const AddPost = () => {
               </div>
               <br/>
               {/* Snap Upload */}
-              <label className="text-[#4A2E16] font-medium mb-1">Snaps</label>
               <div className="w-[850px] mb-4">
+                <label className={GlobalStyle.remarkTopic}>Snaps</label>
                 <label htmlFor="file-upload" className="cursor-pointer w-full">
                   <input
                     id="file-upload"
@@ -102,13 +108,13 @@ export const AddPost = () => {
                     className="hidden"
                     multiple
                   />
-                  <div className="flex items-center rounded-[10px] border-2 border-[#A57B5B] overflow-hidden h-14">
+                  <div className="flex items-center rounded-[10px] border-2 border-[#543310] overflow-hidden h-10">
                     <div className="px-4 flex-grow truncate">
                       {selectedFiles.length > 0
                         ? `${selectedFiles.length} file(s) selected`
                         : "Select files (max 5 images or 1 video)"}
                     </div>
-                    <div className="flex items-center justify-center h-full border-l border-[#A57B5B] px-5">
+                    <div className="flex items-center justify-center h-full border-l border-[#543310] px-5">
                       <FaUpload className="text-gray-600" />
                     </div>
                   </div>
@@ -117,10 +123,9 @@ export const AddPost = () => {
               </div>
               <br/>
               {/* Post Button */}
-                <div className="flex gap-4">
-                  <button className={GlobalStyle.buttonPrimary}>Post</button>
-                </div>
-              
+              <div className="flex gap-4">
+                <button className={GlobalStyle.buttonPrimary}>Post</button>
+              </div>
             </div>
 
             {/* Image in fixed position */}

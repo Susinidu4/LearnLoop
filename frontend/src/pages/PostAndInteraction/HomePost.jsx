@@ -20,31 +20,31 @@ export const HomePost = () => {
         <Header />
         <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
           <main className="p-6 flex justify-center items-center min-h-[calc(100vh-6rem)]">
-            <div className="bg-[#C69F80] rounded-xl p-6 w-[932px] h-[630px] relative flex flex-col">
+          <div className={`${GlobalStyle.cardContainer} w-[932px] h-[630px]  `}>
               {/* Top row with profile and icons */}
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
-                  <span className="text-black font-semibold">Kavishka Perera</span>
+                  <h1 className={GlobalStyle.headingMedium}>Kavishka Perera</h1>
                 </div>
               </div>
               <br/>
               {/* Description */}
-              <p className="text-sm text-black mb-4 leading-5 max-w-[600px]">
+              <p className={GlobalStyle.paragraph}>
                 riptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDriptionDescriptionDe<br/>scriptionDescriptionDescriptionDescriptionDescriptionDDescriptionDescriptionD
               </p>
               <br/><br/>
               {/* Image grid - Centered */}
               <div className="flex justify-center gap-6 mb-4">
-                <div className="w-[300px] h-[300px] bg-[#E6D4C5] rounded-xl"></div>
+                <div className="w-[400px] h-[400px] bg-[#E6D4C5] rounded-xl"></div>
                 <div className="flex flex-col gap-6">
-                  <div className="w-[300px] h-[140px] bg-[#E6D4C5] rounded-xl"></div>
-                  <div className="w-[300px] h-[140px] bg-[#E6D4C5] rounded-xl"></div>
+                  <div className="w-[300px] h-[185px] bg-[#E6D4C5] rounded-xl"></div>
+                  <div className="w-[300px] h-[185px] bg-[#E6D4C5] rounded-xl"></div>
                 </div>
               </div>
 
               {/* Like & Comment Section - Right side vertically centered and clickable */}
-              <div className="absolute top-1/2 right-15 transform -translate-y-1/2 flex flex-col items-center gap-4 cursor-pointer">
+              <div className="absolute top-2/3 right-100 transform -translate-y-1/2 flex flex-col items-center gap-4 cursor-pointer">
                 <div className="flex flex-col items-center" onClick={handleLikeClick}>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
