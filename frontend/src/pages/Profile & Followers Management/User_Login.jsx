@@ -109,7 +109,7 @@ export const User_Login = () => {
               <span className="mx-4 text-[#4a2b0f]">Or</span>
               <div className="flex-grow border-t border-[#4a2b0f30]"></div>
             </div>
-            <div className="flex justify-center space-x-6 mb-16">
+            <div className="flex justify-center space-x-6 ">
               <button className="p-2 rounded-full hover:bg-[#d8c1a6] transition-colors">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
