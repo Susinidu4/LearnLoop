@@ -123,7 +123,7 @@ export const SideBar = () => {
               FAQ
             </button>
             <button
-              onClick={() => navigate("#")}
+              onClick={() => navigate("/privacypolicy")}
               className="flex items-center gap-2 w-full bg-[#543310] text-white px-3 py-2 rounded-lg hover:bg-[#CFB397]"
             >
               <MdPrivacyTip size={18} />
