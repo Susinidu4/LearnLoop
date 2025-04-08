@@ -20,7 +20,7 @@ export const AboutUs = () => {
             <div className="flex items-center justify-center mb-8 gap-4 flex-wrap ">
               <div>
                 <h1 className={`${GlobalStyle.headingLarge}`}>About Us</h1>
-                <p className={`${GlobalStyle.headingSmall} text-gray-700`}>
+                <p className={`${GlobalStyle.headingSmall} text-gray-400`}>
                   Empowering minds, sharing skills—because learning never stops
                 </p>
               </div>
