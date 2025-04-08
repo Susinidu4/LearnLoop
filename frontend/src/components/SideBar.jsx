@@ -1,9 +1,11 @@
-import React from "react";
-import { FaHome, FaPlus} from "react-icons/fa";
+import React, { useState, useRef, useEffect } from "react";
+import { FaHome, FaPlus, FaQuestionCircle } from "react-icons/fa";
 import { RxHamburgerMenu } from "react-icons/rx";
 import { useNavigate, useLocation } from "react-router-dom";
 import { GiRead } from "react-icons/gi";
 import { TbWorldSearch } from "react-icons/tb";
+import { MdInfo, MdPrivacyTip } from "react-icons/md";
+import GlobalStyle from "../assets/prototype/GlobalStyle";
 
 const SidebarIcon = ({ icon, onClick, isActive, title }) => {
   return (
@@ -27,6 +29,30 @@ const SidebarIcon = ({ icon, onClick, isActive, title }) => {
 export const SideBar = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [showMenu, setShowMenu] = useState(false);
+  const menuRef = useRef(); 
+
+  const handleMenuClick = () => {
+    setShowMenu((prev) => !prev);
+  };
+
+  
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setShowMenu(false);
+      }
+    };
+
+    if (showMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showMenu]);
 
   return (
     <aside className="
@@ -57,8 +83,8 @@ export const SideBar = () => {
         />
         <SidebarIcon
           icon={<FaPlus size={20} />}
-          onClick={() => navigate("/create")}
-          isActive={location.pathname === "/create"}
+          onClick={() => navigate("/addpost")}
+          isActive={location.pathname === "/addpost"}
           title="Create"
         />
         <SidebarIcon
@@ -74,7 +100,37 @@ export const SideBar = () => {
         text-[#FFFFFF] cursor-pointer 
         hover:text-gray-300 mb-4
       ">
-        <RxHamburgerMenu size={20} title="Menu" />
+        <RxHamburgerMenu size={20} onClick={handleMenuClick} title="Menu" />
+        
+        {showMenu && (
+          <div
+            ref={menuRef} 
+            className="absolute left-20 bottom-0 mb-4 w-48 bg-[#2F1B06] p-4 rounded-xl shadow-lg space-y-3 z-20"
+          >
+            <p className={`${GlobalStyle.headingSmall} text-white`}>More Options</p>
+            <button
+              onClick={() => navigate("/aboutus")}
+              className="flex items-center gap-2 w-full bg-[#543310] text-white px-3 py-2 rounded-lg hover:bg-[#CFB397]"
+            >
+              <MdInfo size={18} />
+              About Us
+            </button>
+            <button
+              onClick={() => navigate("/FAQ")}
+              className="flex items-center gap-2 w-full bg-[#543310] text-white px-3 py-2 rounded-lg hover:bg-[#CFB397]"
+            >
+              <FaQuestionCircle size={18} />
+              FAQ
+            </button>
+            <button
+              onClick={() => navigate("/privacypolicy")}
+              className="flex items-center gap-2 w-full bg-[#543310] text-white px-3 py-2 rounded-lg hover:bg-[#CFB397]"
+            >
+              <MdPrivacyTip size={18} />
+              Privacy Policy
+            </button>
+          </div>
+        )}
       </div>
     </aside>
   );
