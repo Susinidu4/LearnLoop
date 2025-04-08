@@ -12,6 +12,7 @@ import { MdAddToPhotos } from "react-icons/md";
 import{ AddPost } from "./pages/PostAndInteraction/AddPost"
 import{UserViewPost} from "./pages/PostAndInteraction/UserViewPost"
 import { HomePost } from "./pages/PostAndInteraction/HomePost";
+import { PrivacyPolicy } from "./pages/Other/PrivacyPolicy";
 
 
 
@@ -32,6 +33,7 @@ function App() {
         <Route path="/addpost" element={<AddPost/>}/>
         <Route path="/userviewpost" element={<UserViewPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
+        <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>
         
 
         
