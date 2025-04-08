@@ -3,18 +3,16 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { PrototypeA } from "./assets/prototype/PrototypeA";
 
+//Susinidu
 import { Notification } from "./pages/Comments,Likes & Notification Management/Notification";
 import { FAQ } from "./pages/Other/FAQ";
-
-import { MdAddToPhotos } from "react-icons/md";
+import { AboutUs } from "./pages/Other/AboutUs";
 
 //Oshi
 import{ AddPost } from "./pages/PostAndInteraction/AddPost"
 import{UserViewPost} from "./pages/PostAndInteraction/UserViewPost"
 import { HomePost } from "./pages/PostAndInteraction/HomePost";
 import { PrivacyPolicy } from "./pages/Other/PrivacyPolicy";
-
-
 
 
 function App() {
@@ -28,6 +26,7 @@ function App() {
         {/* Susinidu */}
         <Route path="/notification" element={<Notification/>}/>
         <Route path="/FAQ" element={<FAQ/>}/>
+        <Route path="/aboutus" element={<AboutUs/>}/>
 
         {/* oshi */}
         <Route path="/addpost" element={<AddPost/>}/>

@@ -109,7 +109,7 @@ export const SideBar = () => {
           >
             <p className={`${GlobalStyle.headingSmall} text-white`}>More Options</p>
             <button
-              onClick={() => navigate("#")}
+              onClick={() => navigate("/aboutus")}
               className="flex items-center gap-2 w-full bg-[#543310] text-white px-3 py-2 rounded-lg hover:bg-[#CFB397]"
             >
               <MdInfo size={18} />
