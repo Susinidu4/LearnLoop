@@ -13,6 +13,10 @@ import{ AddPost } from "./pages/PostAndInteraction/AddPost"
 import{UserViewPost} from "./pages/PostAndInteraction/UserViewPost"
 import { HomePost } from "./pages/PostAndInteraction/HomePost";
 import { PrivacyPolicy } from "./pages/Other/PrivacyPolicy";
+import { User_Login } from "./pages/Profile & Followers Management/User_Login";
+
+//yasindu
+
 
 
 function App() {
@@ -33,6 +37,9 @@ function App() {
         <Route path="/userviewpost" element={<UserViewPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
         <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>
+
+        {/* yasindu */}
+        <Route path="/userlogin" element={<User_Login/>}/>
         
 
         
