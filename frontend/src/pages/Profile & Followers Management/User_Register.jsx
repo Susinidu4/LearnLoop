@@ -3,9 +3,75 @@ import { EyeIcon, EyeOffIcon } from 'lucide-react'
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import logo2 from "../../assets/images/Logo2.png";
 import faqImg from "../../assets/images/faqImg.png";
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import { registerUser } from '../../service/Profile & Followers Management/AuthService';
 
 export const User_Register = () => {
-     const [showPassword, setShowPassword] = useState(false)
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: ''
+  });
+  const [rememberMe, setRememberMe] = useState(false);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormData(prev => ({
+          ...prev,
+          [name]: value
+      }));
+  };
+
+  const handleSubmit = async (e) => {
+      e.preventDefault();
+      setError('');
+      
+      // Validation
+      if (!formData.name || !formData.email || !formData.password || !formData.confirmPassword) {
+          setError('All fields are required');
+          return;
+      }
+      
+      if (formData.password !== formData.confirmPassword) {
+          setError('Passwords do not match');
+          return;
+      }
+      
+      if (formData.password.length < 6) {
+          setError('Password must be at least 6 characters');
+          return;
+      }
+
+      try {
+          setLoading(true);
+          // Use the service function
+          await registerUser({
+              name: formData.name,
+              email: formData.email,
+              password: formData.password
+          });
+          
+          // Registration successful
+          navigate('/userlogin'); // Redirect to login page
+      } catch (err) {
+          console.error('Registration error:', err);
+          setError(err.message || 'Registration failed. Please try again.');
+      } finally {
+          setLoading(false);
+      }
+  };
+
+  const togglePasswordVisibility = () => {
+      setShowPassword(!showPassword);
+  };
+
+
     return (
         <div className="flex w-full min-h-screen bg-[#f8f0e5] relative overflow-hidden">
           <div className="absolute top-0 right-0 w-[500px] h-[500px] rounded-full bg-[#2F1B06] translate-x-1/2 -translate-y-1/2"></div>
@@ -17,12 +83,21 @@ export const User_Register = () => {
               <div className="bg-[#e1ceb5] rounded-3xl p-8 shadow-lg">
                 <h2 className={`${GlobalStyle.headingLarge} text-[#4a2b0f] text-3xl font-bold mb-1`}>Sign Up</h2>
                 <p className="text-[#4a2b0f] text-[16px] mb-6">Hello ! Welcome...</p>
-                <form>
+                
+                {error && (
+                    <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
+                        {error}
+                    </div>
+                )}
+                
+                <form onSubmit={handleSubmit}>
                   <div className="mb-4">
                     <input
                       type="text"
                       name="name"
                       placeholder="Name"
+                      value={formData.name}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 rounded-lg bg-[#e1ceb5] border border-[#4a2b0f30] focus:outline-none focus:ring-1 focus:ring-[#4a2b0f]"
                       required
                     />
@@ -32,6 +107,8 @@ export const User_Register = () => {
                       type="email"
                       name="email"
                       placeholder="Email"
+                      value={formData.email}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 rounded-lg bg-[#e1ceb5] border border-[#4a2b0f30] focus:outline-none focus:ring-1 focus:ring-[#4a2b0f]"
                       required
                     />
@@ -41,11 +118,14 @@ export const User_Register = () => {
                       type={showPassword ? 'text' : 'password'}
                       name="password"
                       placeholder="Password"
+                      value={formData.password}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 rounded-lg bg-[#e1ceb5] border border-[#4a2b0f30] focus:outline-none focus:ring-1 focus:ring-[#4a2b0f]"
                       required
                     />
                     <button
                       type="button"
+                      onClick={togglePasswordVisibility}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#4a2b0f]"
                     >
                       {showPassword ? (
@@ -58,13 +138,16 @@ export const User_Register = () => {
                   <div className="mb-4 relative">
                     <input
                       type={showPassword ? 'text' : 'password'}
-                      name="confirm-password"
+                      name="confirmPassword"
                       placeholder="Confirm Password"
+                      value={formData.confirmPassword}
+                      onChange={handleChange}
                       className="w-full px-4 py-3 rounded-lg bg-[#e1ceb5] border border-[#4a2b0f30] focus:outline-none focus:ring-1 focus:ring-[#4a2b0f]"
                       required
                     />
                     <button
                       type="button"
+                      onClick={togglePasswordVisibility}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#4a2b0f]"
                     >
                       {showPassword ? (
@@ -78,6 +161,8 @@ export const User_Register = () => {
                     <input
                       type="checkbox"
                       id="remember"
+                      checked={rememberMe}
+                      onChange={() => setRememberMe(!rememberMe)}
                       className="mr-2 rounded border-[#4a2b0f]"
                     />
                     <label htmlFor="remember" className="text-[#4a2b0f] text-[16px]">
@@ -86,9 +171,10 @@ export const User_Register = () => {
                   </div>
                   <button
                     type="submit"
-                    className="w-full text-[16px] bg-[#4a2b0f] text-white py-3 rounded-lg font-medium hover:bg-[#3a2208] transition-colors"
+                    disabled={loading}
+                    className="w-full text-[16px] bg-[#4a2b0f] text-white py-3 rounded-lg font-medium hover:bg-[#3a2208] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
                   >
-                    Sign Up
+                    {loading ? 'Signing Up...' : 'Sign Up'}
                   </button>
                 </form>
                 <div className="mt-4">
@@ -149,7 +235,6 @@ export const User_Register = () => {
                 className="max-w-full h-auto max-h-[400px] object-contain"
               />
             </div>
-           
           </main>
         </div>
       );
