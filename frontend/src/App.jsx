@@ -19,6 +19,13 @@ import { LeraningPlansExistingUser } from"./pages/LearningPlans&ProgressTracking
 import { LearningPlansSelectExcistingUser } from "./pages/LearningPlans&ProgressTracking/LearningPlansSelectExcictingUser";
 import { AddLearningPlans } from "./pages/LearningPlans&ProgressTracking/AddLearningPlans";
 
+//yasindu
+import { User_Login } from "./pages/Profile & Followers Management/User_Login";
+import { User_Register } from "./pages/Profile & Followers Management/User_Register";
+import { User_Profile } from "./pages/Profile & Followers Management/User_Profile";
+
+
+
 function App() {
   return (
     <BrowserRouter>
@@ -36,6 +43,11 @@ function App() {
         <Route path="/userviewpost" element={<UserViewPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
         <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>
+
+        {/* yasindu */}
+        <Route path="/userlogin" element={<User_Login/>}/>
+        <Route path="/userregister" element={<User_Register/>}/>
+        <Route path="/userprofile" element={<User_Profile/>}/>
         
         {/* Ishara */}
         <Route path="/LeaningPlansExistingUser" element={<LeraningPlansExistingUser/>}/>
