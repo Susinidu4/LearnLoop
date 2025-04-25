@@ -43,7 +43,8 @@ function App() {
         <Route path="/addpost" element={<AddPost/>}/>
         <Route path="/userviewpost" element={<UserViewPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
-        <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>
+
+        <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>  
 
         {/* yasindu */}
         <Route path="/userlogin" element={<User_Login/>}/>

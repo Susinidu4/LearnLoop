@@ -42,6 +42,7 @@ export const HomePost = () => {
   };
 
   return (
+
     <div className={`${GlobalStyle.countBarSubTopicContainer} pt-20`}>
       {postData.map((post, index) => (
         <div
@@ -96,6 +97,7 @@ export const HomePost = () => {
                 {likedStates[index] ? post.likes + 1 : post.likes}
               </span>
             </div>
+
 
             <div
               className="flex flex-col items-center"
