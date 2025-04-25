@@ -6,11 +6,6 @@ import { FaCirclePlus } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
 
 export const LearningPlansSelectExcistingUser = () => {
-  const navigate = useNavigate(); // Initialize the navigate function
-
-  const handleClick = () => {
-    navigate("/AddLearningPlans"); // Navigate to the desired page
-  };
 
   const data = [
     {
@@ -63,7 +58,6 @@ export const LearningPlansSelectExcistingUser = () => {
                   {/* Right Section: "+" Icon */}
                   <div className="ml-auto">
                     <FaCirclePlus
-                      onClick={handleClick}
                       className="text-3xl text-[#CFB397] border-2 border-[#74512D] cursor-pointer bg-black rounded-full"
                     />
                   </div>

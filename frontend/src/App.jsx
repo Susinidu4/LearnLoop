@@ -2,6 +2,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { PrototypeA } from "./assets/prototype/PrototypeA";
+import '@fontsource/poppins'; 
 
 //Susinidu
 import { Notification } from "./pages/Comments,Likes & Notification Management/Notification";
@@ -18,11 +19,13 @@ import { PrivacyPolicy } from "./pages/Other/PrivacyPolicy";
 import { LeraningPlansExistingUser } from"./pages/LearningPlans&ProgressTracking/LearningPlansExistingUser";
 import { LearningPlansSelectExcistingUser } from "./pages/LearningPlans&ProgressTracking/LearningPlansSelectExcictingUser";
 import { AddLearningPlans } from "./pages/LearningPlans&ProgressTracking/AddLearningPlans";
+import { Explore } from "./pages/Other/Explore";
 
 //yasindu
 import { User_Login } from "./pages/Profile & Followers Management/User_Login";
 import { User_Register } from "./pages/Profile & Followers Management/User_Register";
 import { User_Profile } from "./pages/Profile & Followers Management/User_Profile";
+import { HomeSignOut } from "./pages/HomeSignOut";
 
 
 
@@ -42,8 +45,8 @@ function App() {
         <Route path="/addpost" element={<AddPost/>}/>
         <Route path="/userviewpost" element={<UserViewPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
-
         <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>  
+        <Route path="/homesignout" element={<HomeSignOut/>}/>  
 
         {/* yasindu */}
         <Route path="/userlogin" element={<User_Login/>}/>
@@ -54,6 +57,7 @@ function App() {
         <Route path="/LeaningPlansExistingUser" element={<LeraningPlansExistingUser/>}/>
         <Route path="/LearningPlansSelectExcistingUser" element={<LearningPlansSelectExcistingUser/>}/>
         <Route path="/AddLearningPlans" element={<AddLearningPlans/>}/>
+        <Route path="/Explore" element={<Explore/>}/>
         
       </Routes>
     </BrowserRouter>
