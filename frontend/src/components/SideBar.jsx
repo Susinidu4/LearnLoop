@@ -77,8 +77,8 @@ export const SideBar = () => {
         />
         <SidebarIcon
           icon={<TbWorldSearch size={20} />}
-          onClick={() => navigate("/explore")}
-          isActive={location.pathname === "/explore"}
+          onClick={() => navigate("/Explore")}
+          isActive={location.pathname === "/Explore"}
           title="Explore"
         />
         <SidebarIcon
