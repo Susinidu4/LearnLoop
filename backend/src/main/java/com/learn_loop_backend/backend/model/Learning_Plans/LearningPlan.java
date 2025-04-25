@@ -62,7 +62,9 @@ public class LearningPlan {
         public void setCompletionDuration(int completionDuration) { this.completionDuration = completionDuration; }
     }
 
-    // Getters and Setters for LearningPlan class
-    // (You can generate these with your IDE or use Lombok)
+    public int getDurationInWeeks() {
+        throw new UnsupportedOperationException("Unimplemented method 'getDurationInWeeks'");
+    }
+
 }
 
