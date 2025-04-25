@@ -89,9 +89,9 @@ export const SideBar = () => {
         />
         <SidebarIcon
           icon={<GiRead size={20} />}
-          onClick={() => navigate("/help")}
-          isActive={location.pathname === "/help"}
-          title="Help"
+          onClick={() => navigate("/LeaningPlansExistingUser")}
+          isActive={location.pathname === "/LeaningPlansExistingUser"}
+          title="Learning Plans"
         />
       </div>
 
@@ -109,7 +109,7 @@ export const SideBar = () => {
           >
             <p className={`${GlobalStyle.headingSmall} text-white`}>More Options</p>
             <button
-              onClick={() => navigate("/aboutus")}
+              onClick={() => navigate("/aboutUs")}
               className="flex items-center gap-2 w-full bg-[#543310] text-white px-3 py-2 rounded-lg hover:bg-[#CFB397]"
             >
               <MdInfo size={18} />
