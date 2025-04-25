@@ -2,6 +2,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { PrototypeA } from "./assets/prototype/PrototypeA";
+import '@fontsource/poppins'; 
 
 //Susinidu
 import { Notification } from "./pages/Comments,Likes & Notification Management/Notification";
