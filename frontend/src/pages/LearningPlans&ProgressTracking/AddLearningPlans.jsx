@@ -13,13 +13,9 @@ export const AddLearningPlans = () => {
       <SideBar />
       <div className="flex flex-col w-full ml-16 ">
         <Header />
-        <div
-          className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}
-        >
+        <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
           <main className="p-4 sm:p-6 md:p-8 lg:p-12">
-            <div
-              className={`${GlobalStyle.cardContainer} w-full flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8 lg:p-12 max-w-3xl mx-auto shadow-lg rounded-lg`}
-            >
+            <div className={`${GlobalStyle.cardContainer} w-full flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8 lg:p-12 max-w-3xl mx-auto shadow-lg rounded-lg`}>
               <div>
                 <div className="flex items-center gap-4 pt-4">
                   <div className="w-18 h-18 rounded-full bg-[#AE8456] flex items-center justify-center overflow-hidden">
@@ -171,8 +167,7 @@ export const AddLearningPlans = () => {
                 <div className="flex gap-4 justify-end w-full">
                   <button className={GlobalStyle.buttonPrimary}>Submit</button>
                 </div>
-              </div>
-              
+              </div> 
             </div>
           </main>
         </div>
