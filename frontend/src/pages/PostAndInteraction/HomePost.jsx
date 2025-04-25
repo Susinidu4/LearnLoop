@@ -15,9 +15,9 @@ export const HomePost = () => {
 
   return (
     <div className="flex">
-      <SideBar />
+    
       <div className="flex flex-col w-full ml-16">
-        <Header />
+       
         <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
           <main className="p-6 flex justify-center items-center min-h-[calc(100vh-6rem)]">
           <div className={`${GlobalStyle.cardContainer} w-[932px] h-[630px]  `}>

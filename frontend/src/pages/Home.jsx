@@ -2,6 +2,7 @@ import React from "react";
 import { Header } from "../components/Header";
 import { SideBar } from "../components/SideBar";
 import GlobalStyle from "../assets/prototype/GlobalStyle";
+import { HomePost } from "./PostAndInteraction/HomePost";
 
 export const Home = () => {
   return (
@@ -14,6 +15,8 @@ export const Home = () => {
 
             <h1 className={GlobalStyle.headingLarge}>Welcome to the Home Page</h1>
             {/* Your content goes here */}
+            <HomePost/>
+
             
           </main>
         </div>
