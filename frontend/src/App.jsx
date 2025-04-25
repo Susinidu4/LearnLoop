@@ -31,7 +31,7 @@ function App() {
         <Route path="/FAQ" element={<FAQ/>}/>
         <Route path="/aboutUs" element={<AboutUs/>}/>
 
-        {/* oshi */}
+        {/* oshini */}
         <Route path="/addpost" element={<AddPost/>}/>
         <Route path="/userviewpost" element={<UserViewPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
