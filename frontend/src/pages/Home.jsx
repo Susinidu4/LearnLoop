@@ -13,7 +13,7 @@ export const Home = () => {
         <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
           <main className="p-6">
 
-            <h1 className={GlobalStyle.headingLarge}>Welcome to the Home Page</h1>
+            {/* <h1 className={GlobalStyle.headingLarge}></h1> */}
             {/* Your content goes here */}
             <HomePost/>
 
