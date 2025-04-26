@@ -8,4 +8,38 @@ public class Comment {
     private String userId;
     private String content;
     private Date commentedAt;
+
+    public Comment(String userId, String content, Date commentedAt) {
+        this.userId = userId;
+        this.content = content;
+        this.commentedAt = commentedAt;
+    }
+
+    public Comment() {
+
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public void setContent(String content) {
+        this.content = content;
+    }
+
+    public Date getCommentedAt() {
+        return commentedAt;
+    }
+
+    public void setCommentedAt(Date commentedAt) {
+        this.commentedAt = commentedAt;
+    }
 }
