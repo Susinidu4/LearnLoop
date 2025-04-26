@@ -4,7 +4,7 @@ import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
 
-// Same postData array here
+// Sample post data array
 const postData = [
   {
     id: 1,
@@ -32,8 +32,10 @@ const postData = [
 export const UserViewPost = () => {
   const { id } = useParams();
   const [liked, setLiked] = useState(false);
+  const [comments, setComments] = useState(["Great post!", "Very informative.", "Loved this!"]);
+  const [newComment, setNewComment] = useState("");
 
-  const post = postData.find((p) => p.id === parseInt(id)); // Find the post by ID
+  const post = postData.find((p) => p.id === parseInt(id));
 
   if (!post) {
     return <div>Post not found</div>;
@@ -43,8 +45,11 @@ export const UserViewPost = () => {
     setLiked(!liked);
   };
 
-  const handleCommentClick = () => {
-    alert("Comment button clicked");
+  const handleCommentSubmit = () => {
+    if (newComment.trim()) {
+      setComments([...comments, newComment.trim()]);
+      setNewComment("");
+    }
   };
 
   return (
@@ -57,8 +62,7 @@ export const UserViewPost = () => {
         <Header />
         <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
           <div className="flex justify-center pt-10">
-            <div className={`${GlobalStyle.cardContainer} w-[932px] h-[630px] relative mb-12 p-10`}>
-              {/* Top row: Profile and Name */}
+            <div className={`${GlobalStyle.cardContainer} w-[932px] relative mb-12 p-10`}>              
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
@@ -82,7 +86,6 @@ export const UserViewPost = () => {
 
               {/* Like & Comment buttons */}
               <div className="absolute right-4 top-3/4 transform -translate-y-1/2 flex flex-col gap-6 cursor-pointer">
-                {/* Like Button */}
                 <div
                   className="flex flex-col items-center"
                   onClick={handleLikeClick}
@@ -93,9 +96,7 @@ export const UserViewPost = () => {
                     stroke={liked ? "none" : "currentColor"}
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
-                    className={`w-8 h-8 transition-all duration-300 ease-in-out ${
-                      liked ? "scale-125" : "scale-100"
-                    }`}
+                    className={`w-8 h-8 transition-all duration-300 ease-in-out ${liked ? "scale-125" : "scale-100"}`}
                   >
                     <path
                       strokeLinecap="round"
@@ -103,16 +104,10 @@ export const UserViewPost = () => {
                       d="M21.752 6.318a5.753 5.753 0 00-9.317-1.618L12 5.06l-.435-.36A5.753 5.753 0 002.248 6.318c-1.272 2.232-.38 5.104 1.523 6.947L12 21.75l8.23-8.485c1.903-1.843 2.795-4.715 1.522-6.947z"
                     />
                   </svg>
-                  <span className="text-sm">
-                    {liked ? post.likes + 1 : post.likes}
-                  </span>
+                  <span className="text-sm">{liked ? post.likes + 1 : post.likes}</span>
                 </div>
 
-                {/* Comment Button */}
-                <div
-                  className="flex flex-col items-center"
-                  onClick={handleCommentClick}
-                >
+                <div className="flex flex-col items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -130,10 +125,44 @@ export const UserViewPost = () => {
                   <span className="text-sm">{post.comments}</span>
                 </div>
               </div>
+
+              {/* Comments Section */}
+              <div className="mt-6">
+                {comments.map((comment, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-between items-center bg-[#D9C3AC] rounded-lg p-4 mb-2"
+                  >
+                    <span>{comment}</span>
+                    <div className="flex items-center gap-3">
+                      <button className="text-[#8B6F5A]">Edit</button>
+                      <button className="text-[#8B6F5A]">Delete</button>
+                    </div>
+                  </div>
+                ))}
+
+                {/* Add Comment */}
+                <div className="flex items-center gap-3 mt-4">
+                  <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
+                  <input
+                    type="text"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Write a comment..."
+                    className="flex-grow border rounded-lg p-2"
+                  />
+                  <button
+                    onClick={handleCommentSubmit}
+                    className="p-2 bg-[#8B6F5A] text-white rounded-lg"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>  
+      </div>
     </div>
   );
 };
