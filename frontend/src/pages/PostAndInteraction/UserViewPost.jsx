@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
+import { MdEdit, MdDelete } from "react-icons/md";
 
 // Sample post data array
 const postData = [
@@ -132,15 +133,16 @@ export const UserViewPost = () => {
                 <div className="h-[200px] overflow-y-scroll bg-[#8B6F5A] p-4 rounded-lg">
                   {comments.map((comment, index) => (
                     <div
-                      key={index}
-                      className="flex justify-between items-center bg-[#D9C3AC] rounded-lg p-4 mb-2"
-                    >
-                      <span>{comment}</span>
-                      <div className="flex items-center gap-3">
-                        <button className="text-[#8B6F5A]">Edit</button>
-                        <button className="text-[#8B6F5A]">Delete</button>
-                      </div>
+                    key={index}
+                    className="flex justify-between items-center bg-[#D9C3AC] rounded-lg p-4 mb-6 min-h-[40px]"
+                  >
+                    <span className="break-words">{comment}</span>
+                    <div className="flex items-center gap-3">
+                      <button className="text-[#8B6F5A]"><MdEdit /></button>
+                      <button className="text-[#8B6F5A]"><MdDelete /></button>
                     </div>
+                  </div>
+                  
                   ))}
                 </div>
 
