@@ -10,21 +10,24 @@ const postData = [
   {
     id: 1,
     name: "Kavishka Perera",
-    description: "Description 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    description:
+      "Description 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     likes: 100,
     comments: 80,
   },
   {
     id: 2,
     name: "Sahan Fernando",
-    description: "Description 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    description:
+      "Description 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     likes: 245,
     comments: 65,
   },
   {
     id: 3,
     name: "Nadeesha Madushani",
-    description: "Description 3: Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+    description:
+      "Description 3: Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
     likes: 330,
     comments: 120,
   },
@@ -33,7 +36,11 @@ const postData = [
 export const UserViewPost = () => {
   const { id } = useParams();
   const [liked, setLiked] = useState(false);
-  const [comments, setComments] = useState(["Great post!", "Very informative.", "Loved this!"]);
+  const [comments, setComments] = useState([
+    "Great post!",
+    "Very informative.",
+    "Loved this!",
+  ]);
   const [newComment, setNewComment] = useState("");
 
   const post = postData.find((p) => p.id === parseInt(id));
@@ -61,9 +68,13 @@ export const UserViewPost = () => {
       {/* Main content */}
       <div className="flex flex-col w-full ml-16">
         <Header />
-        <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
+        <div
+          className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}
+        >
           <div className="flex justify-center pt-10">
-            <div className={`${GlobalStyle.cardContainer} w-[932px] relative mb-12 p-10`}>
+            <div
+              className={`${GlobalStyle.cardContainer} w-[932px] relative mb-12 p-10`}
+            >
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
@@ -97,7 +108,9 @@ export const UserViewPost = () => {
                     stroke={liked ? "none" : "currentColor"}
                     viewBox="0 0 24 24"
                     strokeWidth={1.5}
-                    className={`w-8 h-8 transition-all duration-300 ease-in-out ${liked ? "scale-125" : "scale-100"}`}
+                    className={`w-8 h-8 transition-all duration-300 ease-in-out ${
+                      liked ? "scale-125" : "scale-100"
+                    }`}
                   >
                     <path
                       strokeLinecap="round"
@@ -105,7 +118,9 @@ export const UserViewPost = () => {
                       d="M21.752 6.318a5.753 5.753 0 00-9.317-1.618L12 5.06l-.435-.36A5.753 5.753 0 002.248 6.318c-1.272 2.232-.38 5.104 1.523 6.947L12 21.75l8.23-8.485c1.903-1.843 2.795-4.715 1.522-6.947z"
                     />
                   </svg>
-                  <span className="text-sm">{liked ? post.likes + 1 : post.likes}</span>
+                  <span className="text-sm">
+                    {liked ? post.likes + 1 : post.likes}
+                  </span>
                 </div>
 
                 <div className="flex flex-col items-center">
@@ -133,16 +148,19 @@ export const UserViewPost = () => {
                 <div className="h-[200px] overflow-y-scroll bg-[#8B6F5A] p-4 rounded-lg">
                   {comments.map((comment, index) => (
                     <div
-                    key={index}
-                    className="flex justify-between items-center bg-[#D9C3AC] rounded-lg p-4 mb-6 min-h-[40px]"
-                  >
-                    <span className="break-words">{comment}</span>
-                    <div className="flex items-center gap-3">
-                      <button className="text-[#8B6F5A]"><MdEdit /></button>
-                      <button className="text-[#8B6F5A]"><MdDelete /></button>
+                      key={index}
+                      className="flex justify-between items-center bg-[#D9C3AC] rounded-lg p-4 mb-6 min-h-[40px]"
+                    >
+                      <span className="break-words">{comment}</span>
+                      <div className="flex items-center gap-3">
+                        <button className="text-[#8B6F5A]">
+                          <MdEdit />
+                        </button>
+                        <button className="text-[#8B6F5A]">
+                          <MdDelete />
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                  
                   ))}
                 </div>
 
@@ -156,12 +174,15 @@ export const UserViewPost = () => {
                     placeholder="Write a comment..."
                     className="flex-grow border rounded-lg p-2"
                   />
-                  <button
-                    onClick={handleCommentSubmit}
-                    className="p-2 bg-[#8B6F5A] text-white rounded-lg"
-                  >
-                    Submit
-                  </button>
+                  {/* button 1*/}
+                  <div className="flex gap-4">
+                    <button
+                      className={`${GlobalStyle.buttonPrimary} rounded-lg`}
+                      onClick={handleCommentSubmit}
+                    >
+                      Submit
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
