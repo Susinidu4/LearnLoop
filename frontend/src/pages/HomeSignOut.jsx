@@ -2,8 +2,8 @@ import React from "react";
 import { Header } from "../components/Header";
 import { SideBar } from "../components/SideBar";
 import GlobalStyle from "../assets/prototype/GlobalStyle";
-import hatman from "../assets/images/hatman.png";
-import books from "../assets/images/books.png";
+import homeMan from "../assets/images/homeMan.png";
+
 
 
 export const HomeSignOut = () => {
@@ -20,8 +20,8 @@ export const HomeSignOut = () => {
                 Welcome to LearnLoop
               </div>
               <div className="flex items-end gap-2">
-                <img src={hatman} alt="Hat Man" className="h-28" />
-                <img src={books} alt="Books" className="h-20 -ml-4" />
+                <img src={homeMan} alt="homeMan" className="h-28" />
+               
               </div>
             </div>
 
