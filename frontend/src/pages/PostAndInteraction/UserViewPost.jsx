@@ -62,7 +62,7 @@ export const UserViewPost = () => {
         <Header />
         <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
           <div className="flex justify-center pt-10">
-            <div className={`${GlobalStyle.cardContainer} w-[932px] relative mb-12 p-10`}>              
+            <div className={`${GlobalStyle.cardContainer} w-[932px] relative mb-12 p-10`}>
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
@@ -85,7 +85,7 @@ export const UserViewPost = () => {
               </div>
 
               {/* Like & Comment buttons */}
-              <div className="absolute right-4 top-3/4 transform -translate-y-1/2 flex flex-col gap-6 cursor-pointer">
+              <div className="absolute right-4 top-125 transform -translate-y-1/2 flex flex-col gap-6 cursor-pointer">
                 <div
                   className="flex flex-col items-center"
                   onClick={handleLikeClick}
@@ -128,18 +128,21 @@ export const UserViewPost = () => {
 
               {/* Comments Section */}
               <div className="mt-6">
-                {comments.map((comment, index) => (
-                  <div
-                    key={index}
-                    className="flex justify-between items-center bg-[#D9C3AC] rounded-lg p-4 mb-2"
-                  >
-                    <span>{comment}</span>
-                    <div className="flex items-center gap-3">
-                      <button className="text-[#8B6F5A]">Edit</button>
-                      <button className="text-[#8B6F5A]">Delete</button>
+                {/* Scrollable comments container */}
+                <div className="h-[200px] overflow-y-scroll bg-[#8B6F5A] p-4 rounded-lg">
+                  {comments.map((comment, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center bg-[#D9C3AC] rounded-lg p-4 mb-2"
+                    >
+                      <span>{comment}</span>
+                      <div className="flex items-center gap-3">
+                        <button className="text-[#8B6F5A]">Edit</button>
+                        <button className="text-[#8B6F5A]">Delete</button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
 
                 {/* Add Comment */}
                 <div className="flex items-center gap-3 mt-4">
