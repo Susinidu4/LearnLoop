@@ -28,7 +28,7 @@ export const HomePost = () => {
                   <h1 className={GlobalStyle.headingMedium}>Kavishka Perera</h1>
                 </div>
               </div>
-              <br/>
+              <br/>-
               {/* Description */}
               <p className={GlobalStyle.paragraph}>
                 riptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDriptionDescriptionDe<br/>scriptionDescriptionDescriptionDescriptionDescriptionDDescriptionDescriptionD
