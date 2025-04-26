@@ -7,4 +7,29 @@ import java.util.Date;
 public class Like {
     private String userId;
     private Date likedAt;
+
+    public Like(String userId, Date likedAt) {
+        this.userId = userId;
+        this.likedAt = likedAt;
+    }
+
+    public Like() {
+
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public Date getLikedAt() {
+        return likedAt;
+    }
+
+    public void setLikedAt(Date likedAt) {
+        this.likedAt = likedAt;
+    }
 }
