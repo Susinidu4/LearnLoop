@@ -3,27 +3,31 @@ import { useParams } from "react-router-dom";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
+import { MdEdit, MdDelete } from "react-icons/md";
 
-// Same postData array here
+// Sample post data array
 const postData = [
   {
     id: 1,
     name: "Kavishka Perera",
-    description: "Description 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    description:
+      "Description 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     likes: 100,
     comments: 80,
   },
   {
     id: 2,
     name: "Sahan Fernando",
-    description: "Description 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    description:
+      "Description 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     likes: 245,
     comments: 65,
   },
   {
     id: 3,
     name: "Nadeesha Madushani",
-    description: "Description 3: Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+    description:
+      "Description 3: Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
     likes: 330,
     comments: 120,
   },
@@ -32,8 +36,14 @@ const postData = [
 export const UserViewPost = () => {
   const { id } = useParams();
   const [liked, setLiked] = useState(false);
+  const [comments, setComments] = useState([
+    "Great post!",
+    "Very informative.",
+    "Loved this!",
+  ]);
+  const [newComment, setNewComment] = useState("");
 
-  const post = postData.find((p) => p.id === parseInt(id)); // Find the post by ID
+  const post = postData.find((p) => p.id === parseInt(id));
 
   if (!post) {
     return <div>Post not found</div>;
@@ -43,8 +53,11 @@ export const UserViewPost = () => {
     setLiked(!liked);
   };
 
-  const handleCommentClick = () => {
-    alert("Comment button clicked");
+  const handleCommentSubmit = () => {
+    if (newComment.trim()) {
+      setComments([...comments, newComment.trim()]);
+      setNewComment("");
+    }
   };
 
   return (
@@ -55,10 +68,13 @@ export const UserViewPost = () => {
       {/* Main content */}
       <div className="flex flex-col w-full ml-16">
         <Header />
-        <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
+        <div
+          className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}
+        >
           <div className="flex justify-center pt-10">
-            <div className={`${GlobalStyle.cardContainer} w-[932px] h-[630px] relative mb-12 p-10`}>
-              {/* Top row: Profile and Name */}
+            <div
+              className={`${GlobalStyle.cardContainer} w-[932px] relative mb-12 p-10`}
+            >
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
@@ -81,8 +97,7 @@ export const UserViewPost = () => {
               </div>
 
               {/* Like & Comment buttons */}
-              <div className="absolute right-4 top-3/4 transform -translate-y-1/2 flex flex-col gap-6 cursor-pointer">
-                {/* Like Button */}
+              <div className="absolute right-4 top-125 transform -translate-y-1/2 flex flex-col gap-6 cursor-pointer">
                 <div
                   className="flex flex-col items-center"
                   onClick={handleLikeClick}
@@ -108,11 +123,7 @@ export const UserViewPost = () => {
                   </span>
                 </div>
 
-                {/* Comment Button */}
-                <div
-                  className="flex flex-col items-center"
-                  onClick={handleCommentClick}
-                >
+                <div className="flex flex-col items-center">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -130,10 +141,54 @@ export const UserViewPost = () => {
                   <span className="text-sm">{post.comments}</span>
                 </div>
               </div>
+
+              {/* Comments Section */}
+              <div className="mt-6">
+                {/* Scrollable comments container */}
+                <div className="h-[200px] overflow-y-scroll bg-[#8B6F5A] p-4 rounded-lg">
+                  {comments.map((comment, index) => (
+                    <div
+                      key={index}
+                      className="flex justify-between items-center bg-[#D9C3AC] rounded-lg p-4 mb-6 min-h-[40px]"
+                    >
+                      <span className="break-words">{comment}</span>
+                      <div className="flex items-center gap-3">
+                        <button className="text-[#8B6F5A]">
+                          <MdEdit />
+                        </button>
+                        <button className="text-[#8B6F5A]">
+                          <MdDelete />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Add Comment */}
+                <div className="flex items-center gap-3 mt-4">
+                  <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
+                  <input
+                    type="text"
+                    value={newComment}
+                    onChange={(e) => setNewComment(e.target.value)}
+                    placeholder="Write a comment..."
+                    className="flex-grow border rounded-lg p-2"
+                  />
+                  {/* button 1*/}
+                  <div className="flex gap-4">
+                    <button
+                      className={`${GlobalStyle.buttonPrimary} rounded-lg`}
+                      onClick={handleCommentSubmit}
+                    >
+                      Submit
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-      </div>  
+      </div>
     </div>
   );
 };
