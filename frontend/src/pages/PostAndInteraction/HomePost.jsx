@@ -1,28 +1,26 @@
 import React, { useState } from "react";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
+import { useNavigate } from "react-router-dom";
 
 const postData = [
   {
     id: 1,
     name: "Kavishka Perera",
-    description:
-      "Description 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
+    description: "Description 1: Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
     likes: 100,
     comments: 80,
   },
   {
     id: 2,
     name: "Sahan Fernando",
-    description:
-      "Description 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    description: "Description 2: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
     likes: 245,
     comments: 65,
   },
   {
     id: 3,
     name: "Nadeesha Madushani",
-    description:
-      "Description 3: Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
+    description: "Description 3: Ut enim ad minim veniam, quis nostrud exercitation ullamco.",
     likes: 330,
     comments: 120,
   },
@@ -30,6 +28,7 @@ const postData = [
 
 export const HomePost = () => {
   const [likedStates, setLikedStates] = useState(postData.map(() => false));
+  const navigate = useNavigate();
 
   const handleLikeClick = (index) => {
     const updatedLikes = [...likedStates];
@@ -37,12 +36,11 @@ export const HomePost = () => {
     setLikedStates(updatedLikes);
   };
 
-  const handleCommentClick = () => {
-    alert("Comment button clicked");
+  const handleCommentClick = (postId) => {
+    navigate(`/userviewpost/${postId}`); // Pass the ID to navigate
   };
 
   return (
-
     <div className={`${GlobalStyle.countBarSubTopicContainer} pt-20`}>
       {postData.map((post, index) => (
         <div
@@ -73,6 +71,7 @@ export const HomePost = () => {
 
           {/* Like & Comment buttons */}
           <div className="absolute right-4 top-3/4 transform -translate-y-1/2 flex flex-col gap-6 cursor-pointer">
+            {/* Like Button */}
             <div
               className="flex flex-col items-center"
               onClick={() => handleLikeClick(index)}
@@ -98,10 +97,10 @@ export const HomePost = () => {
               </span>
             </div>
 
-
+            {/* Comment Button */}
             <div
               className="flex flex-col items-center"
-              onClick={handleCommentClick}
+              onClick={() => handleCommentClick(post.id)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
