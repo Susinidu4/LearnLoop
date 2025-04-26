@@ -2,6 +2,7 @@ import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Home } from "./pages/Home";
 import { PrototypeA } from "./assets/prototype/PrototypeA";
+import '@fontsource/poppins'; 
 
 //Susinidu
 import { Notification } from "./pages/Comments,Likes & Notification Management/Notification";
@@ -18,6 +19,7 @@ import { PrivacyPolicy } from "./pages/Other/PrivacyPolicy";
 import { LeraningPlansExistingUser } from"./pages/LearningPlans&ProgressTracking/LearningPlansExistingUser";
 import { LearningPlansSelectExcistingUser } from "./pages/LearningPlans&ProgressTracking/LearningPlansSelectExcictingUser";
 import { AddLearningPlans } from "./pages/LearningPlans&ProgressTracking/AddLearningPlans";
+import { Explore } from "./pages/Other/Explore";
 
 //yasindu
 import { User_Login } from "./pages/Profile & Followers Management/User_Login";
@@ -55,6 +57,7 @@ function App() {
         <Route path="/LeaningPlansExistingUser" element={<LeraningPlansExistingUser/>}/>
         <Route path="/LearningPlansSelectExcistingUser" element={<LearningPlansSelectExcistingUser/>}/>
         <Route path="/AddLearningPlans" element={<AddLearningPlans/>}/>
+        <Route path="/Explore" element={<Explore/>}/>
         
       </Routes>
     </BrowserRouter>
