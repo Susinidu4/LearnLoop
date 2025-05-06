@@ -8,10 +8,5 @@ import java.util.List;
 
 @Repository
 public interface LearningPlanRepository extends MongoRepository<LearningPlan, String> {
-    
-    // Custom method to get all plans by a specific user
     List<LearningPlan> findByUserId(String userId);
-    
-    // You can add more custom queries if needed
 }
-

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom"; // Added useNavigate
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
@@ -34,39 +34,30 @@ const Card = ({ title, description, author, cardData }) => {
 
 // Main Component
 export const LeraningPlansExistingUser = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+
+  const [learningPlans, setLearningPlans] = useState([]); // State to store fetched data
+
+  // Fetch learning plans data from the backend
+  useEffect(() => {
+    const fetchLearningPlans = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:5000/api/learning-plans"
+        ); // Endpoint to get all learning plans
+        const data = await response.json(); // Assuming the response is a JSON array
+        setLearningPlans(data); // Update the state with the fetched data
+      } catch (error) {
+        console.error("Error fetching learning plans:", error);
+      }
+    };
+
+    fetchLearningPlans(); // Call the function to fetch data
+  }, []);
 
   const handleClick = () => {
-    navigate("/AddLearningPlans"); 
+    navigate("/AddLearningPlans");
   };
-
-  const data = [
-    {
-      title: "Boost Your Skills : Explore and Learn more coding skills",
-      description: "Boost Your Skills : Explore and Learn more coding skills",
-      author: "Kavishka Perera",
-    },
-    {
-      title: "Master Frontend Frameworks",
-      description: "React, Angular, and Vue – pick your path",
-      author: "Nimashi Silva",
-    },
-    {
-      title: "Backend Magic: From Node to Spring Boot",
-      description: "Dive deep into server-side development",
-      author: "Sahan Dias",
-    },
-    {
-      title: "Data Science Journey",
-      description: "Learn Python, Pandas, and machine learning basics",
-      author: "Tharushi Fernando",
-    },
-    {
-      title: "UI/UX Design Fundamentals",
-      description: "Design thinking and prototyping tools",
-      author: "Pasindu Weerasinghe",
-    },
-  ];
 
   return (
     <div className="flex">
@@ -87,10 +78,10 @@ export const LeraningPlansExistingUser = () => {
             </div>
 
             <div className="flex flex-col gap-8 max-w-4xl mx-auto mt-8">
-              {data.map((item, index) => (
+              {learningPlans.map((item, index) => (
                 <Card
                   key={index}
-                  title={item.title}
+                  title={item.planTopic}
                   description={item.description}
                   author={item.author}
                   cardData={item}
