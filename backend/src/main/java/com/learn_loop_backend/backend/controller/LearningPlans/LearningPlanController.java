@@ -48,5 +48,16 @@ public class LearningPlanController {
         return ResponseEntity.ok(learningPlansDTOList);
     }
 
+    // DELETE Learning Plan by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteLearningPlan(@PathVariable String id) {
+        try {
+            service.deleteLearningPlan(id);
+            return ResponseEntity.ok("Learning plan deleted successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body("Learning plan not found with id: " + id);
+        }
+    }
+
 }
 
