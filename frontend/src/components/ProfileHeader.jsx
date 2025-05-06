@@ -1,6 +1,6 @@
-import React from 'react'
-import { PencilIcon } from 'lucide-react'
-import yasindu from '../assets/images/yasindu.jpg'
+import React from "react";
+import { PencilIcon } from "lucide-react";
+import yasindu from "../assets/images/yasindu.jpg";
 export function ProfileHeader() {
   return (
     <div className="mb-6 py-28">
@@ -14,6 +14,11 @@ export function ProfileHeader() {
               alt="Profile"
               className="w-full h-full object-cover"
             />
+
+            <div className="text-center mb-4 absolute -bottom-28 left-0 right-0">
+              <h1 className="text-2xl font-bold">Yasindu Pasanjith</h1>
+              <p className="text-gray-600">Developer</p>
+            </div>
           </div>
         </div>
         {/* Edit button */}
@@ -43,10 +48,10 @@ export function ProfileHeader() {
         </div>
       </div>
       {/* Profile info */}
-      <div className="text-center mb-4">
+      {/* <div className="text-center mb-4">
         <h1 className="text-2xl font-bold">Yasindu Pasanjith</h1>
         <p className="text-gray-600">Developer</p>
-      </div>
+      </div> */}
     </div>
-  )
+  );
 }
