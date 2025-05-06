@@ -5,6 +5,7 @@ import java.util.Date;
 
 @Data
 public class Comment {
+    private String id;
     private String userId;
     private String content;
     private Date commentedAt;
@@ -17,6 +18,14 @@ public class Comment {
 
     public Comment() {
 
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getUserId() {
