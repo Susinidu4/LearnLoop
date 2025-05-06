@@ -29,11 +29,54 @@ const postData = [
 export const HomePost = () => {
   const [likedStates, setLikedStates] = useState(postData.map(() => false));
   const navigate = useNavigate();
+  const [postLikes, setPostLikes] = useState(postData.map((post) => post.likes));
 
-  const handleLikeClick = (index) => {
-    const updatedLikes = [...likedStates];
-    updatedLikes[index] = !updatedLikes[index];
-    setLikedStates(updatedLikes);
+  const userId = "123"; // Replace with the actual logged-in user's ID
+
+  const handleLikeClick = async (index, postId) => {
+    try {
+      console.log(`Liking post with ID: ${postId}`);
+      console.log(`User ID: ${userId}`);
+      if (!likedStates[index]) {
+        // Like the post
+        const response = await fetch(`http://localhost:5000/api/posts/${postId}/likes`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ userId }),
+        });
+
+        if (response.ok) {
+          // Update state after a successful like
+          const updatedLikedStates = [...likedStates];
+          updatedLikedStates[index] = true;
+          setLikedStates(updatedLikedStates);
+
+          const updatedPostLikes = [...postLikes];
+          updatedPostLikes[index] += 1;
+          setPostLikes(updatedPostLikes);
+        }
+      } else {
+        // Unlike the post
+        const response = await fetch(`http://localhost:5000/api/posts/${postId}/likes/${userId}`, {
+          method: "DELETE",
+        });
+
+        if (response.ok) {
+          // Update state after a successful unlike
+          const updatedLikedStates = [...likedStates];
+          updatedLikedStates[index] = false;
+          setLikedStates(updatedLikedStates);
+
+          const updatedPostLikes = [...postLikes];
+          updatedPostLikes[index] -= 1;
+          setPostLikes(updatedPostLikes);
+        }
+      }
+    } catch (error) {
+      console.error("Error updating like status:", error);
+    }
   };
 
   const handleCommentClick = (postId) => {
@@ -74,7 +117,7 @@ export const HomePost = () => {
             {/* Like Button */}
             <div
               className="flex flex-col items-center"
-              onClick={() => handleLikeClick(index)}
+              onClick={() => handleLikeClick(index, post.id)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +136,7 @@ export const HomePost = () => {
                 />
               </svg>
               <span className="text-sm">
-                {likedStates[index] ? post.likes + 1 : post.likes}
+                {postLikes[index]} {/* Use the updated number of likes */}
               </span>
             </div>
 
