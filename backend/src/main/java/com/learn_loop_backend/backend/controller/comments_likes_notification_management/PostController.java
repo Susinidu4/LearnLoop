@@ -72,6 +72,7 @@ public class PostController {
         return ResponseEntity.noContent().build();
     }
 
+    // create cooment
     @PostMapping("/{postId}/comments")
     public ResponseEntity<Post> addComment(@PathVariable String postId, @RequestBody CommentDTO commentDTO) {
         Comment comment = new Comment();
@@ -86,6 +87,20 @@ public class PostController {
         return ResponseEntity.notFound().build();
     }
 
+    //update comment
+    @PutMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<Post> updateComment(
+            @PathVariable String postId,
+            @PathVariable String commentId,
+            @RequestBody CommentDTO commentDTO) {
+
+        Post updatedPost = postService.updateComment(postId, commentId, commentDTO.getContent());
+        if (updatedPost != null) {
+            return ResponseEntity.ok(updatedPost);
+        }
+        return ResponseEntity.notFound().build();
+    }
+
     //view all the comments
     @GetMapping("/{postId}/comments")
     public ResponseEntity<List<Comment>> getAllComments(@PathVariable String postId) {
@@ -94,6 +109,21 @@ public class PostController {
                 .orElse(null));
     }
 
+    // delete comment by commentId and postId
+    @DeleteMapping("/{postId}/comments/{commentId}")
+    public ResponseEntity<Post> deleteComment(@PathVariable String postId, @PathVariable String commentId) {
+        try {
+            Post post = postService.deleteComment(commentId, postId);
+            if (post != null) {
+                return ResponseEntity.ok(post);
+            }
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    //create like
     @PostMapping("/{postId}/likes")
     public ResponseEntity<Post> likePost(@PathVariable String postId, @RequestBody LikeDTO likeDTO) {
         Like like = new Like();
@@ -107,6 +137,7 @@ public class PostController {
         return ResponseEntity.notFound().build();
     }
 
+    //delete like
     @DeleteMapping("/{postId}/likes/{userId}")
     public ResponseEntity<Post> unlikePost(@PathVariable String postId, @PathVariable String userId) {
         Post post = postService.unlikePost(userId, postId);

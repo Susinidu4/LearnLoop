@@ -36,6 +36,16 @@ public class LearningPlanService {
         return learningPlans.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    // DELETE by id
+    public void deleteLearningPlan(String id) {
+        Optional<LearningPlan> plan = repository.findById(id);
+        if (plan.isPresent()) {
+            repository.deleteById(id);
+        } else {
+            throw new RuntimeException("Learning plan not found with id: " + id);
+        }
+    }
+
     // CONVERT LearningPlan to DTO
     public LearningPlansDTO convertToDTO(LearningPlan plan) {
         LearningPlansDTO dto = new LearningPlansDTO();

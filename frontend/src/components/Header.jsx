@@ -12,6 +12,10 @@ export const Header = () => {
     navigate("/notification");
   };
 
+  const handleProfileClick = () => {
+    navigate("/userprofile");
+  }
+
   return (
     <header className="fixed z-50 bg-[#2E1A0F] text-white p-2 pr-20 flex justify-between items-center top-0 w-full shadow-md ">
       <div>
@@ -28,7 +32,7 @@ export const Header = () => {
         />
 
         {/* User Profile */}
-        <div className="flex items-center gap-6 cursor-pointer hover:text-[#CFB397] transition duration-300">
+        <div className="flex items-center gap-6 cursor-pointer hover:text-[#CFB397] transition duration-300" onClick={handleProfileClick}>
           <FaCircleUser size={40} title="Profile" />
           <MdKeyboardArrowDown size={24} title="Profile" />
         </div>
