@@ -4,12 +4,18 @@ package com.learn_loop_backend.backend.service.profile_follower_management;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.Map;
+
+import static javax.crypto.Cipher.SECRET_KEY;
 
 @Service
 public class JWTService {
@@ -67,4 +73,6 @@ public class JWTService {
         if (data == null) return null;
         return data.get(key);
     }
+
+
 }

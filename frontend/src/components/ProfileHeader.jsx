@@ -1,28 +1,115 @@
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { PencilIcon } from "lucide-react";
-import yasindu from "../assets/images/yasindu.jpg";
+import ProfileService from "../service/Profile & Followers Management/ProfileService"; // Import your ProfileService
+import FollowerService from "../service/Profile & Followers Management/FollowService";
+
 export function ProfileHeader() {
+  const user = JSON.parse(localStorage.getItem("user"));
+  const [followersCount, setFollowersCount] = useState(0);
+  const [followingCount, setFollowingCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [profileImage, setProfileImage] = useState(null);
+  const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if (user && user.id) {
+          // Get followers count
+          const followers = await FollowerService.getFollowers(user.id);
+          setFollowersCount(followers.length);
+
+          // Get following count
+          const following = await FollowerService.getFollowing(user.id);
+          setFollowingCount(following.length);
+
+          // Load profile image
+          await loadProfileImage();
+        }
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [user]);
+
+  const loadProfileImage = async () => {
+    try {
+      const imageUrl = await ProfileService.getProfileImage(user.id);
+      if (imageUrl) {
+        setProfileImage(imageUrl);
+      }
+    } catch (error) {
+      console.error("Error loading profile image:", error);
+    }
+  };
+
+  const handleEditClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      setIsLoading(true);
+      await ProfileService.uploadProfileImage(user.id, file);
+      await loadProfileImage(); // Refresh the image after upload
+    } catch (error) {
+      console.error("Error uploading profile image:", error);
+      alert("Failed to upload profile image");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (isLoading) {
+    return <div>Loading profile data...</div>;
+  }
+
   return (
     <div className="mb-6 py-28">
+      {/* Hidden file input */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept="image/*"
+        style={{ display: 'none' }}
+      />
+      
       {/* Cover image */}
       <div className="h-48 bg-[#d9c4a3] rounded-lg mb-16 relative">
         {/* Profile image */}
         <div className="absolute -bottom-14 left-12">
           <div className="w-28 h-28 rounded-full border-4 border-[#c19e67] overflow-hidden">
-            <img
-              src={yasindu}
-              alt="Profile"
-              className="w-full h-full object-cover"
-            />
+            {profileImage ? (
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="w-full h-full bg-gray-300 flex items-center justify-center">
+                <span className="text-gray-500">No Image</span>
+              </div>
+            )}
 
             <div className="text-center mb-4 absolute -bottom-28 left-0 right-0">
-              <h1 className="text-2xl font-bold">Yasindu Pasanjith</h1>
+              <h1 className="text-2xl font-bold">{user.name}</h1>
               <p className="text-gray-600">Developer</p>
             </div>
           </div>
         </div>
         {/* Edit button */}
-        <button className="absolute bottom-4 right-4 bg-[#c19e67] p-2 rounded-full">
+        <button 
+          className="absolute bottom-4 right-4 bg-[#c19e67] p-2 rounded-full"
+          onClick={handleEditClick}
+        >
           <PencilIcon size={20} color="white" />
         </button>
       </div>
@@ -30,9 +117,15 @@ export function ProfileHeader() {
       <div className="flex justify-center space-x-8 mb-6">
         <div className="flex flex-col items-center">
           <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
-            <span className="font-bold">12</span>
+            <span className="font-bold">{followersCount}</span>
           </div>
           <span className="text-sm">Followers</span>
+        </div>
+        <div className="flex flex-col items-center">
+          <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
+            <span className="font-bold">{followingCount}</span>
+          </div>
+          <span className="text-sm">Following</span>
         </div>
         <div className="flex flex-col items-center">
           <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
@@ -40,18 +133,7 @@ export function ProfileHeader() {
           </div>
           <span className="text-sm">Posts</span>
         </div>
-        <div className="flex flex-col items-center">
-          <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
-            <span className="font-bold">12</span>
-          </div>
-          <span className="text-sm">Likes</span>
-        </div>
       </div>
-      {/* Profile info */}
-      {/* <div className="text-center mb-4">
-        <h1 className="text-2xl font-bold">Yasindu Pasanjith</h1>
-        <p className="text-gray-600">Developer</p>
-      </div> */}
     </div>
   );
 }
