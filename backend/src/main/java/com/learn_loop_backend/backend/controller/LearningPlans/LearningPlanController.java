@@ -1,6 +1,7 @@
 package com.learn_loop_backend.backend.controller.LearningPlans;
 
 
+import com.learn_loop_backend.backend.DTO.Learning_Plans.LearningPlansDTO;
 import com.learn_loop_backend.backend.model.Learning_Plans.LearningPlan;
 import com.learn_loop_backend.backend.service.LearnPlans.LearningPlanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,8 +12,7 @@ import java.util.Optional;
 import java.util.List;
 
 @RestController
-@RequestMapping("/learning-plans")
-@CrossOrigin(origins = "*") // Allow requests from frontend (React)
+@RequestMapping("/api/learning-plans")
 public class LearningPlanController {
 
     @Autowired
@@ -20,41 +20,33 @@ public class LearningPlanController {
 
     // CREATE
     @PostMapping
-    public ResponseEntity<?> createPlan(@RequestBody LearningPlan plan) {
-        if (plan.getDurationInWeeks() <= 0) {
-            return ResponseEntity.badRequest().body("Duration must be a positive number.");
+    public ResponseEntity<LearningPlansDTO> createLearningPlan(@RequestBody LearningPlan plan) {
+        // Ensure the userId is present in the request body
+        if (plan.getUserId() == null || plan.getUserId().isEmpty()) {
+            return ResponseEntity.badRequest().body(null); // Return 400 Bad Request if userId is missing
         }
-        return ResponseEntity.ok(service.createPlan(plan));
+
+        LearningPlan savedPlan = service.saveLearningPlan(plan);
+        LearningPlansDTO planDTO = service.convertToDTO(savedPlan);
+        return ResponseEntity.ok(planDTO);
     }
 
-    // READ by ID
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getPlanById(@PathVariable String id) {
-        Optional<LearningPlan> plan = service.getPlanById(id);
-        return plan.map(ResponseEntity::ok)
-                   .orElse(ResponseEntity.notFound().build());
+    // Endpoint to get all learning plans
+    @GetMapping
+    public ResponseEntity<List<LearningPlan>> getAllLearningPlans() {
+        List<LearningPlan> learningPlans = service.getAllLearningPlans();
+        return ResponseEntity.ok(learningPlans);
     }
 
-    // READ by User
+    // Get learning plans by userId
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<LearningPlan>> getPlansByUser(@PathVariable String userId) {
-        return ResponseEntity.ok(service.getPlansByUser(userId));
-    }
-
-    // UPDATE
-    @PutMapping("/update")
-    public ResponseEntity<?> updatePlan(@RequestBody LearningPlan plan) {
-        if (plan.getDurationInWeeks() <= 0) {
-            return ResponseEntity.badRequest().body("Duration must be positive.");
+    public ResponseEntity<List<LearningPlansDTO>> getLearningPlansByUserId(@PathVariable String userId) {
+        if (userId == null || userId.isEmpty()) {
+            return ResponseEntity.badRequest().body(null); // Return 400 Bad Request if userId is invalid
         }
-        return ResponseEntity.ok(service.updatePlan(plan));
+        List<LearningPlansDTO> learningPlansDTOList = service.getLearningPlansByUserId(userId);
+        return ResponseEntity.ok(learningPlansDTOList);
     }
 
-    // DELETE
-    @DeleteMapping("/delete")
-    public ResponseEntity<?> deletePlan(@RequestParam String id) {
-        service.deletePlan(id);
-        return ResponseEntity.ok("Deleted successfully.");
-    }
 }
 
