@@ -1,22 +1,30 @@
 import React, { useEffect, useState } from "react";
 import { MdEdit, MdDelete } from "react-icons/md";
+import ProfileService from "../service/Profile & Followers Management/ProfileService"; // Adjust the path as needed
 
 export function LearningPlansCard() {
   const [learningPlans, setLearningPlans] = useState([]);
-  const userId = "911"; // Replace with the actual userId
-  const user  = JSON.parse(localStorage.getItem("user"));
-  console.log("User ID from localStorage:", user); // Check if this logs the correct userId
+  const [profileImage, setProfileImage] = useState(null);
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  // Fetch user data by userId
   useEffect(() => {
     const fetchData = async () => {
       try {
+        if (!user?.id) return;
+
+        // Load learning plans
         const response = await fetch(`http://localhost:5000/api/learning-plans/user/${user.id}`);
         if (response.ok) {
           const data = await response.json();
           setLearningPlans(data);
         } else {
-          console.error("Error fetching data");
+          console.error("Error fetching learning plans");
+        }
+
+        // Load profile image
+        const imageUrl = await ProfileService.getProfileImage(user.id);
+        if (imageUrl) {
+          setProfileImage(imageUrl);
         }
       } catch (error) {
         console.error("Error:", error);
@@ -24,19 +32,16 @@ export function LearningPlansCard() {
     };
 
     fetchData();
-  }, [user.id]); // Fetch data when the component mounts or userId changes
+  }, [user?.id]);
 
-  // Delete the learning plan
   const handleDelete = async (planId) => {
-    console.log("Deleting plan with ID:", planId); // Check if this logs the correct ID
     try {
       const response = await fetch(`http://localhost:5000/api/learning-plans/${planId}`, {
         method: "DELETE",
       });
-  
+
       if (response.ok) {
-        // Remove the deleted plan from the state to update the UI
-        setLearningPlans((prevPlans) => prevPlans.filter((plan) => plan.id !== planId)); // Use `id` here
+        setLearningPlans((prevPlans) => prevPlans.filter((plan) => plan.id !== planId));
         alert("Learning plan deleted successfully");
       } else {
         console.error("Error deleting learning plan", response.status);
@@ -49,11 +54,10 @@ export function LearningPlansCard() {
   return (
     <div className="space-y-6">
       {learningPlans.length === 0 ? (
-        <p>No learning plans found.</p> // Display a message if no plans are available
+        <p>No learning plans found.</p>
       ) : (
         learningPlans.map((plan) => (
           <div key={plan.id} className="max-w-4xl mx-auto bg-[#EFEFEF] rounded-xl shadow-md overflow-hidden">
-            {/* Card Content */}
             <div className="bg-[#C0AE95] h-40 relative">
               <div className="absolute top-3 right-3 flex space-x-2">
                 <button className="p-2 rounded-full bg-white shadow-md">
@@ -61,7 +65,7 @@ export function LearningPlansCard() {
                 </button>
                 <button
                   className="p-2 rounded-full bg-white shadow-md"
-                  onClick={() => handleDelete(plan.id)} // Use `id` here
+                  onClick={() => handleDelete(plan.id)}
                 >
                   <MdDelete />
                 </button>
@@ -73,8 +77,20 @@ export function LearningPlansCard() {
                 <p className="text-sm text-gray-600">{plan.description}</p>
               </div>
               <div className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-[#C0AE95] rounded-full"></div>
-                <span className="font-semibold text-black">{plan.userId}</span> {/* Replace with an existing field */}
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-[#C0AE95]">
+                  {profileImage ? (
+                    <img
+                      src={profileImage}
+                      alt="User"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-300 flex items-center justify-center">
+                      <span className="text-xs text-gray-500">No Img</span>
+                    </div>
+                  )}
+                </div>
+                <span className="font-semibold text-black">{user.name}</span>
               </div>
             </div>
           </div>
