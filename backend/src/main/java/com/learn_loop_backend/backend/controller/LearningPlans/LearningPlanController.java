@@ -31,7 +31,7 @@ public class LearningPlanController {
         return ResponseEntity.ok(planDTO);
     }
 
-    // Endpoint to get all learning plans
+    // get all learning plans
     @GetMapping
     public ResponseEntity<List<LearningPlan>> getAllLearningPlans() {
         List<LearningPlan> learningPlans = service.getAllLearningPlans();
