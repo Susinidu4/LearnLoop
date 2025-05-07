@@ -89,7 +89,7 @@ export const Notification = () => {
               <img
                 src={notificationImage}
                 alt="character"
-                className="absolute bottom-8 left-35 w-40 md:w-60"
+                className="absolute bottom-8 left-20 w-35 md:w-55"
               />
             </div>
           </main>

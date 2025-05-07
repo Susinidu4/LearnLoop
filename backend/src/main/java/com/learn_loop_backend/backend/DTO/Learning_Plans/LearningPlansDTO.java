@@ -17,6 +17,9 @@ public class LearningPlansDTO {
     private Date createdAt;
     private Date updatedAt;
 
+    public void setImageUrl(String imageUrl) {
+    }
+
     @Data
     public static class StepDTO {
         private int stepNumber;
