@@ -4,14 +4,17 @@ import { SideBar } from "../../components/SideBar";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import { FaUpload } from "react-icons/fa";
 import postGirl from "../../assets/Images/postgirl.png";
+import axios from "axios";
 
 export const AddPost = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [category, setCategory] = useState("");
+  const [description, setDescription] = useState("");
   const [error, setError] = useState("");
-  const [balance, setBalance] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  const handleFileChange = (e) => {
+  const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
 
     if (files.length > 5) {
@@ -19,37 +22,82 @@ export const AddPost = () => {
       return;
     }
 
-    const validFiles = files.filter((file) => {
+    // Check video duration for each file
+    for (const file of files) {
       if (file.type.startsWith("video")) {
-        const videoElement = document.createElement("video");
-        videoElement.src = URL.createObjectURL(file);
-        return new Promise((resolve, reject) => {
-          videoElement.onloadedmetadata = () => {
-            if (videoElement.duration > 30) {
-              reject("Video duration must be less than 30 seconds.");
-            } else {
-              resolve(file);
-            }
-          };
-        });
+        try {
+          const duration = await getVideoDuration(file);
+          if (duration > 30) {
+            setError("Video duration must be less than 30 seconds.");
+            return;
+          }
+        } catch (err) {
+          setError("Error checking video duration.");
+          return;
+        }
       }
-      return true;
-    });
-
-    if (validFiles.length === files.length) {
-      setError("");
-      setSelectedFiles(files);
-    } else {
-      setError("Video duration must be less than 30 seconds.");
     }
+
+    setError("");
+    setSelectedFiles(files);
+  };
+
+  const getVideoDuration = (file) => {
+    return new Promise((resolve) => {
+      const video = document.createElement("video");
+      video.src = URL.createObjectURL(file);
+      video.onloadedmetadata = () => {
+        resolve(video.duration);
+        URL.revokeObjectURL(video.src);
+      };
+    });
   };
 
   const handleCategoryChange = (e) => {
     setCategory(e.target.value);
   };
 
-  const handleBalanceChange = (e) => {
-    setBalance(e.target.value);
+  const handleDescriptionChange = (e) => {
+    setDescription(e.target.value);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!description || !category || selectedFiles.length === 0) {
+      setError("Please fill all fields and select at least one file.");
+      return;
+    }
+
+    setIsSubmitting(true);
+    setError("");
+
+    try {
+      const formData = new FormData();
+      formData.append("userId", user.id);
+      formData.append("description", description);
+      formData.append("category", category);
+      
+      selectedFiles.forEach((file) => {
+        formData.append("files", file);
+      });
+
+      const response = await axios.post("http://localhost:5000/api/posts-interaction", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // Reset form on success
+      setDescription("");
+      setCategory("");
+      setSelectedFiles([]);
+      alert("Post created successfully!");
+    } catch (err) {
+      setError(err.response?.data?.message || "Failed to create post");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -59,13 +107,12 @@ export const AddPost = () => {
         <Header />
         <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
           <main className="p-6">
-            {/* Centered container for the form */}
             <div className="relative flex flex-col bg-[#C8A381] p-6 rounded-2xl shadow-lg w-[950px] h-[600px] mx-auto">
               {/* User Info */}
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
-                  <h1 className={GlobalStyle.headingMedium}>Kavishka Perera</h1>
+                  <h1 className={GlobalStyle.headingMedium}>{user?.name || "User"}</h1>
                 </div>
               </div>
               <br/>
@@ -73,8 +120,9 @@ export const AddPost = () => {
               <div className="mb-6 w-[850px]">
                 <label className={GlobalStyle.remarkTopic}>Description</label>
                 <textarea
-                  type="text"
-                  placeholder=""
+                  value={description}
+                  onChange={handleDescriptionChange}
+                  placeholder="Write your post description..."
                   className={`${GlobalStyle.inputText} w-full`}
                   rows="3"
                 ></textarea>
@@ -87,6 +135,7 @@ export const AddPost = () => {
                   className={`${GlobalStyle.selectBox} w-full`}
                   value={category}
                   onChange={handleCategoryChange}
+                  required
                 >
                   <option value="">Select a category</option>
                   <option value="coding">Coding</option>
@@ -112,7 +161,7 @@ export const AddPost = () => {
                     <div className="px-4 flex-grow truncate">
                       {selectedFiles.length > 0
                         ? `${selectedFiles.length} file(s) selected`
-                        : "Select files (max 5 images or 1 video)"}
+                        : "Select files (max 5 images or videos under 30s)"}
                     </div>
                     <div className="flex items-center justify-center h-full border-l border-[#543310] px-5">
                       <FaUpload className="text-gray-600" />
@@ -124,7 +173,13 @@ export const AddPost = () => {
               <br/>
               {/* Post Button */}
               <div className="flex gap-4">
-                <button className={GlobalStyle.buttonPrimary}>Post</button>
+                <button 
+                  onClick={handleSubmit}
+                  disabled={isSubmitting}
+                  className={`${GlobalStyle.buttonPrimary} ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
+                >
+                  {isSubmitting ? "Posting..." : "Post"}
+                </button>
               </div>
             </div>
 
