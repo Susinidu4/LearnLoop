@@ -31,7 +31,7 @@ public class LearningPlanController {
         return ResponseEntity.ok(planDTO);
     }
 
-    // Endpoint to get all learning plans
+    // get all learning plans
     @GetMapping
     public ResponseEntity<List<LearningPlan>> getAllLearningPlans() {
         List<LearningPlan> learningPlans = service.getAllLearningPlans();
@@ -46,6 +46,17 @@ public class LearningPlanController {
         }
         List<LearningPlansDTO> learningPlansDTOList = service.getLearningPlansByUserId(userId);
         return ResponseEntity.ok(learningPlansDTOList);
+    }
+
+    // DELETE Learning Plan by ID
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteLearningPlan(@PathVariable String id) {
+        try {
+            service.deleteLearningPlan(id);
+            return ResponseEntity.ok("Learning plan deleted successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body("Learning plan not found with id: " + id);
+        }
     }
 
 }

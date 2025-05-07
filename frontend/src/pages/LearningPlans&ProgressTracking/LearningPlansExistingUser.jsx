@@ -3,9 +3,10 @@ import { useNavigate, Link } from "react-router-dom"; // Added useNavigate
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
+import ProfileService from "../../service/Profile & Followers Management/ProfileService";
 
 // Card Component
-const Card = ({ title, description, author, cardData }) => {
+const Card = ({ title, description, author, cardData, imageUrl, userId }) => {
   return (
     <Link
       to={{
@@ -23,8 +24,17 @@ const Card = ({ title, description, author, cardData }) => {
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-[#9f7f50]"></div>
-            <span className="text-sm font-semibold text-black">{author}</span>
+            <div className="w-8 h-8 rounded-full bg-[#9f7f50]">{/* User Image as Avatar */}
+            <img
+              src={imageUrl}
+              alt={author}
+              className="w-8 h-8 rounded-full object-cover" // Make it circular
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "/default-avatar.jpg"; // Fallback image if user image not found
+              }}
+            /></div>
+            <span className="text-sm font-semibold text-black">{userId}</span>
           </div>
         </div>
       </div>
@@ -78,15 +88,19 @@ export const LeraningPlansExistingUser = () => {
             </div>
 
             <div className="flex flex-col gap-8 max-w-4xl mx-auto mt-8">
-              {learningPlans.map((item, index) => (
-                <Card
-                  key={index}
-                  title={item.planTopic}
-                  description={item.description}
-                  author={item.author}
-                  cardData={item}
-                />
-              ))}
+            {learningPlans.map((item, index) => {
+                const imageUrl = ProfileService.getProfileImageUrl(item.userId);
+                return (
+                  <Card
+                    key={index}
+                    title={item.planTopic}
+                    description={item.description}
+                    author={item.author}
+                    cardData={item}
+                    imageUrl={imageUrl}
+                  />
+                );
+              })}
             </div>
           </main>
         </div>

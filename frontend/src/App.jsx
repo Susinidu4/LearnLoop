@@ -27,6 +27,10 @@ import { User_Login } from "./pages/Profile & Followers Management/User_Login";
 import { User_Register } from "./pages/Profile & Followers Management/User_Register";
 import { User_Profile } from "./pages/Profile & Followers Management/User_Profile";
 
+import { HomeSignOut } from "./pages/HomeSignOut";
+import { UsersPage } from "./pages/Profile & Followers Management/UsersPage";
+import { PostsGallery } from "./pages/Other/PostsGallery";
+
 
 
 
@@ -53,6 +57,8 @@ function App() {
         <Route path="/userlogin" element={<User_Login/>}/>
         <Route path="/userregister" element={<User_Register/>}/>
         <Route path="/userprofile" element={<User_Profile/>}/>
+        <Route path="/users" element={<UsersPage/>}/>
+        <Route path="/posts" element={<PostsGallery/>}/>
         
         {/* Ishara */}
         <Route path="/LeaningPlansExistingUser" element={<LeraningPlansExistingUser/>}/>
