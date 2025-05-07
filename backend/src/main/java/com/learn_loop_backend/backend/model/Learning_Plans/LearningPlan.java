@@ -34,6 +34,8 @@ public class LearningPlan {
     @LastModifiedDate
     private Date updatedAt;
 
+    private String imageUrl;
+
     @Data
     public static class Step {
         private int stepNumber;

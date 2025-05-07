@@ -59,7 +59,7 @@ function App() {
         
         {/* Ishara */}
         <Route path="/LeaningPlansExistingUser" element={<LeraningPlansExistingUser/>}/>
-        <Route path="/LearningPlansSelectExcistingUser" element={<LearningPlansSelectExcistingUser/>}/>
+        <Route path="/LearningPlansSelectExcistingUser/:userId" element={<LearningPlansSelectExcistingUser/>}/>
         <Route path="/AddLearningPlans" element={<AddLearningPlans/>}/>
         <Route path="/Explore" element={<Explore/>}/>
         
