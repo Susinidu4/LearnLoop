@@ -3,6 +3,8 @@ import { Header } from '../../components/Header'
 import { ProfileHeader } from '../../components/ProfileHeader'
 import { TabNavigation } from '../../components/TabNavigation'
 import { PostCard } from '../../components/PostCard'
+import { LearningPlansCard } from '../../components/LearningPlansCard'
+import { LearningProgress } from '../../components/LearningProgress'
 import { SideBar } from '../../components/SideBar'
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
 
@@ -25,18 +27,10 @@ export const User_Profile = () => {
               />
             )}
             {activeTab === 'Learning Plans' && (
-              <div className="mt-4 p-6 bg-[#d9c4a3] rounded-lg">
-                <p className="text-gray-700">
-                  Your learning plans will appear here.
-                </p>
-              </div>
+              <LearningPlansCard/>
             )}
             {activeTab === 'Learning Progress' && (
-              <div className="mt-4 p-6 bg-[#d9c4a3] rounded-lg">
-                <p className="text-gray-700">
-                  Your learning progress will appear here.
-                </p>
-              </div>
+              <LearningProgress/>
             )}
           </div>
         </main>

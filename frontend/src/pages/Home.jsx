@@ -13,7 +13,7 @@ export const Home = () => {
         <Header />
         <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
            {/* Page Heading */}
-           <h1 className={GlobalStyle.headingLarge}>Welcome to the Home Page</h1>
+           {/* <h1 className={GlobalStyle.headingLarge}>Welcome to the Home Page</h1> */}
           <main className="p-6 space-y-6 flex flex-col items-center">
             {/*  Search Bar */}
             <div className="relative w-full max-w-2xl">
