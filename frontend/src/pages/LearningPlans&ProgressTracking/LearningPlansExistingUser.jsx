@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom"; // Added useNavigate
+import { useNavigate, Link } from "react-router-dom";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import ProfileService from "../../service/Profile & Followers Management/ProfileService";
+import { getUserById } from "../../service/Profile & Followers Management/AuthService"; // Assuming you've saved your service in this path
 
 // Card Component
 const Card = ({ title, description, author, cardData, imageUrl, userId, userName }) => {
@@ -74,12 +75,27 @@ export const LeraningPlansExistingUser = () => {
   // Fetch user names based on userId
   useEffect(() => {
     const fetchUserNames = async () => {
-      const names = {};
-      for (const plan of learningPlans) {
-        const name = await fetchUserName(plan.userId);
-        names[plan.userId] = name;
+      try {
+        // Create an array of promises to fetch user names concurrently using getUserById
+        const namesPromises = learningPlans.map(async (plan) => {
+          const user = await getUserById(plan.userId); // Fetch the user details by ID
+          return { userId: plan.userId, name: user.name }; // Return userId and name
+        });
+
+        // Wait for all the promises to resolve
+        const namesArray = await Promise.all(namesPromises);
+
+        // Convert the array into an object with userId as the key
+        const names = namesArray.reduce((acc, { userId, name }) => {
+          acc[userId] = name;
+          return acc;
+        }, {});
+
+        console.log("Fetched User Names:", names);  // Debugging line
+        setUserNames(names); // Store names in state
+      } catch (error) {
+        console.error("Error fetching user names:", error);
       }
-      setUserNames(names); // Store names in state
     };
 
     if (learningPlans.length > 0) {
@@ -87,17 +103,7 @@ export const LeraningPlansExistingUser = () => {
     }
   }, [learningPlans]);
 
-  const fetchUserName = async (userId) => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/users/${userId}`); // Endpoint to get user details
-      const data = await response.json();
-      return data.name; // Assuming the response includes the 'name' field
-    } catch (error) {
-      console.error("Error fetching user name:", error);
-      return "Unknown User"; // Default value in case of error
-    }
-  };
-
+  // Handle "Add a learning Plan" button click
   const handleClick = () => {
     navigate("/AddLearningPlans");
   };
@@ -107,9 +113,7 @@ export const LeraningPlansExistingUser = () => {
       <SideBar />
       <div className="flex flex-col w-full ml-16">
         <Header />
-        <div
-          className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}
-        >
+        <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
           <main className="p-6">
             <div className="flex">
               <button
@@ -123,6 +127,7 @@ export const LeraningPlansExistingUser = () => {
             <div className="flex flex-col gap-8 max-w-4xl mx-auto mt-8">
               {learningPlans.map((item, index) => {
                 const imageUrl = ProfileService.getProfileImageUrl(item.userId);
+                const userName = userNames[item.userId] || "Unknown User"; // Default if userName is not available
                 return (
                   <Card
                     key={index}
@@ -132,7 +137,7 @@ export const LeraningPlansExistingUser = () => {
                     cardData={item}
                     imageUrl={imageUrl}
                     userId={item.userId}
-                    userName={userNames[item.userId] || "Loading..."} // Pass user name
+                    userName={userName} // Pass user name
                   />
                 );
               })}

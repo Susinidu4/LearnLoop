@@ -14,7 +14,6 @@ import { AddPost } from "./pages/PostAndInteraction/AddPost"
 import { UserViewPost } from "./pages/PostAndInteraction/UserViewPost"
 import { HomePost } from "./pages/PostAndInteraction/HomePost";
 import { PrivacyPolicy } from "./pages/Other/PrivacyPolicy";
-import { HomeSignOut } from "./pages/HomeSignOut";
 
 //Ishara
 import { LeraningPlansExistingUser } from"./pages/LearningPlans&ProgressTracking/LearningPlansExistingUser";

@@ -44,7 +44,11 @@ export const AddLearningPlans = () => {
 
     if (newCount > steps.length) {
       for (let i = steps.length; i < newCount; i++) {
-        updatedSteps.push({ topic: "", resourceLink: "", completionDuration: "" });
+        updatedSteps.push({
+          topic: "",
+          resourceLink: "",
+          completionDuration: "",
+        });
       }
     } else {
       updatedSteps.length = newCount;
@@ -65,7 +69,10 @@ export const AddLearningPlans = () => {
       formData.append(`steps[${index}].stepNumber`, index + 1);
       formData.append(`steps[${index}].topic`, step.topic);
       formData.append(`steps[${index}].resourceLink`, step.resourceLink);
-      formData.append(`steps[${index}].completionDuration`, step.completionDuration);
+      formData.append(
+        `steps[${index}].completionDuration`,
+        step.completionDuration
+      );
     });
 
     if (bannerImage) {
@@ -73,11 +80,15 @@ export const AddLearningPlans = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/learning-plans", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/learning-plans",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       alert("Learning Plan submitted successfully!");
       setPlanTopic("");
       setDescription("");
@@ -96,7 +107,9 @@ export const AddLearningPlans = () => {
       <SideBar />
       <div className="flex flex-col w-full ml-16">
         <Header />
-        <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
+        <div
+          className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}
+        >
           <main className="p-4 sm:p-6 md:p-8 lg:p-12">
             <div
               className={`${GlobalStyle.cardContainer} w-full flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8 lg:p-12 max-w-3xl mx-auto shadow-lg rounded-lg`}
@@ -111,7 +124,9 @@ export const AddLearningPlans = () => {
                     />
                   </div>
                   <p className="text-sm text-black">
-                    <span className={`${GlobalStyle.headingSmall} font-semibold`}>
+                    <span
+                      className={`${GlobalStyle.headingSmall} font-semibold`}
+                    >
                       {user.name}
                     </span>
                   </p>
@@ -139,7 +154,9 @@ export const AddLearningPlans = () => {
                 </div>
 
                 <div className="mb-6">
-                  <label className={GlobalStyle.remarkTopic}>Plan Completion Duration</label>
+                  <label className={GlobalStyle.remarkTopic}>
+                    Plan Completion Duration
+                  </label>
                   <input
                     type="text"
                     placeholder="Text here"
@@ -149,21 +166,50 @@ export const AddLearningPlans = () => {
                   />
                 </div>
 
-                <div className="mb-6">
-                  <label className={GlobalStyle.remarkTopic}>Upload Banner Image</label>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setBannerImage(e.target.files[0])}
-                    className="w-[600px]"
-                  />
+                <div className="mb-6 w-[600px]">
+                  <label className={GlobalStyle.remarkTopic}>Banner</label>
+                  <div className="relative mt-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      id="bannerUpload"
+                      onChange={(e) => setBannerImage(e.target.files[0])}
+                      className="sr-only"
+                    />
+                    <div className="flex items-center justify-between border-2 border-[#543310] rounded-lg overflow-hidden">
+                      <div className="px-4 py-2 text-[#543310] text-sm w-full">
+                        Upload banner image
+                      </div>
+                      <label
+                        htmlFor="bannerUpload"
+                        className="flex items-center justify-center w-12 cursor-pointer border-l border-[#543310] hover:bg-[#dbc0a8]"
+                      >
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="h-5 w-5 text-[#2e3c2f]"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M5 10l7-7m0 0l7 7m-7-7v18"
+                          />
+                        </svg>
+                      </label>
+                    </div>
+                  </div>
                 </div>
 
                 <div className="space-y-2 pb-6 flex items-center">
                   <div className={GlobalStyle.textBoxTopic}>Step Count :</div>
                   <div className="w-20 border-[#543310] border-2 rounded-lg p-1 flex justify-center items-center ml-4">
                     <div className="flex items-center gap-1">
-                      <span className="text-2xl font-semibold text-gray-800">{count}</span>
+                      <span className="text-2xl font-semibold text-gray-800">
+                        {count}
+                      </span>
                       <div className="flex flex-col">
                         <button
                           onClick={() => handleStepCountChange(count + 1)}
@@ -172,7 +218,9 @@ export const AddLearningPlans = () => {
                           <ChevronUp className="w-4 h-4 text-gray-800" />
                         </button>
                         <button
-                          onClick={() => handleStepCountChange(Math.max(0, count - 1))}
+                          onClick={() =>
+                            handleStepCountChange(Math.max(0, count - 1))
+                          }
                           className="hover:bg-[#9b7355] rounded p-0.5 transition-colors"
                         >
                           <ChevronDown className="w-4 h-4 text-gray-800" />
@@ -184,7 +232,9 @@ export const AddLearningPlans = () => {
 
                 {steps.map((step, index) => (
                   <div key={index} className="mb-8">
-                    <h3 className={`${GlobalStyle.paragraph} pb-3`}>Step {index + 1}:</h3>
+                    <h3 className={`${GlobalStyle.paragraph} pb-3`}>
+                      Step {index + 1}:
+                    </h3>
 
                     <div className="mb-4">
                       <label className={GlobalStyle.remarkTopic}>Topic</label>
@@ -193,30 +243,46 @@ export const AddLearningPlans = () => {
                         placeholder="Text here"
                         className={`${GlobalStyle.inputText} w-[600px]`}
                         value={step.topic}
-                        onChange={(e) => handleStepChange(index, "topic", e.target.value)}
+                        onChange={(e) =>
+                          handleStepChange(index, "topic", e.target.value)
+                        }
                       />
                     </div>
 
                     <div className="mb-4">
-                      <label className={GlobalStyle.remarkTopic}>Resource Link</label>
+                      <label className={GlobalStyle.remarkTopic}>
+                        Resource Link
+                      </label>
                       <input
                         type="text"
                         placeholder="Text here"
                         className={`${GlobalStyle.inputText} w-[600px]`}
                         value={step.resourceLink}
-                        onChange={(e) => handleStepChange(index, "resourceLink", e.target.value)}
+                        onChange={(e) =>
+                          handleStepChange(
+                            index,
+                            "resourceLink",
+                            e.target.value
+                          )
+                        }
                       />
                     </div>
 
                     <div className="mb-4">
-                      <label className={GlobalStyle.remarkTopic}>Completion Duration</label>
+                      <label className={GlobalStyle.remarkTopic}>
+                        Completion Duration
+                      </label>
                       <input
                         type="text"
                         placeholder="Text here"
                         className={`${GlobalStyle.inputText} w-[600px]`}
                         value={step.completionDuration}
                         onChange={(e) =>
-                          handleStepChange(index, "completionDuration", e.target.value)
+                          handleStepChange(
+                            index,
+                            "completionDuration",
+                            e.target.value
+                          )
                         }
                       />
                     </div>
@@ -224,7 +290,10 @@ export const AddLearningPlans = () => {
                 ))}
 
                 <div className="flex gap-4 justify-end w-full">
-                  <button onClick={handleSubmit} className={GlobalStyle.buttonPrimary}>
+                  <button
+                    onClick={handleSubmit}
+                    className={GlobalStyle.buttonPrimary}
+                  >
                     Submit
                   </button>
                 </div>
