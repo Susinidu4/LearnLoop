@@ -4,12 +4,14 @@ import { MdEdit, MdDelete } from "react-icons/md";
 export function LearningPlansCard() {
   const [learningPlans, setLearningPlans] = useState([]);
   const userId = "911"; // Replace with the actual userId
+  const user  = JSON.parse(localStorage.getItem("user"));
+  console.log("User ID from localStorage:", user); // Check if this logs the correct userId
 
   // Fetch user data by userId
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/learning-plans/user/${userId}`);
+        const response = await fetch(`http://localhost:5000/api/learning-plans/user/${user.id}`);
         if (response.ok) {
           const data = await response.json();
           setLearningPlans(data);
@@ -22,7 +24,7 @@ export function LearningPlansCard() {
     };
 
     fetchData();
-  }, [userId]);
+  }, [user.id]); // Fetch data when the component mounts or userId changes
 
   // Delete the learning plan
   const handleDelete = async (planId) => {

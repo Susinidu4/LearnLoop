@@ -11,8 +11,9 @@ export const AddLearningPlans = () => {
   const [planTopic, setPlanTopic] = useState(""); // State for Plan Topic
   const [description, setDescription] = useState(""); // State for Description
   const [completionDuration, setCompletionDuration] = useState("");
+  const user = JSON.parse(localStorage.getItem("user"));
   
-  const [userId, setUserId] = useState("911");
+  const [userId, setUserId] = useState(user.id);
   
   const [steps, setSteps] = useState([ // State for the steps
     { topic: "", resourceLink: "", completionDuration: "" },
