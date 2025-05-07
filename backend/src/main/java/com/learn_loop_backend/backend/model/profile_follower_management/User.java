@@ -19,11 +19,6 @@ public class User {
     private String email;
     private String password;
 
-    @DBRef
-    private List<User> followers = new ArrayList<>();
-
-    @DBRef
-    private List<User> following = new ArrayList<>();
 
 
     public User(String name, String email, String password) {
@@ -65,19 +60,20 @@ public class User {
         this.password = password;
     }
 
-    public List<User> getFollowers() {
-        return followers;
+    // Add this to your existing User class
+    @DBRef
+    private Profile profile;
+
+    // Add getter and setter
+    public Profile getProfile() {
+        return profile;
     }
 
-    public void setFollowers(List<User> followers) {
-        this.followers = followers;
+    public void setProfile(Profile profile) {
+        this.profile = profile;
     }
 
-    public List<User> getFollowing() {
-        return following;
-    }
 
-    public void setFollowing(List<User> following) {
-        this.following = following;
-    }
+
+
 }

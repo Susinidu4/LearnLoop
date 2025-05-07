@@ -1,67 +1,77 @@
 package com.learn_loop_backend.backend.service.profile_follower_management;
 
 import com.learn_loop_backend.backend.DTO.profile_follower_management.FollowRequestDTO;
-import com.learn_loop_backend.backend.model.profile_follower_management.User;
-import com.learn_loop_backend.backend.repository.profile_follower_management.UserRepository;
+import com.learn_loop_backend.backend.model.profile_follower_management.Followers;
+import com.learn_loop_backend.backend.repository.profile_follower_management.FollowerRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FollowerService {
 
-    private final UserRepository userRepository;
+    @Autowired
+    private FollowerRepository followerRepository;
 
-    public FollowerService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    // CREATE - Follow a user
+    public Followers followUser(FollowRequestDTO followRequestDTO) {
+        // Check if the follow relationship already exists
+        boolean alreadyExists = followerRepository.existsByFollowerIdAndFollowINGId(
+                followRequestDTO.getFollowerId(),
+                followRequestDTO.getFollowingId()
+        );
 
-    public User getUserById(String id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + id));
-    }
-
-    public String followUser(FollowRequestDTO followRequest) {
-        User follower = getUserById(followRequest.getFollowerId());
-        User following = getUserById(followRequest.getFollowingId());
-
-        if (follower.getFollowing().contains(following)) {
-            return "User is already following this account";
+        if (alreadyExists) {
+            throw new RuntimeException("User is already following this profile");
         }
 
-        follower.getFollowing().add(following);
-        following.getFollowers().add(follower);
+        Followers followers = new Followers(
+                followRequestDTO.getFollowerId(),
+                followRequestDTO.getFollowingId()
+        );
 
-        userRepository.save(follower);
-        userRepository.save(following);
-
-        return "Successfully followed user";
+        return followerRepository.save(followers);
     }
 
-    public String unfollowUser(FollowRequestDTO followRequest) {
-        User follower = getUserById(followRequest.getFollowerId());
-        User following = getUserById(followRequest.getFollowingId());
+    // RETRIEVE - Get all followers of a user
+    public List<Followers> getFollowersOfUser(String userId) {
+        return followerRepository.findByFollowINGId(userId);
+    }
 
-        if (!follower.getFollowing().contains(following)) {
-            return "User is not following this account";
+    // RETRIEVE - Get all users a person is following
+    public List<Followers> getFollowingByUser(String userId) {
+        return followerRepository.findByFollowerId(userId);
+    }
+
+    // RETRIEVE - Check if a specific follow relationship exists
+    public boolean isFollowing(String followerId, String followingId) {
+        return followerRepository.existsByFollowerIdAndFollowINGId(followerId, followingId);
+    }
+
+    // DELETE - Unfollow a user
+    public void unfollowUser(String followerId, String followingId) {
+        Optional<Followers> followRelationship = followerRepository.findByFollowerIdAndFollowINGId(followerId, followingId);
+
+        if (followRelationship.isPresent()) {
+            followerRepository.delete(followRelationship.get());
+        } else {
+            throw new RuntimeException("Follow relationship not found");
         }
-
-        follower.getFollowing().remove(following);
-        following.getFollowers().remove(follower);
-
-        userRepository.save(follower);
-        userRepository.save(following);
-
-        return "Successfully unfollowed user";
     }
 
-    public List<User> getFollowers(String userId) {
-        User user = getUserById(userId);
-        return user.getFollowers();
-    }
+    // UPDATE - Not typically needed for simple follow relationships, but here's an example if needed
+    public Followers updateFollowRelationship(String id, FollowRequestDTO followRequestDTO) {
+        Optional<Followers> existing = followerRepository.findById(id);
 
-    public List<User> getFollowing(String userId) {
-        User user = getUserById(userId);
-        return user.getFollowing();
+        if (existing.isPresent()) {
+            Followers updated = existing.get();
+            updated.setFollowerId(followRequestDTO.getFollowerId());
+            updated.setFollowINGId(followRequestDTO.getFollowingId());
+            return followerRepository.save(updated);
+        } else {
+            throw new RuntimeException("Follow relationship not found with id: " + id);
+        }
     }
 }
