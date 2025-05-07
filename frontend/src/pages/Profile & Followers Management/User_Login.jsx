@@ -39,9 +39,10 @@ export const User_Login = () => {
             // Handle successful login
             console.log('Login successful:', response);
             
-            // Store token if available
+            // Store token and user details if available
             if (response.token) {
                 localStorage.setItem('authToken', response.token);
+                localStorage.setItem('user', JSON.stringify(response.user));
                 
                 // Remember me functionality
                 if (rememberMe) {

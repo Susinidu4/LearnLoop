@@ -141,7 +141,7 @@ export const PrivacyPolicy = () => {
             <img
               src={postGirl}
               alt="Girl Illustration"
-              className="absolute right-0 bottom-0 w-60 md:w-72 lg:w-[28rem] opacity-60 z-10 pointer-events-none"
+              className="absolute right-0 bottom-0 w-60 md:w-72 lg:w-[28rem] opacity-100 z-10 pointer-events-none"
             />
           </div>
         </div>
