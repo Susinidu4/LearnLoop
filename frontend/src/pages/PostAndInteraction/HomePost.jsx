@@ -3,15 +3,16 @@ import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import { useNavigate } from "react-router-dom";
 import PostService from "../../service/Post-And-Interaction/PostService";
 import { getUserById } from "../../service/Profile & Followers Management/AuthService";
+import axios from "axios";
 
 export const HomePost = () => {
   const [posts, setPosts] = useState([]);
   const [userDetails, setUserDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [likedStates, setLikedStates] = useState([]);
+  const [likedStates, setLikedStates] = useState([]); // true or false for each post
   const navigate = useNavigate();
-  const currentUserId = "681aba84b955421123b03";  // Hardcoded current user ID
+  const currentUserId = JSON.parse(localStorage.getItem("user"))?.id;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -19,14 +20,16 @@ export const HomePost = () => {
         const fetchedPosts = await PostService.getAllPosts();
         setPosts(fetchedPosts);
 
-        // Initialize liked states based on the fetched posts
-        setLikedStates(
-          fetchedPosts.map((post) =>
-            post.likes.some((like) => like.userId === currentUserId)
-          )
+        // Check if current user liked each post
+        const likedStatusArray = fetchedPosts.map((post) =>
+          post.likes.some((like) => like.userId === currentUserId)
         );
+        setLikedStates(likedStatusArray);
 
-        const uniqueUserIds = [...new Set(fetchedPosts.map((post) => post.userId))];
+        // Get user names for posts
+        const uniqueUserIds = [
+          ...new Set(fetchedPosts.map((post) => post.userId)),
+        ];
         const userDetailsPromises = uniqueUserIds.map(async (userId) => {
           try {
             const user = await getUserById(userId);
@@ -48,69 +51,61 @@ export const HomePost = () => {
     };
 
     fetchData();
-  }, []);
+  }, [currentUserId]);
 
-  const handleLikeClick = async (index, postId) => {
-    if (!postId) {
-      console.error("Invalid postId:", postId);
-      return;
-    }
-
+  // Like/Unlike handler
+  const handleLikeClick = async (postId, index) => {
     try {
       const alreadyLiked = likedStates[index];
 
-      // If already liked, remove like (DELETE request)
       if (alreadyLiked) {
-        const response = await fetch(`http://localhost:5000/api/post/${postId}/likes/${currentUserId}`, {
-          method: "DELETE",
-        });
+        // Unlike the post (DELETE)
+        const response = await fetch(
+          `http://localhost:5000/api/post/${postId}/likes/${currentUserId}`,
+          {
+            method: "DELETE",
+          }
+        );
+        if (!response.ok) throw new Error("Failed to unlike post");
 
-        if (!response.ok) {
-          throw new Error("Failed to unlike post");
-        }
-
-        // Optimistically update local liked state
+        // Update UI
         setLikedStates((prev) => {
           const updated = [...prev];
-          updated[index] = !alreadyLiked;
+          updated[index] = false;
           return updated;
         });
 
-        // Update the likes array in posts state to reflect the like/unlike
         setPosts((prev) => {
           const updatedPosts = [...prev];
-          const updatedPost = { ...updatedPosts[index] };
-
-          updatedPost.likes = updatedPost.likes.filter((like) => like.userId !== currentUserId);
-          updatedPosts[index] = updatedPost;
+          updatedPosts[index].likes = updatedPosts[index].likes.filter(
+            (like) => like.userId !== currentUserId
+          );
           return updatedPosts;
         });
       } else {
-        // If not liked, add like (POST request)
-        const response = await fetch(`http://localhost:5000/api/post/${postId}/likes`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: currentUserId }),
-        });
+        // Like the post (POST)
+        const response = await fetch(
+          `http://localhost:5000/api/post/${postId}/likes`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ userId: currentUserId }),
+          }
+        );
+        if (!response.ok) throw new Error("Failed to like post");
 
-        if (!response.ok) {
-          throw new Error("Failed to like post");
-        }
+        // Update UI
+        const newLike = { userId: currentUserId, likedAt: new Date() };
 
-        // Optimistically update local liked state
         setLikedStates((prev) => {
           const updated = [...prev];
-          updated[index] = !alreadyLiked;
+          updated[index] = true;
           return updated;
         });
 
-        // Update the likes array in posts state to reflect the like/unlike
         setPosts((prev) => {
           const updatedPosts = [...prev];
-          const updatedPost = { ...updatedPosts[index] };
-
-          updatedPost.likes.push({ userId: currentUserId, likedAt: new Date() });
-          updatedPosts[index] = updatedPost;
+          updatedPosts[index].likes = [...updatedPosts[index].likes, newLike];
           return updatedPosts;
         });
       }
@@ -123,33 +118,46 @@ export const HomePost = () => {
     navigate(`/userviewpost/${postId}`);
   };
 
-  if (loading) return <div className="text-center mt-20 text-lg">Loading posts...</div>;
-  if (error) return <div className="text-center mt-20 text-red-600">{error}</div>;
+  if (loading)
+    return <div className="text-center mt-20 text-lg">Loading posts...</div>;
+  if (error)
+    return <div className="text-center mt-20 text-red-600">{error}</div>;
 
   return (
     <div className={`${GlobalStyle.countBarSubTopicContainer} pt-20`}>
       {posts.map((post, index) => {
-        const user = userDetails[post.userId] || { name: `User ${post.userId}` };
+        const user = userDetails[post.userId] || {
+          name: `User ${post.userId}`,
+        };
 
         return (
-          <div key={post._id || post.id} className="bg-[#CFB397] shadow-md rounded-lg w-full max-w-4xl mb-8 p-8">
-            {/* Top Row */}
+          <div
+            key={post._id || post.id}
+            className="bg-[#CFB397] shadow-md rounded-lg w-full max-w-4xl mb-8 p-8"
+          >
+            {/* Post Header */}
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 rounded-full bg-[#8B6F5A]"></div>
-                <h1 className="text-lg font-semibold text-gray-800">{user.name}</h1>
+                <h1 className="text-lg font-semibold text-gray-800">
+                  {user.name}
+                </h1>
               </div>
             </div>
 
-            {/* Description */}
+            {/* Post Description */}
             <p className="text-gray-700 text-base mb-6">{post.description}</p>
 
-            {/* Image Grid */}
-            {post.mediaUrls && post.mediaUrls.length > 0 && (
+            {/* Post Images */}
+            {post.mediaUrls?.length > 0 && (
               <div className="flex justify-center gap-6 mb-6">
                 {post.mediaUrls.map((url, i) => (
                   <div key={i} className="w-80 h-80 rounded-xl overflow-hidden">
-                    <img src={url} alt={`Post media ${i}`} className="w-full h-full object-cover" />
+                    <img
+                      src={url}
+                      alt={`Post media ${i}`}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                 ))}
               </div>
@@ -160,12 +168,12 @@ export const HomePost = () => {
               {/* Like Button */}
               <div
                 className="flex items-center gap-2"
-                onClick={() => handleLikeClick(index, post._id || post.id)}
+                onClick={() => handleLikeClick(post._id || post.id, index)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill={likedStates[index] ? "red" : "none"}
-                  stroke={likedStates[index] ? "none" : "currentColor"}
+                  fill={likedStates[index] ? "red" : "none"} // Red fill if liked
+                  stroke={likedStates[index] ? "none" : "currentColor"} // Outline if not liked
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   className="w-7 h-7 transition-all duration-300 ease-in-out"
