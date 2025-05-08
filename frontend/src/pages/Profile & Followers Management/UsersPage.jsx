@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Header } from '../../components/Header';
+import { SideBar } from '../../components/SideBar';
 
 export const UsersPage = () => {
   // State for users data and UI
@@ -87,7 +89,9 @@ export const UsersPage = () => {
     }, [user._id]);
 
     return (
-      <div className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4 hover:shadow-lg transition-shadow">
+      <div>
+        <SideBar />
+        <div className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4 hover:shadow-lg transition-shadow">
         <div className="flex-shrink-0">
           {profileImage ? (
             <img
@@ -118,6 +122,7 @@ export const UsersPage = () => {
         >
           {followStatus[user._id] ? 'Following' : 'Follow'}
         </button>
+      </div>
       </div>
     );
   };
