@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { GiRead } from "react-icons/gi";
 import { TbWorldSearch } from "react-icons/tb";
 import { MdInfo, MdPrivacyTip } from "react-icons/md";
+import { FaUsers } from "react-icons/fa";
 import GlobalStyle from "../assets/prototype/GlobalStyle";
 
 const SidebarIcon = ({ icon, onClick, isActive, title }) => {
@@ -31,13 +32,12 @@ export const SideBar = () => {
   const location = useLocation();
 
   const [showMenu, setShowMenu] = useState(false);
-  const menuRef = useRef(); 
+  const menuRef = useRef();
 
   const handleMenuClick = () => {
     setShowMenu((prev) => !prev);
   };
 
-  
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
@@ -55,20 +55,24 @@ export const SideBar = () => {
   }, [showMenu]);
 
   return (
-    <aside className="
+    <aside
+      className="
       bg-[#2E1A0F] h-screen w-16 
       flex flex-col items-center 
       fixed left-0 top-0 z-10
       pt-6 pb-6
-    ">
+    "
+    >
       {/* Spacer to account for header height */}
       <div className="h-24"></div>
 
       {/* Centered Navigation Icons */}
-      <div className="
+      <div
+        className="
         flex flex-col items-center 
         gap-6 flex-1 justify-center
-      ">
+      "
+      >
         <SidebarIcon
           icon={<FaHome size={20} />}
           onClick={() => navigate("/")}
@@ -93,21 +97,31 @@ export const SideBar = () => {
           isActive={location.pathname === "/LeaningPlansExistingUser"}
           title="Learning Plans"
         />
+        <SidebarIcon
+          icon={<FaUsers size={20} />}
+          onClick={() => navigate("/LeaningPlansExistingUser")}
+          isActive={location.pathname === "/LeaningPlansExistingUser"}
+          title="Users"
+        />
       </div>
 
       {/* Bottom Menu - stays at bottom */}
-      <div className="
+      <div
+        className="
         text-[#FFFFFF] cursor-pointer 
         hover:text-gray-300 mb-4
-      ">
+      "
+      >
         <RxHamburgerMenu size={20} onClick={handleMenuClick} title="Menu" />
-        
+
         {showMenu && (
           <div
-            ref={menuRef} 
+            ref={menuRef}
             className="absolute left-20 bottom-0 mb-4 w-48 bg-[#2F1B06] p-4 rounded-xl shadow-lg space-y-3 z-20"
           >
-            <p className={`${GlobalStyle.headingSmall} text-white`}>More Options</p>
+            <p className={`${GlobalStyle.headingSmall} text-white`}>
+              More Options
+            </p>
             <button
               onClick={() => navigate("/aboutUs")}
               className="flex items-center gap-2 w-full bg-[#543310] text-white px-3 py-2 rounded-lg hover:bg-[#CFB397]"
