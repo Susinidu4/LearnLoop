@@ -1,27 +1,26 @@
 package com.learn_loop_backend.backend.service.profile_follower_management;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.learn_loop_backend.backend.model.profile_follower_management.Profile;
 import com.learn_loop_backend.backend.repository.profile_follower_management.ProfileRepository;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.UUID;
+import java.util.Map;
 
 @Service
 public class ProfileService {
 
     private final ProfileRepository profileRepository;
+    private final Cloudinary cloudinary;
 
-    @Value("${file.upload-dir}")
-    private String uploadDir;
-
-    public ProfileService(ProfileRepository profileRepository) {
+    @Autowired
+    public ProfileService(ProfileRepository profileRepository, Cloudinary cloudinary) {
         this.profileRepository = profileRepository;
+        this.cloudinary = cloudinary;
     }
 
     public Profile createProfile(String userId) {
@@ -39,40 +38,34 @@ public class ProfileService {
             profile = createProfile(userId);
         }
 
-        // Create upload directory if it doesn't exist
-        Path uploadPath = Paths.get(uploadDir);
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
+        // Upload image to Cloudinary
+        Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                ObjectUtils.asMap(
+                        "folder", "profile_images",
+                        "public_id", "user_" + userId,
+                        "overwrite", true
+                ));
 
-        // Generate unique filename
-        String filename = UUID.randomUUID().toString() + "_" + file.getOriginalFilename();
-        Path filePath = uploadPath.resolve(filename);
+        // Get the secure URL of the uploaded image
+        String imageUrl = (String) uploadResult.get("secure_url");
 
-        // Save file
-        Files.copy(file.getInputStream(), filePath);
-
-        // Update profile with new image path
-        profile.setImagePath(filename);
+        // Update profile with the Cloudinary URL
+        profile.setImagePath(imageUrl);
         return profileRepository.save(profile);
     }
 
     public void deleteProfileImage(String userId) throws IOException {
         Profile profile = getProfileByUserId(userId);
         if (profile != null && profile.getImagePath() != null) {
-            Path filePath = Paths.get(uploadDir).resolve(profile.getImagePath());
-            Files.deleteIfExists(filePath);
+            // Delete image from Cloudinary
+            cloudinary.uploader().destroy("profile_images/user_" + userId, ObjectUtils.emptyMap());
             profile.setImagePath(null);
             profileRepository.save(profile);
         }
     }
 
-    public byte[] getProfileImage(String userId) throws IOException {
+    public String getProfileImageUrl(String userId) {
         Profile profile = getProfileByUserId(userId);
-        if (profile == null || profile.getImagePath() == null) {
-            return null;
-        }
-        Path filePath = Paths.get(uploadDir).resolve(profile.getImagePath());
-        return Files.readAllBytes(filePath);
+        return profile != null ? profile.getImagePath() : null;
     }
 }

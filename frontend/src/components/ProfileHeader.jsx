@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PencilIcon } from "lucide-react";
-import ProfileService from "../service/Profile & Followers Management/ProfileService"; // Import your ProfileService
+import ProfileService from "../service/Profile & Followers Management/ProfileService";
 import FollowerService from "../service/Profile & Followers Management/FollowService";
 
 export function ProfileHeader() {
@@ -8,7 +8,7 @@ export function ProfileHeader() {
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImageUrl, setProfileImageUrl] = useState(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -39,9 +39,7 @@ export function ProfileHeader() {
   const loadProfileImage = async () => {
     try {
       const imageUrl = await ProfileService.getProfileImage(user.id);
-      if (imageUrl) {
-        setProfileImage(imageUrl);
-      }
+      setProfileImageUrl(imageUrl);
     } catch (error) {
       console.error("Error loading profile image:", error);
     }
@@ -57,8 +55,8 @@ export function ProfileHeader() {
 
     try {
       setIsLoading(true);
-      await ProfileService.uploadProfileImage(user.id, file);
-      await loadProfileImage(); // Refresh the image after upload
+      const imageUrl = await ProfileService.uploadProfileImage(user.id, file);
+      setProfileImageUrl(imageUrl);
     } catch (error) {
       console.error("Error uploading profile image:", error);
       alert("Failed to upload profile image");
@@ -85,11 +83,11 @@ export function ProfileHeader() {
       {/* Cover image */}
       <div className="h-48 bg-[#d9c4a3] rounded-lg mb-16 relative">
         {/* Profile image */}
-        <div className="absolute -bottom-14 left-12">
+        <div className="absolute -bottom-28 left-5 flex flex-col items-center">
           <div className="w-28 h-28 rounded-full border-4 border-[#c19e67] overflow-hidden">
-            {profileImage ? (
+            {profileImageUrl ? (
               <img
-                src={profileImage}
+                src={profileImageUrl}
                 alt="Profile"
                 className="w-full h-full object-cover"
               />
@@ -98,13 +96,15 @@ export function ProfileHeader() {
                 <span className="text-gray-500">No Image</span>
               </div>
             )}
-
-            <div className="text-center mb-4 absolute -bottom-28 left-0 right-0">
-              <h1 className="text-2xl font-bold">{user.name}</h1>
-              <p className="text-gray-600">Developer</p>
-            </div>
+          </div>
+          
+          {/* User info - now positioned directly below the profile picture */}
+          <div className="text-center mt-3 w-full">
+            <h1 className="text-2xl font-bold">{user.name}</h1>
+            <p className="text-gray-600">Developer</p>
           </div>
         </div>
+
         {/* Edit button */}
         <button 
           className="absolute bottom-4 right-4 bg-[#c19e67] p-2 rounded-full"
@@ -113,6 +113,7 @@ export function ProfileHeader() {
           <PencilIcon size={20} color="white" />
         </button>
       </div>
+
       {/* Profile stats */}
       <div className="flex justify-center space-x-8 mb-6">
         <div className="flex flex-col items-center">
