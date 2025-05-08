@@ -139,7 +139,9 @@ export const LeraningPlansExistingUser = () => {
                     cardData={item}
                     imageUrl={userImage}
                     userId={item.userId}
+
                     userName={userName}
+
                   />
                 );
               })}

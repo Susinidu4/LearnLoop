@@ -45,4 +45,15 @@ public class PostController {
         List<Post> posts = postService.getAllPosts();
         return ResponseEntity.ok(posts);
     }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<Post> getPostById(@PathVariable String postId) {
+        Post post = postService.getPostById(postId);
+        if (post != null) {
+            return ResponseEntity.ok(post);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }
