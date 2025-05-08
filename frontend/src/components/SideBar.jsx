@@ -64,7 +64,7 @@ export const SideBar = () => {
     "
     >
       {/* Spacer to account for header height */}
-      <div className="h-24"></div>
+      <div className="h-22"></div>
 
       {/* Centered Navigation Icons */}
       <div
