@@ -3,7 +3,7 @@ import axios from 'axios';
 const API_BASE_URL = 'http://localhost:5000/api/v1/profiles';
 
 class ProfileService {
-  // Upload profile image
+  // Upload profile image to Cloudinary via backend
   static async uploadProfileImage(userId, file) {
     try {
       const formData = new FormData();
@@ -19,23 +19,18 @@ class ProfileService {
         }
       );
 
-      return response.data;
+      return response.data; // This will be the Cloudinary URL
     } catch (error) {
       console.error('Error uploading profile image:', error);
       throw error;
     }
   }
 
-  // Get profile image
+  // Get Cloudinary image URL
   static async getProfileImage(userId) {
     try {
-      const response = await axios.get(`${API_BASE_URL}/${userId}/image`, {
-        responseType: 'blob', // Important for handling binary data
-      });
-
-      // Create a URL for the image blob
-      const imageUrl = URL.createObjectURL(response.data);
-      return imageUrl;
+      const response = await axios.get(`${API_BASE_URL}/${userId}/image`);
+      return response.data; // Returns the Cloudinary URL
     } catch (error) {
       if (error.response && error.response.status === 404) {
         // No profile image found
@@ -46,7 +41,7 @@ class ProfileService {
     }
   }
 
-  // Delete profile image
+  // Delete profile image from Cloudinary
   static async deleteProfileImage(userId) {
     try {
       const response = await axios.delete(`${API_BASE_URL}/${userId}/image`);
@@ -55,11 +50,6 @@ class ProfileService {
       console.error('Error deleting profile image:', error);
       throw error;
     }
-  }
-
-  // Utility function to get profile image URL
-  static getProfileImageUrl(userId) {
-    return `${API_BASE_URL}/${userId}/image`;
   }
 }
 
