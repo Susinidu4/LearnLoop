@@ -129,7 +129,7 @@ export const HomePost = () => {
     return <div className="text-center mt-20 text-red-600">{error}</div>;
 
   return (
-    <div className={`${GlobalStyle.countBarSubTopicContainer} pt-20`}>
+    <div className={`${GlobalStyle.countBarSubTopicContainer} pt-4`}>
       {posts.map((post, index) => {
         const user = userDetails[post.userId] || {
           name: `User ${post.userId}`,
