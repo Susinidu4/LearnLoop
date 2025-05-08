@@ -50,4 +50,8 @@ public class PostAndInteractionService {
     public List<Post> getAllPosts() {
         return postRepository.findAll();
     }
+
+    public Post getPostById(String postId) {
+        return postRepository.findById(postId).orElse(null);
+    }
 }

@@ -47,7 +47,7 @@ function App() {
 
         {/* oshini */}
         <Route path="/addpost" element={<AddPost/>}/>
-        <Route path="/userviewpost/:id" element={<UserViewPost/>}/>
+        <Route path="/userviewpost/:postId" element={<UserViewPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
         <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>  
         <Route path="/homesignout" element={<HomeSignOut/>}/>  
