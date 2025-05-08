@@ -5,6 +5,7 @@ import { SideBar } from "../../components/SideBar";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import { MdEdit, MdDelete } from "react-icons/md";
 
+
 // Sample post data array
 const postData = [
   {
