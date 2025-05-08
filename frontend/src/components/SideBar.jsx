@@ -99,8 +99,8 @@ export const SideBar = () => {
         />
         <SidebarIcon
           icon={<FaUsers size={20} />}
-          onClick={() => navigate("/LeaningPlansExistingUser")}
-          isActive={location.pathname === "/LeaningPlansExistingUser"}
+          onClick={() => navigate("/users")}
+          isActive={location.pathname === "/users"}
           title="Users"
         />
       </div>
