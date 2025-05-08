@@ -8,10 +8,10 @@ import '@fontsource/poppins';
 import { Notification } from "./pages/Comments,Likes & Notification Management/Notification";
 import { FAQ } from "./pages/Other/FAQ";
 import { AboutUs } from "./pages/Other/AboutUs";
+import { PostDetailPage } from "./pages/PostAndInteraction/PostDetailPage"; // Assuming this is the correct path for PostDetailPage
 
 //Oshi
 import { AddPost } from "./pages/PostAndInteraction/AddPost"
-import { UserViewPost } from "./pages/PostAndInteraction/UserViewPost"
 import { HomePost } from "./pages/PostAndInteraction/HomePost";
 import { PrivacyPolicy } from "./pages/Other/PrivacyPolicy";
 
@@ -44,10 +44,10 @@ function App() {
         <Route path="/notification" element={<Notification/>}/>
         <Route path="/FAQ" element={<FAQ/>}/>
         <Route path="/aboutUs" element={<AboutUs/>}/>
+        <Route path="/postdetails/:postId" element={<PostDetailPage />} />
 
         {/* oshini */}
         <Route path="/addpost" element={<AddPost/>}/>
-        <Route path="/userviewpost/:postId" element={<UserViewPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
         <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>  
         <Route path="/homesignout" element={<HomeSignOut/>}/>  
