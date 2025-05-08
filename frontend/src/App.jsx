@@ -8,7 +8,7 @@ import '@fontsource/poppins';
 import { Notification } from "./pages/Comments,Likes & Notification Management/Notification";
 import { FAQ } from "./pages/Other/FAQ";
 import { AboutUs } from "./pages/Other/AboutUs";
-import { PostDetailPage } from "./pages/PostAndInteraction/PostDetailPage"; // Assuming this is the correct path for PostDetailPage
+import { PostDetailPage } from "./pages/PostAndInteraction/PostDetailPage"; 
 
 //Oshi
 import { AddPost } from "./pages/PostAndInteraction/AddPost"
