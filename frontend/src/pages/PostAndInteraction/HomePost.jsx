@@ -114,8 +114,13 @@ export const HomePost = () => {
     }
   };
 
+  // Updated handleCommentClick
   const handleCommentClick = (postId) => {
-    navigate(`/userviewpost/${postId}`);
+    if (postId) {
+      navigate(`/postdetails/${postId}`); // Navigate to the post details page
+    } else {
+      console.error("Invalid postId", postId); // Debugging
+    }
   };
 
   if (loading)
@@ -190,7 +195,7 @@ export const HomePost = () => {
               {/* Comment Button */}
               <div
                 className="flex items-center gap-2"
-                onClick={() => handleCommentClick(post._id)}
+                onClick={() => handleCommentClick(post._id || post.id)} // Correctly pass the post ID
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
