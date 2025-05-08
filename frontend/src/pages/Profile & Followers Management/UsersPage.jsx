@@ -10,19 +10,23 @@ export const UsersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [followStatus, setFollowStatus] = useState({});
+  const myData = JSON.parse(localStorage.getItem('user')) || null;
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get('http://localhost:5000/api/v1/auth/users');
-        setUsers(response.data);
-        setFilteredUsers(response.data);
-        console.log('Fetched users:', response.data);
+        
+        // Filter out the current user's account
+        const otherUsers = response.data.filter(user => user.id !== myData?.id);
+        
+        setUsers(otherUsers);
+        setFilteredUsers(otherUsers);
         
         // Initialize follow status
         const initialFollowStatus = {};
-        response.data.forEach(user => {
-          initialFollowStatus[user._id] = false;
+        otherUsers.forEach(user => {
+          initialFollowStatus[user.id] = false;
         });
         setFollowStatus(initialFollowStatus);
         
@@ -34,7 +38,7 @@ export const UsersPage = () => {
     };
 
     fetchUsers();
-  }, []);
+  }, [myData?.id]); // Add myData.id as dependency
 
   useEffect(() => {
     const results = users.filter(user =>
@@ -45,10 +49,8 @@ export const UsersPage = () => {
 
   const handleFollowToggle = async (userId) => {
     try {
-      // In a real app, you would make an API call here to follow/unfollow
       console.log(`Toggling follow status for user ${userId}`);
       
-      // Update local state
       setFollowStatus(prev => ({
         ...prev,
         [userId]: !prev[userId]
@@ -64,7 +66,7 @@ export const UsersPage = () => {
     useEffect(() => {
       const loadProfileImage = async () => {
         try {
-          const imageUrl = await ProfileService.getProfileImage(user.id);
+          const imageUrl = await ProfileService.getProfileImage(user.id); // Changed from user.id to user._id
           setProfileImage(imageUrl);
         } catch (error) {
           console.error('Error loading profile image:', error);
@@ -147,7 +149,6 @@ export const UsersPage = () => {
       <div className="flex-1 p-8">
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Discover Users</h1>
         
-        {/* Search bar */}
         <div className="mb-6">
           <div className="relative max-w-md">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -174,7 +175,6 @@ export const UsersPage = () => {
           </div>
         </div>
 
-        {/* Users list */}
         <div className="space-y-3">
           {filteredUsers.length > 0 ? (
             filteredUsers.map(user => (
