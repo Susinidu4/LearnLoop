@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PencilIcon } from "lucide-react";
+import { Link } from "react-router-dom";
 import ProfileService from "../service/Profile & Followers Management/ProfileService";
 import FollowerService from "../service/Profile & Followers Management/FollowService";
 
@@ -118,13 +119,13 @@ export function ProfileHeader() {
       <div className="flex justify-center space-x-8 mb-6">
         <div className="flex flex-col items-center">
           <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
-            <span className="font-bold">{followersCount}</span>
+           <Link to={`/myfollowers`} > <span className="font-bold">{followingCount}</span></Link>
           </div>
           <span className="text-sm">Followers</span>
         </div>
         <div className="flex flex-col items-center">
           <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
-            <span className="font-bold">{followingCount}</span>
+            <span className="font-bold">{followersCount}</span>
           </div>
           <span className="text-sm">Following</span>
         </div>
