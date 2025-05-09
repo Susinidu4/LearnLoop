@@ -33,6 +33,7 @@ public class NotificationService {
         return notificationRepository.findByReceiverUserIdOrderByCreatedAtDesc(receiverUserId)
                 .stream()
                 .map(n -> new NotificationDTO(
+                        n.getId(),
                         n.getPostId(),
                         n.getReceiverUserId(),
                         n.getSenderUserId(),
@@ -43,4 +44,10 @@ public class NotificationService {
                 ))
                 .collect(Collectors.toList());
     }
+
+    // Delete a notification by its ID
+    public void deleteNotification(String notificationId) {
+        notificationRepository.deleteById(notificationId);  // Delete by ID
+    }
+
 }
