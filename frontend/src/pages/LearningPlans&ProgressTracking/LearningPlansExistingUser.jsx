@@ -6,6 +6,7 @@ import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import ProfileService from "../../service/Profile & Followers Management/ProfileService";
 import { getUserById } from "../../service/Profile & Followers Management/AuthService";
 
+
 // Card Component
 const Card = ({ title, description, author, cardData, imageUrl, userId, userName }) => {
   return (
