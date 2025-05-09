@@ -71,7 +71,7 @@ const PostService = {
     }
   },
 
-  // ✅ Update post
+  // Update post
   updatePost: async (postId, description, category, files) => {
     const formData = new FormData();
     formData.append('description', description);
