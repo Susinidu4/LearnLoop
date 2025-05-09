@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import FollowerService from '../../service/Profile & Followers Management/FollowService';
 import ProfileService from '../../service/Profile & Followers Management/ProfileService';
+import { getUserById } from '../../service/Profile & Followers Management/AuthService';
+import { Link } from 'react-router-dom';
 
 export const MyFollowers = () => {
     const myData = JSON.parse(localStorage.getItem('user')) || null;
@@ -12,27 +14,38 @@ export const MyFollowers = () => {
         const fetchFollowers = async () => {
             try {
                 if (myData && myData.id) {
+                    // First get the follower relationships
                     const followersData = await FollowerService.getFollowing(myData.id);
-                    console.log('Followers data:', followersData); // Debugging line
-                    // Add profile images to each follower
-                    const followersWithImages = await Promise.all(
+                    console.log('Followers data:', followersData);
+
+                    // Then enrich with user details and profile images
+                    const enrichedFollowers = await Promise.all(
                         followersData.map(async (follower) => {
                             try {
+                                // Get user details
+                                const user = await getUserById(follower.followINGId);
+                                // Get profile image
                                 const imageUrl = await ProfileService.getProfileImage(follower.followINGId);
+                                
                                 return {
                                     ...follower,
+                                    name: user.name,
+                                    email: user.email,
                                     imageUrl: imageUrl || null
                                 };
                             } catch (error) {
-                                console.error(`Error loading image for user ${follower.followINGId}:`, error);
+                                console.error(`Error loading data for user ${follower.followINGId}:`, error);
                                 return {
                                     ...follower,
+                                    name: 'Unknown User',
+                                    email: '',
                                     imageUrl: null
                                 };
                             }
                         })
                     );
-                    setFollowers(followersWithImages);
+                    
+                    setFollowers(enrichedFollowers);
                 }
             } catch (err) {
                 setError(err.message);
@@ -72,13 +85,18 @@ export const MyFollowers = () => {
             ) : (
                 <div className="space-y-4">
                     {followers.map((follower) => (
-                        <div key={follower._id} className="flex items-center bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow">
+                        <Link to={`/followerprofile/${follower.followINGId}`}>
+                            <div key={follower._id} className="flex items-center bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow">
                             <div className="flex-shrink-0 mr-4">
                                 {follower.imageUrl ? (
                                     <img
                                         src={follower.imageUrl}
                                         alt={`${follower.name}'s profile`}
                                         className="h-12 w-12 rounded-full object-cover"
+                                        onError={(e) => {
+                                            e.target.onerror = null;
+                                            e.target.src = "/default-avatar.jpg";
+                                        }}
                                     />
                                 ) : (
                                     <div className="h-12 w-12 rounded-full bg-gray-300 flex items-center justify-center">
@@ -93,6 +111,7 @@ export const MyFollowers = () => {
                                 <p className="text-sm text-gray-500">{follower.email}</p>
                             </div>
                         </div>
+                        </Link>
                     ))}
                 </div>
             )}

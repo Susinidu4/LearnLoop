@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { SideBar } from '../../components/SideBar';
 import ProfileService from '../../service/Profile & Followers Management/ProfileService';
+import FollowerService from '../../service/Profile & Followers Management/FollowService';
 
 export const UsersPage = () => {
   const [users, setUsers] = useState([]);
@@ -10,6 +11,7 @@ export const UsersPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [followStatus, setFollowStatus] = useState({});
+  const [followLoading, setFollowLoading] = useState({}); // Track loading state per user
   const myData = JSON.parse(localStorage.getItem('user')) || null;
 
   useEffect(() => {
@@ -23,13 +25,25 @@ export const UsersPage = () => {
         setUsers(otherUsers);
         setFilteredUsers(otherUsers);
         
-        // Initialize follow status
+        // Initialize follow status and loading states
         const initialFollowStatus = {};
-        otherUsers.forEach(user => {
-          initialFollowStatus[user.id] = false;
-        });
-        setFollowStatus(initialFollowStatus);
+        const initialLoadingStates = {};
         
+        // Check follow status for each user
+        await Promise.all(otherUsers.map(async (user) => {
+          initialFollowStatus[user.id] = false;
+          initialLoadingStates[user.id] = false;
+          
+          try {
+            const isFollowing = await FollowerService.checkIsFollowing( user.id,myData.id);
+            initialFollowStatus[user.id] = isFollowing;
+          } catch (error) {
+            console.error(`Error checking follow status for user ${user.id}:`, error);
+          }
+        }));
+        
+        setFollowStatus(initialFollowStatus);
+        setFollowLoading(initialLoadingStates);
         setLoading(false);
       } catch (err) {
         setError(err.message);
@@ -38,7 +52,7 @@ export const UsersPage = () => {
     };
 
     fetchUsers();
-  }, [myData?.id]); // Add myData.id as dependency
+  }, [myData?.id]);
 
   useEffect(() => {
     const results = users.filter(user =>
@@ -49,14 +63,29 @@ export const UsersPage = () => {
 
   const handleFollowToggle = async (userId) => {
     try {
-      console.log(`Toggling follow status for user ${userId}`);
+      // Set loading state for this user
+      setFollowLoading(prev => ({ ...prev, [userId]: true }));
       
+      if (followStatus[userId]) {
+        // Unfollow logic
+        await FollowerService.unfollowUser(userId,myData.id);
+      } else {
+        // Follow logic
+        await FollowerService.followUser(userId,myData.id);
+      }
+      
+      // Toggle follow status
       setFollowStatus(prev => ({
         ...prev,
         [userId]: !prev[userId]
       }));
+      
     } catch (error) {
       console.error('Error toggling follow status:', error);
+      // You might want to show an error message to the user here
+    } finally {
+      // Reset loading state
+      setFollowLoading(prev => ({ ...prev, [userId]: false }));
     }
   };
 
@@ -66,7 +95,7 @@ export const UsersPage = () => {
     useEffect(() => {
       const loadProfileImage = async () => {
         try {
-          const imageUrl = await ProfileService.getProfileImage(user.id); // Changed from user.id to user._id
+          const imageUrl = await ProfileService.getProfileImage(user.id);
           setProfileImage(imageUrl);
         } catch (error) {
           console.error('Error loading profile image:', error);
@@ -75,7 +104,7 @@ export const UsersPage = () => {
       };
 
       loadProfileImage();
-    }, [user._id]);
+    }, [user.id]);
 
     return (
       <div className="bg-white rounded-lg shadow-md p-4 flex items-center space-x-4 hover:shadow-lg transition-shadow mb-4">
@@ -102,14 +131,21 @@ export const UsersPage = () => {
         </div>
         
         <button
-          onClick={() => handleFollowToggle(user._id)}
+          onClick={() => handleFollowToggle(user.id)}
+          disabled={followLoading[user.id]}
           className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-            followStatus[user._id]
+            followStatus[user.id]
               ? 'bg-gray-200 text-gray-800 hover:bg-gray-300'
               : 'bg-blue-600 text-white hover:bg-blue-700'
-          }`}
+          } ${followLoading[user.id] ? 'opacity-50 cursor-not-allowed' : ''}`}
         >
-          {followStatus[user._id] ? 'Following' : 'Follow'}
+          {followLoading[user.id] ? (
+            'Processing...'
+          ) : followStatus[user.id] ? (
+            'Following'
+          ) : (
+            'Follow'
+          )}
         </button>
       </div>
     );
@@ -178,7 +214,7 @@ export const UsersPage = () => {
         <div className="space-y-3">
           {filteredUsers.length > 0 ? (
             filteredUsers.map(user => (
-              <UserCard key={user._id} user={user} />
+              <UserCard key={user.id} user={user} />
             ))
           ) : (
             <div className="text-center py-8 text-gray-500">
