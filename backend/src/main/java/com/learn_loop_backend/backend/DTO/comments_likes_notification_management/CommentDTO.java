@@ -8,8 +8,8 @@ public class CommentDTO {
     private String postId;
     private String content;
 
-    public CommentDTO(String postId, String content) {
-        this.userId = postId;
+    public CommentDTO(String userId, String postId, String content) {
+        this.userId = userId;
         this.postId = postId;
         this.content = content;
     }

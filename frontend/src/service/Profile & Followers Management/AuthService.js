@@ -49,7 +49,7 @@ export const getUserById = async (id) => {
 
 export const updateUser = async (id, userData) => {
   try {
-    const response = await axios.put(`${API_URL}/users/${id}`, userData);
+    const response = await axios.put(`${API_URL}/${id}`, userData);
     return response.data;
   } catch (error) {
     console.error(`Error updating user ${id}:`, error.response?.data || error.message);

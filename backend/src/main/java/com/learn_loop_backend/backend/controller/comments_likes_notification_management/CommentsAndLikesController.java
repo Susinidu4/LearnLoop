@@ -21,7 +21,7 @@ public class CommentsAndLikesController {
     @Autowired
     private CommentAndLikedService commentAndLikedService;
 
-    // create cooment
+    // create comment
     @PostMapping("/{postId}/comments")
     public ResponseEntity<Post> addComment(@PathVariable String postId, @RequestBody CommentDTO commentDTO) {
         Comment comment = new Comment();

@@ -28,6 +28,17 @@ const PostService = {
     }
   },
 
+  // Get post by ID 
+  getPostById: async (postId) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/${postId}`);
+      return response.data;
+    } catch (error) {
+      console.error(`Error fetching post with ID ${postId}:`, error);
+      throw error;
+    }
+  },
+
   // Get posts by user ID
   getPostsByUser: async (userId) => {
     try {
@@ -60,6 +71,8 @@ const PostService = {
       throw error;
     }
   },
+
+
 
   // You can add more methods here for other endpoints like:
   // - Updating a post

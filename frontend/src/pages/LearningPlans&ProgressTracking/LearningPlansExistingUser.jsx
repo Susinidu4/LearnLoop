@@ -4,7 +4,8 @@ import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import ProfileService from "../../service/Profile & Followers Management/ProfileService";
-import { getUserById } from "../../service/Profile & Followers Management/AuthService"; // Assuming you've saved your service in this path
+import { getUserById } from "../../service/Profile & Followers Management/AuthService";
+
 
 // Card Component
 const Card = ({ title, description, author, cardData, imageUrl, userId, userName }) => {
@@ -31,15 +32,14 @@ const Card = ({ title, description, author, cardData, imageUrl, userId, userName
               {/* User Image as Avatar */}
               <img
                 src={imageUrl}
-                alt={author}
-                className="w-8 h-8 rounded-full object-cover" // Make it circular
+                alt={userName}
+                className="w-8 h-8 rounded-full object-cover"
                 onError={(e) => {
                   e.target.onerror = null;
-                  e.target.src = "/default-avatar.jpg"; // Fallback image if user image not found
+                  e.target.src = "/default-avatar.jpg";
                 }}
               />
             </div>
-            {/* Display user name here */}
             <span className="text-sm font-semibold text-black">{userName}</span>
           </div>
         </div>
@@ -51,59 +51,61 @@ const Card = ({ title, description, author, cardData, imageUrl, userId, userName
 // Main Component
 export const LeraningPlansExistingUser = () => {
   const navigate = useNavigate();
-
-  const [learningPlans, setLearningPlans] = useState([]); // State to store fetched data
-  const [userNames, setUserNames] = useState({}); // State to store fetched user names
+  const [learningPlans, setLearningPlans] = useState([]);
+  const [userNames, setUserNames] = useState({});
+  const [userImages, setUserImages] = useState({});
 
   // Fetch learning plans data from the backend
   useEffect(() => {
     const fetchLearningPlans = async () => {
       try {
-        const response = await fetch(
-          "http://localhost:5000/api/learning-plans"
-        ); // Endpoint to get all learning plans
-        const data = await response.json(); // Assuming the response is a JSON array
-        setLearningPlans(data); // Update the state with the fetched data
+        const response = await fetch("http://localhost:5000/api/learning-plans");
+        const data = await response.json();
+        setLearningPlans(data);
       } catch (error) {
         console.error("Error fetching learning plans:", error);
       }
     };
 
-    fetchLearningPlans(); // Call the function to fetch data
+    fetchLearningPlans();
   }, []);
 
-  // Fetch user names based on userId
+  // Fetch user names and profile images
   useEffect(() => {
-    const fetchUserNames = async () => {
+    const fetchUserData = async () => {
       try {
-        // Create an array of promises to fetch user names concurrently using getUserById
-        const namesPromises = learningPlans.map(async (plan) => {
-          const user = await getUserById(plan.userId); // Fetch the user details by ID
-          return { userId: plan.userId, name: user.name }; // Return userId and name
-        });
-
-        // Wait for all the promises to resolve
-        const namesArray = await Promise.all(namesPromises);
-
-        // Convert the array into an object with userId as the key
-        const names = namesArray.reduce((acc, { userId, name }) => {
-          acc[userId] = name;
-          return acc;
-        }, {});
-
-        console.log("Fetched User Names:", names);  // Debugging line
-        setUserNames(names); // Store names in state
+        const names = {};
+        const images = {};
+        
+        // Process each learning plan to fetch user data
+        for (const plan of learningPlans) {
+          try {
+            // Fetch user name
+            const user = await getUserById(plan.userId);
+            names[plan.userId] = user.name;
+            
+            // Fetch profile image
+            const imageUrl = await ProfileService.getProfileImage(plan.userId);
+            images[plan.userId] = imageUrl || "/default-avatar.jpg";
+          } catch (error) {
+            console.error(`Error fetching data for user ${plan.userId}:`, error);
+            names[plan.userId] = "Unknown User";
+            images[plan.userId] = "/default-avatar.jpg";
+          }
+        }
+        
+        setUserNames(names);
+        setUserImages(images);
       } catch (error) {
-        console.error("Error fetching user names:", error);
+        console.error("Error fetching user data:", error);
       }
     };
 
     if (learningPlans.length > 0) {
-      fetchUserNames(); // Fetch names only after learning plans are fetched
+      fetchUserData();
     }
   }, [learningPlans]);
 
-  // Handle "Add a learning Plan" button click
   const handleClick = () => {
     navigate("/AddLearningPlans");
   };
@@ -126,18 +128,21 @@ export const LeraningPlansExistingUser = () => {
 
             <div className="flex flex-col gap-8 max-w-4xl mx-auto mt-8">
               {learningPlans.map((item, index) => {
-                const imageUrl = ProfileService.getProfileImageUrl(item.userId);
-                const userName = userNames[item.userId] || "Unknown User"; // Default if userName is not available
+                const userName = userNames[item.userId] || "Unknown User";
+                const userImage = userImages[item.userId] || "/default-avatar.jpg";
+                
                 return (
                   <Card
                     key={index}
                     title={item.planTopic}
                     description={item.description}
-                    author={item.author}
+                    author={userName}
                     cardData={item}
-                    imageUrl={imageUrl}
+                    imageUrl={userImage}
                     userId={item.userId}
-                    userName={userName} // Pass user name
+
+                    userName={userName}
+
                   />
                 );
               })}

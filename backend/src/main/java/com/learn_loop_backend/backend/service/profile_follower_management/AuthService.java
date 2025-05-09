@@ -130,7 +130,7 @@ public class AuthService {
     }
 
     // Update user
-    public User updateUser(String id, RegisterRequestDTO userData) {
+    public User updateUser(String id, UpdateUserRequestDTO userData) {
         User existingUser = getUserById(id);
 
         existingUser.setName(userData.getName());
