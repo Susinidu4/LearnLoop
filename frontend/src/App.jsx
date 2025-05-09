@@ -14,15 +14,13 @@ import { AddPost } from "./pages/PostAndInteraction/AddPost"
 import { UserViewPost } from "./pages/PostAndInteraction/UserViewPost"
 import { HomePost } from "./pages/PostAndInteraction/HomePost";
 import { PrivacyPolicy } from "./pages/Other/PrivacyPolicy";
-import { HomeSignOut } from "./pages/HomeSignOut";
+
 
 //Ishara
 import { LeraningPlansExistingUser } from"./pages/LearningPlans&ProgressTracking/LearningPlansExistingUser";
 import { LearningPlansSelectExcistingUser } from "./pages/LearningPlans&ProgressTracking/LearningPlansSelectExcictingUser";
 import { AddLearningPlans } from "./pages/LearningPlans&ProgressTracking/AddLearningPlans";
 import { Explore } from "./pages/Other/Explore";
-import { LearningPlansSelectUserProfile } from "./pages/LearningPlans&ProgressTracking/LearningPlanSelectUserProfile";
-
 
 
 //yasindu
@@ -53,7 +51,7 @@ function App() {
         <Route path="/userviewpost/:id" element={<UserViewPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
         <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>  
-        <Route path="/homesignout" element={<HomeSignOut/>}/>  
+          
 
         {/* yasindu */}
         <Route path="/userlogin" element={<User_Login/>}/>
@@ -67,9 +65,7 @@ function App() {
         <Route path="/LearningPlansSelectExcistingUser/:userId" element={<LearningPlansSelectExcistingUser/>}/>
         <Route path="/AddLearningPlans" element={<AddLearningPlans/>}/>
         <Route path="/Explore" element={<Explore/>}/>
-        <Route path="/LearningPlanSelectUserProfile/:userId" element={<LearningPlansSelectUserProfile />} />
-
-
+        
      
         
         
