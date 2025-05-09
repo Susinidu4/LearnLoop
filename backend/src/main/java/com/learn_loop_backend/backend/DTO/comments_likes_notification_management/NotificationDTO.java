@@ -3,6 +3,7 @@ package com.learn_loop_backend.backend.DTO.comments_likes_notification_managemen
 import java.time.LocalDateTime;
 
 public class NotificationDTO {
+    private String id;
     private String postId;
     private String receiverUserId;
     private String senderUserId;
@@ -13,8 +14,9 @@ public class NotificationDTO {
 
     public NotificationDTO() {}
 
-    public NotificationDTO(String postId, String receiverUserId, String senderUserId, String type,
+    public NotificationDTO(String id, String postId, String receiverUserId, String senderUserId, String type,
                            String message, String status, LocalDateTime createdAt) {
+        this.id = id;
         this.postId = postId;
         this.receiverUserId = receiverUserId;
         this.senderUserId = senderUserId;
@@ -22,6 +24,14 @@ public class NotificationDTO {
         this.message = message;
         this.status = status;
         this.createdAt = createdAt;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getPostId() {
