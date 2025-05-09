@@ -118,15 +118,19 @@ export function ProfileHeader() {
       {/* Profile stats */}
       <div className="flex justify-center space-x-8 mb-6">
         <div className="flex flex-col items-center">
-          <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
-           <Link to={`/myfollowers`} > <span className="font-bold">{followingCount}</span></Link>
+        <Link to={`/myfollowers`} > 
+        <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
+           <span className="font-bold">{followingCount}</span>
           </div>
+        </Link>
           <span className="text-sm">Followers</span>
         </div>
         <div className="flex flex-col items-center">
+          <Link to={`/myfollowings`} >
           <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
             <span className="font-bold">{followersCount}</span>
           </div>
+          </Link>
           <span className="text-sm">Following</span>
         </div>
         <div className="flex flex-col items-center">
