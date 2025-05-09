@@ -3,6 +3,7 @@ import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import { useNavigate } from "react-router-dom";
 import PostService from "../../service/Post-And-Interaction/PostService";
 import { getUserById } from "../../service/Profile & Followers Management/AuthService";
+import NotificationService from "../../service/Like-Comment-Notification-Management/Notification";
 import axios from "axios";
 
 export const HomePost = () => {
@@ -12,6 +13,7 @@ export const HomePost = () => {
   const [error, setError] = useState(null);
   const [likedStates, setLikedStates] = useState([]); // true or false for each post
   const navigate = useNavigate();
+  const [loggedInUser, setLoggedInUser] = useState(null);
   const currentUserId = JSON.parse(localStorage.getItem("user"))?.id;
 
   useEffect(() => {
@@ -43,6 +45,9 @@ export const HomePost = () => {
         const userDetailsResults = await Promise.all(userDetailsPromises);
         const combinedUserDetails = Object.assign({}, ...userDetailsResults);
         setUserDetails(combinedUserDetails);
+
+        const currentUserDetails = await getUserById(currentUserId);
+        setLoggedInUser(currentUserDetails);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -53,18 +58,16 @@ export const HomePost = () => {
     fetchData();
   }, [currentUserId]);
 
-  // Like/Unlike handler
   const handleLikeClick = async (postId, index) => {
     try {
       const alreadyLiked = likedStates[index];
+      const postOwnerId = posts[index].userId; // Assuming `userId` is the post owner's ID
 
       if (alreadyLiked) {
         // Unlike the post (DELETE)
         const response = await fetch(
           `http://localhost:5000/api/post/${postId}/likes/${currentUserId}`,
-          {
-            method: "DELETE",
-          }
+          { method: "DELETE" }
         );
         if (!response.ok) throw new Error("Failed to unlike post");
 
@@ -108,6 +111,20 @@ export const HomePost = () => {
           updatedPosts[index].likes = [...updatedPosts[index].likes, newLike];
           return updatedPosts;
         });
+
+        if (postOwnerId && postOwnerId !== currentUserId) {
+          // Send notification to post owner if it's not the current user
+          await NotificationService.sendNotification({
+            postId,
+            receiverUserId: postOwnerId,
+            senderUserId: currentUserId,
+            type: "like",
+            message: `${loggedInUser?.name || "Someone"} liked your post!`,
+            status: "unread",
+            createdAt: new Date().toISOString(),
+          });
+          
+        }
       }
     } catch (err) {
       console.error("Error toggling like:", err);
