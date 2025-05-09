@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getUserById } from '../../service/Profile & Followers Management/AuthService';
 import ProfileService from '../../service/Profile & Followers Management/ProfileService';
 import FollowerService from '../../service/Profile & Followers Management/FollowService';
+import { FollowerPostCard } from './FollowerPostCard';
 
 export const FollowerProfile = () => {
     const { id } = useParams();
@@ -39,6 +40,7 @@ export const FollowerProfile = () => {
                 try {
                     const followers = await FollowerService.getFollowers(id);
                     setFollowersCount(followers.length);
+                    console.log('Followers:', followers);
                 } catch (followersError) {
                     console.error('Error fetching followers:', followersError);
                 }
@@ -47,6 +49,7 @@ export const FollowerProfile = () => {
                 try {
                     const following = await FollowerService.getFollowing(id);
                     setFollowingCount(following.length);
+                    console.log('Following:', following);
                 } catch (followingError) {
                     console.error('Error fetching following:', followingError);
                 }
@@ -55,7 +58,6 @@ export const FollowerProfile = () => {
                 try {
                     const followStatus = await FollowerService.checkIsFollowing(id,currentUserId);
                     setIsFollowing(followStatus);
-                    console.log('Follow status:', followStatus);
                 } catch (followStatusError) {
                     console.error('Error checking follow status:', followStatusError);
                 }
@@ -75,11 +77,11 @@ export const FollowerProfile = () => {
     const handleFollowToggle = async () => {
         try {
             if (isFollowing) {
-                await FollowerService.unfollowUser(currentUserId, id);
-                setFollowersCount(prev => prev - 1);
+                await FollowerService.unfollowUser(id,currentUserId);
+                window.location.reload();    
             } else {
-                await FollowerService.followUser(currentUserId, id);
-                setFollowersCount(prev => prev + 1);
+                await FollowerService.followUser(id,currentUserId);
+                window.location.reload();
             }
             setIsFollowing(!isFollowing);
         } catch (error) {
@@ -141,11 +143,11 @@ export const FollowerProfile = () => {
                                 {/* Stats and Follow Button */}
                                 <div className="mt-4 flex flex-wrap items-center gap-4 justify-center sm:justify-start">
                                     <div className="text-center">
-                                        <p className="text-xl font-bold text-gray-900">{followersCount}</p>
+                                        <p className="text-xl font-bold text-gray-900">{followingCount}</p>
                                         <p className="text-sm text-gray-500">Followers</p>
                                     </div>
                                     <div className="text-center">
-                                        <p className="text-xl font-bold text-gray-900">{followingCount}</p>
+                                        <p className="text-xl font-bold text-gray-900">{followersCount}</p>
                                         <p className="text-sm text-gray-500">Following</p>
                                     </div>
                                     <div className="text-center">
@@ -171,12 +173,9 @@ export const FollowerProfile = () => {
                         </div>
                     </div>
                     
-                    {/* Additional sections */}
+                    {/* Post sections */}
                     <div className="border-t border-gray-200 px-6 py-4">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-3">About</h2>
-                        <p className="text-gray-600">
-                            {user.about || 'No information available'}
-                        </p>
+                        <FollowerPostCard uid={id} />
                     </div>
                 </div>
             </div>

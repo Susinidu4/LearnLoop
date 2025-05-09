@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import FollowerService from '../../service/Profile & Followers Management/FollowService';
 import ProfileService from '../../service/Profile & Followers Management/ProfileService';
 import { getUserById } from '../../service/Profile & Followers Management/AuthService';
-import Swal from 'sweetalert2'
+import { Link } from 'react-router-dom';
 
 export const MyFollowings = () => {
     const myData = JSON.parse(localStorage.getItem('user')) || null;
@@ -110,7 +110,8 @@ export const MyFollowings = () => {
             ) : (
                 <div className="space-y-4">
                     {followings.map((following) => (
-                        <div key={following._id} className="flex items-center justify-between bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow">
+                        <Link to={`/followerprofile/${following.followerId}`}>
+                            <div key={following._id} className="flex items-center justify-between bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow">
                             <div className="flex items-center">
                                 <div className="flex-shrink-0 mr-4">
                                     {following.imageUrl ? (
@@ -158,6 +159,7 @@ export const MyFollowings = () => {
                                 )}
                             </button>
                         </div>
+                        </Link>
                     ))}
                 </div>
             )}
