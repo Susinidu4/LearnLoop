@@ -28,6 +28,7 @@ const SidebarIcon = ({ icon, onClick, isActive, title }) => {
 };
 
 export const SideBar = () => {
+  const user = JSON.parse(localStorage.getItem("user"));
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -85,24 +86,29 @@ export const SideBar = () => {
           isActive={location.pathname === "/Explore"}
           title="Explore"
         />
-        <SidebarIcon
-          icon={<FaPlus size={20} />}
-          onClick={() => navigate("/addpost")}
-          isActive={location.pathname === "/addpost"}
-          title="Create"
-        />
-        <SidebarIcon
-          icon={<GiRead size={20} />}
-          onClick={() => navigate("/LeaningPlansExistingUser")}
-          isActive={location.pathname === "/LeaningPlansExistingUser"}
-          title="Learning Plans"
-        />
-        <SidebarIcon
-          icon={<FaUsers size={20} />}
-          onClick={() => navigate("/users")}
-          isActive={location.pathname === "/users"}
-          title="Users"
-        />
+        
+        {user && (
+          <>
+            <SidebarIcon
+              icon={<FaPlus size={20} />}
+              onClick={() => navigate("/addpost")}
+              isActive={location.pathname === "/addpost"}
+              title="Create"
+            />
+            <SidebarIcon
+              icon={<GiRead size={20} />}
+              onClick={() => navigate("/LeaningPlansExistingUser")}
+              isActive={location.pathname === "/LeaningPlansExistingUser"}
+              title="Learning Plans"
+            />
+            <SidebarIcon
+              icon={<FaUsers size={20} />}
+              onClick={() => navigate("/users")}
+              isActive={location.pathname === "/users"}
+              title="Users"
+            />
+          </>
+        )}
       </div>
 
       {/* Bottom Menu - stays at bottom */}

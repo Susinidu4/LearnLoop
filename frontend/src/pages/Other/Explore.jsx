@@ -6,6 +6,7 @@ import { FaSearch } from "react-icons/fa";
 import explore from "../../assets/images/explore.png";
 import PostService from "../../service/Post-And-Interaction/PostService";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { Header2 } from "../../components/Header2";
 
 export const Explore = () => {
   const [posts, setPosts] = useState([]);
@@ -84,7 +85,7 @@ export const Explore = () => {
       <div className="flex">
         <SideBar />
         <div className="flex flex-col w-full ml-16 bg-[#F7EDE5] min-h-screen">
-          <Header />
+          <Header2 />
           <div className="flex justify-center items-center h-full">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#402006]"></div>
           </div>
