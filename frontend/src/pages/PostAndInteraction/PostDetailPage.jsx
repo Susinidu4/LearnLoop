@@ -7,6 +7,7 @@ import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import { MdEdit, MdDelete } from "react-icons/md";
 import NotificationService from "../../service/Like-Comment-Notification-Management/Notification";
+import ProfileService from "../../service/Profile & Followers Management/ProfileService";
 
 export const PostDetailPage = () => {
   const { postId } = useParams();
@@ -18,6 +19,7 @@ export const PostDetailPage = () => {
   const [newComment, setNewComment] = useState("");
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedCommentContent, setEditedCommentContent] = useState("");
+  const [profileImages, setProfileImages] = useState({});
 
   // Safely retrieve the logged-in user and their ID
   const loggedInUser = JSON.parse(localStorage.getItem("user"));
@@ -28,7 +30,20 @@ export const PostDetailPage = () => {
       try {
         const fetchedPost = await PostService.getPostById(postId);
         setPost(fetchedPost);
-        setUser(await getUserById(fetchedPost.userId));
+
+        // Get user details and profile image
+        const userData = await getUserById(fetchedPost.userId);
+        setUser(userData);
+
+        // Fetch profile image
+        const imageUrl = await ProfileService.getProfileImage(
+          fetchedPost.userId
+        );
+        setProfileImages((prev) => ({
+          ...prev,
+          [fetchedPost.userId]: imageUrl,
+        }));
+
         setComments(fetchedPost.comments || []);
       } catch (err) {
         setError("Failed to load post details");
@@ -43,7 +58,6 @@ export const PostDetailPage = () => {
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
     console.log("Sender ID:", loggedInUserId); // Log senderId
-  
 
     try {
       const response = await fetch(
@@ -146,7 +160,19 @@ export const PostDetailPage = () => {
               <div className="bg-[#CFB397] shadow-md rounded-lg w-full max-w-4xl mx-auto mb-8 p-8">
                 <div className="flex justify-between items-start mb-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-full bg-[#8B6F5A]"></div>
+                    <div className="w-12 h-12 rounded-full bg-[#8B6F5A] overflow-hidden">
+                      {profileImages[post.userId] ? (
+                        <img
+                          src={profileImages[post.userId]}
+                          alt={`${user.name}'s profile`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-white">
+                          {user.name ? user.name.charAt(0).toUpperCase() : "U"}
+                        </div>
+                      )}
+                    </div>
                     <h1 className="text-lg font-semibold text-gray-800">
                       {user.name || `User ${post.userId}`}
                     </h1>
@@ -301,7 +327,19 @@ export const PostDetailPage = () => {
                   </div>
 
                   <div className="flex items-center gap-3 mt-4">
-                    <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
+                     <div className="w-10 h-10 rounded-full bg-[#8B6F5A] overflow-hidden">
+    {profileImages[loggedInUserId] ? (
+      <img 
+        src={profileImages[loggedInUserId]} 
+        alt={`Your profile`}
+        className="w-full h-full object-cover"
+      />
+    ) : (
+      <div className="w-full h-full flex items-center justify-center text-white">
+        {loggedInUser?.name ? loggedInUser.name.charAt(0).toUpperCase() : 'Y'}
+      </div>
+    )}
+  </div>
                     <input
                       type="text"
                       value={newComment}
