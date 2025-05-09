@@ -26,6 +26,16 @@ const NotificationService = {
       return [];
     }
   },
+
+  // Delete notification by ID
+  deleteNotification: async (notificationId) => {
+    try {
+      await axios.delete(`${API_URL}/${notificationId}`);  // DELETE request to backend
+    } catch (error) {
+      throw new Error('Error deleting notification');
+    }
+  },
+
 };
 
 export default NotificationService;
