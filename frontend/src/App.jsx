@@ -32,6 +32,7 @@ import { PostsGallery } from "./pages/Other/PostsGallery";
 import { MyFollowers } from "./pages/Profile & Followers Management/MyFollowers";
 import { MyFollowings } from "./pages/Profile & Followers Management/MyFollowings";
 import { UserUpdatePage } from "./pages/Profile & Followers Management/UserUpdatePage";
+import { FollowerProfile } from "./pages/Profile & Followers Management/FollowerProfile";
 
 
 
@@ -64,6 +65,7 @@ function App() {
         <Route path="/myfollowers" element={<MyFollowers/>}/>
         <Route path="/myfollowings" element={<MyFollowings/>}/>
         <Route path="/updateuser" element={<UserUpdatePage/>}/>
+        <Route path="/followerprofile/:id" element={<FollowerProfile/>}/>
         
         {/* Ishara */}
         <Route path="/LeaningPlansExistingUser" element={<LeraningPlansExistingUser/>}/>

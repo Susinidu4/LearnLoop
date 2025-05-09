@@ -79,7 +79,7 @@ public class AuthController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody RegisterRequestDTO userData) {
+    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody UpdateUserRequestDTO userData) {
         try {
             User updatedUser = authService.updateUser(id, userData);
             return ResponseEntity.ok(updatedUser);

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import FollowerService from '../../service/Profile & Followers Management/FollowService';
 import ProfileService from '../../service/Profile & Followers Management/ProfileService';
 import { getUserById } from '../../service/Profile & Followers Management/AuthService';
+import { Link } from 'react-router-dom';
 
 export const MyFollowers = () => {
     const myData = JSON.parse(localStorage.getItem('user')) || null;
@@ -84,7 +85,8 @@ export const MyFollowers = () => {
             ) : (
                 <div className="space-y-4">
                     {followers.map((follower) => (
-                        <div key={follower._id} className="flex items-center bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow">
+                        <Link to={`/followerprofile/${follower.followINGId}`}>
+                            <div key={follower._id} className="flex items-center bg-white rounded-lg shadow p-4 hover:shadow-md transition-shadow">
                             <div className="flex-shrink-0 mr-4">
                                 {follower.imageUrl ? (
                                     <img
@@ -109,6 +111,7 @@ export const MyFollowers = () => {
                                 <p className="text-sm text-gray-500">{follower.email}</p>
                             </div>
                         </div>
+                        </Link>
                     ))}
                 </div>
             )}
