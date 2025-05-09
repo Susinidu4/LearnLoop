@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import FollowerService from '../../service/Profile & Followers Management/FollowService';
 import ProfileService from '../../service/Profile & Followers Management/ProfileService';
 import { getUserById } from '../../service/Profile & Followers Management/AuthService';
+import Swal from 'sweetalert2'
 
 export const MyFollowings = () => {
     const myData = JSON.parse(localStorage.getItem('user')) || null;
@@ -69,6 +70,8 @@ export const MyFollowings = () => {
             setFollowings(prevFollowings => 
                 prevFollowings.filter(following => following.followINGId !== followerId)
             );
+
+
             
         } catch (error) {
             console.error('Error unfollowing user:', error);
