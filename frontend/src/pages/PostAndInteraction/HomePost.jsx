@@ -4,14 +4,14 @@ import { useNavigate } from "react-router-dom";
 import PostService from "../../service/Post-And-Interaction/PostService";
 import { getUserById } from "../../service/Profile & Followers Management/AuthService";
 import NotificationService from "../../service/Like-Comment-Notification-Management/Notification";
-import axios from "axios";
+import ProfileService from "../../service/Profile & Followers Management/ProfileService";
 
 export const HomePost = () => {
   const [posts, setPosts] = useState([]);
   const [userDetails, setUserDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [likedStates, setLikedStates] = useState([]); // true or false for each post
+  const [likedStates, setLikedStates] = useState([]);
   const navigate = useNavigate();
   const [loggedInUser, setLoggedInUser] = useState(null);
   const currentUserId = JSON.parse(localStorage.getItem("user"))?.id;
@@ -28,17 +28,31 @@ export const HomePost = () => {
         );
         setLikedStates(likedStatusArray);
 
-        // Get user names for posts
+        // Get user details and profile images
         const uniqueUserIds = [
           ...new Set(fetchedPosts.map((post) => post.userId)),
         ];
+        
         const userDetailsPromises = uniqueUserIds.map(async (userId) => {
           try {
             const user = await getUserById(userId);
-            return { [userId]: user };
+            const profileImage = await ProfileService.getProfileImage(userId);
+            return { 
+              [userId]: {
+                ...user,
+                profileImage,
+                initials: user.name.split(' ').map(n => n[0]).join('').toUpperCase()
+              }
+            };
           } catch (error) {
             console.error(`Error fetching user ${userId}:`, error);
-            return { [userId]: { name: `User ${userId}` } };
+            return { 
+              [userId]: { 
+                name: `User ${userId}`,
+                profileImage: null,
+                initials: 'U' 
+              } 
+            };
           }
         });
 
@@ -46,6 +60,7 @@ export const HomePost = () => {
         const combinedUserDetails = Object.assign({}, ...userDetailsResults);
         setUserDetails(combinedUserDetails);
 
+        // Get current user details
         const currentUserDetails = await getUserById(currentUserId);
         setLoggedInUser(currentUserDetails);
       } catch (err) {
@@ -61,10 +76,10 @@ export const HomePost = () => {
   const handleLikeClick = async (postId, index) => {
     try {
       const alreadyLiked = likedStates[index];
-      const postOwnerId = posts[index].userId; // Assuming `userId` is the post owner's ID
+      const postOwnerId = posts[index].userId;
 
       if (alreadyLiked) {
-        // Unlike the post (DELETE)
+        // Unlike the post
         const response = await fetch(
           `http://localhost:5000/api/post/${postId}/likes/${currentUserId}`,
           { method: "DELETE" }
@@ -86,7 +101,7 @@ export const HomePost = () => {
           return updatedPosts;
         });
       } else {
-        // Like the post (POST)
+        // Like the post
         const response = await fetch(
           `http://localhost:5000/api/post/${postId}/likes`,
           {
@@ -112,8 +127,8 @@ export const HomePost = () => {
           return updatedPosts;
         });
 
+        // Send notification if not the current user's post
         if (postOwnerId && postOwnerId !== currentUserId) {
-          // Send notification to post owner if it's not the current user
           await NotificationService.sendNotification({
             postId,
             receiverUserId: postOwnerId,
@@ -123,7 +138,6 @@ export const HomePost = () => {
             status: "unread",
             createdAt: new Date().toISOString(),
           });
-          
         }
       }
     } catch (err) {
@@ -131,25 +145,24 @@ export const HomePost = () => {
     }
   };
 
-  // Updated handleCommentClick
   const handleCommentClick = (postId) => {
     if (postId) {
-      navigate(`/postdetails/${postId}`); // Navigate to the post details page
+      navigate(`/postdetails/${postId}`);
     } else {
-      console.error("Invalid postId", postId); // Debugging
+      console.error("Invalid postId", postId);
     }
   };
 
-  if (loading)
-    return <div className="text-center mt-20 text-lg">Loading posts...</div>;
-  if (error)
-    return <div className="text-center mt-20 text-red-600">{error}</div>;
+  if (loading) return <div className="text-center mt-20 text-lg">Loading posts...</div>;
+  if (error) return <div className="text-center mt-20 text-red-600">{error}</div>;
 
   return (
     <div className={`${GlobalStyle.countBarSubTopicContainer} pt-4`}>
       {posts.map((post, index) => {
         const user = userDetails[post.userId] || {
           name: `User ${post.userId}`,
+          profileImage: null,
+          initials: 'U'
         };
 
         return (
@@ -160,7 +173,21 @@ export const HomePost = () => {
             {/* Post Header */}
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-[#8B6F5A]"></div>
+                {user.profileImage ? (
+                  <img 
+                    src={user.profileImage} 
+                    alt="Profile" 
+                    className="w-12 h-12 rounded-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '';
+                    }}
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-[#8B6F5A] flex items-center justify-center text-white font-semibold">
+                    {user.initials}
+                  </div>
+                )}
                 <h1 className="text-lg font-semibold text-gray-800">
                   {user.name}
                 </h1>
@@ -194,8 +221,8 @@ export const HomePost = () => {
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill={likedStates[index] ? "red" : "none"} // Red fill if liked
-                  stroke={likedStates[index] ? "none" : "currentColor"} // Outline if not liked
+                  fill={likedStates[index] ? "red" : "none"}
+                  stroke={likedStates[index] ? "none" : "currentColor"}
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   className="w-7 h-7 transition-all duration-300 ease-in-out"
@@ -212,7 +239,7 @@ export const HomePost = () => {
               {/* Comment Button */}
               <div
                 className="flex items-center gap-2"
-                onClick={() => handleCommentClick(post._id || post.id)} // Correctly pass the post ID
+                onClick={() => handleCommentClick(post._id || post.id)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
