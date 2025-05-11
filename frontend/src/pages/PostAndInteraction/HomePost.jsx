@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import PostService from "../../service/Post-And-Interaction/PostService";
 import { getUserById } from "../../service/Profile & Followers Management/AuthService";
 import NotificationService from "../../service/Like-Comment-Notification-Management/Notification";
-import axios from "axios";
+import ProfileService from "../../service/Profile & Followers Management/ProfileService";
 
 export const HomePost = () => {
   const [posts, setPosts] = useState([]);
@@ -28,17 +28,29 @@ export const HomePost = () => {
         );
         setLikedStates(likedStatusArray);
 
-        // Get user names for posts
+        // Get user details and profile images for posts
         const uniqueUserIds = [
           ...new Set(fetchedPosts.map((post) => post.userId)),
         ];
         const userDetailsPromises = uniqueUserIds.map(async (userId) => {
           try {
             const user = await getUserById(userId);
-            return { [userId]: user };
+            const profileImage = await ProfileService.getProfileImage(userId);
+            return {
+              [userId]: {
+                ...user,
+                profileImage: profileImage || null,
+              },
+            };
+            
           } catch (error) {
             console.error(`Error fetching user ${userId}:`, error);
-            return { [userId]: { name: `User ${userId}` } };
+            return {
+              [userId]: {
+                name: `User ${userId}`,
+                profileImage: null,
+              },
+            };
           }
         });
 
@@ -123,7 +135,6 @@ export const HomePost = () => {
             status: "unread",
             createdAt: new Date().toISOString(),
           });
-          
         }
       }
     } catch (err) {
@@ -160,7 +171,19 @@ export const HomePost = () => {
             {/* Post Header */}
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-[#8B6F5A]"></div>
+                <div className="w-12 h-12 rounded-full bg-[#8B6F5A] overflow-hidden">
+                  {user.profileImage ? (
+                    <img
+                      src={user.profileImage}
+                      alt={`${user.name}'s profile`}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center text-white">
+                      {user.name.charAt(0).toUpperCase()}
+                    </div>
+                  )}
+                </div>
                 <h1 className="text-lg font-semibold text-gray-800">
                   {user.name}
                 </h1>
