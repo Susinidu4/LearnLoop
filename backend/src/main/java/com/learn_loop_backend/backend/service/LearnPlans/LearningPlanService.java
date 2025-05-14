@@ -89,6 +89,31 @@ public class LearningPlanService {
         return repository.save(existingPlan);
     }
 
+    public LearningPlan updateStepStatus(String planId, int stepNumber, String status) {
+        Optional<LearningPlan> optionalPlan = repository.findById(planId);
+        if (optionalPlan.isEmpty()) {
+            throw new RuntimeException("Learning plan not found with id: " + planId);
+        }
+
+        LearningPlan plan = optionalPlan.get();
+
+        boolean updated = false;
+        for (var step : plan.getSteps()) {
+            if (step.getStepNumber() == stepNumber) {
+                step.setStatus(status);
+                updated = true;
+                break;
+            }
+        }
+
+        if (!updated) {
+            throw new RuntimeException("Step not found with step number: " + stepNumber);
+        }
+
+        plan.setUpdatedAt(new Date());
+        return repository.save(plan);
+    }
+
     // CONVERT LearningPlan to DTO
     public LearningPlansDTO convertToDTO(LearningPlan plan) {
         LearningPlansDTO dto = new LearningPlansDTO();

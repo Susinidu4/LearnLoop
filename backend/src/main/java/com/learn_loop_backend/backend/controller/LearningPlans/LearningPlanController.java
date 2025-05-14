@@ -61,7 +61,7 @@ public class LearningPlanController {
         return ResponseEntity.ok(learningPlansDTOList);
     }
 
-    // ✅ GET one learning plan by its ID
+    // GET one learning plan by its ID
     @GetMapping("/{id}")
     public ResponseEntity<LearningPlansDTO> getLearningPlanById(@PathVariable String id) {
         Optional<LearningPlan> optionalPlan = service.getLearningPlanById(id);
@@ -81,6 +81,22 @@ public class LearningPlanController {
             return ResponseEntity.ok("Learning plan deleted successfully.");
         } catch (RuntimeException e) {
             return ResponseEntity.status(404).body("Learning plan not found with id: " + id);
+        }
+    }
+
+    @PutMapping("/{planId}/steps/{stepNumber}/status")
+    public ResponseEntity<?> updateStepStatus(
+            @PathVariable String planId,
+            @PathVariable int stepNumber,
+            @RequestParam String status) {
+
+        try {
+            LearningPlan updatedPlan = service.updateStepStatus(planId, stepNumber, status);
+            return ResponseEntity.ok().body("Step status updated successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to update step status: " + e.getMessage());
         }
     }
 
