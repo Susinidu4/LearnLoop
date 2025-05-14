@@ -3,30 +3,70 @@ import { useParams } from "react-router-dom";
 import { Header } from "../components/Header";
 import { SideBar } from "../components/SideBar";
 import GlobalStyle from "../assets/prototype/GlobalStyle/";
+import { getUserById } from "../service/Profile & Followers Management/AuthService"
 
 export function LearningPlansDetailCard() {
   const { id } = useParams();
   const [plan, setPlan] = useState(null);
+  const [createdByName, setCreatedByName] = useState("Loading...");
 
   useEffect(() => {
-    const fetchPlan = async () => {
+    const fetchPlanAndUser = async () => {
       try {
         const res = await fetch(
           `http://localhost:5000/api/learning-plans/${id}`
         );
-        if (res.ok) {
-          const data = await res.json();
-          setPlan(data);
-        } else {
+        if (!res.ok) {
           console.error("Failed to fetch plan", res.status);
+          return;
+        }
+
+        const data = await res.json();
+        setPlan(data);
+
+        // Fetch the creator's name using plan.createdBy
+        if (data.userId) {
+          try {
+            const user = await getUserById(data.userId);
+            setCreatedByName(user.name || "Unknown User");
+          } catch (userErr) {
+            console.error("Failed to fetch user", userErr);
+            setCreatedByName("Unknown User");
+          }
+        } else {
+          setCreatedByName("Unknown User");
         }
       } catch (err) {
         console.error("Fetch error", err);
       }
     };
 
-    fetchPlan();
+    fetchPlanAndUser();
   }, [id]);
+
+  const handleMarkCompleted = async (stepNumber) => {
+    try {
+      const res = await fetch(
+        `http://localhost:5000/api/learning-plans/${id}/steps/${stepNumber}/status?status=completed`,
+        {
+          method: "PUT",
+        }
+      );
+
+      if (res.ok) {
+        const updatedSteps = plan.steps.map((step) =>
+          step.stepNumber === stepNumber
+            ? { ...step, status: "completed" }
+            : step
+        );
+        setPlan({ ...plan, steps: updatedSteps });
+      } else {
+        console.error("Failed to update step status");
+      }
+    } catch (error) {
+      console.error("Error updating step status", error);
+    }
+  };
 
   if (!plan) {
     return <div className="text-center py-10">Loading...</div>;
@@ -48,7 +88,7 @@ export function LearningPlansDetailCard() {
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 rounded-full bg-[#9C8259]" />
                   <div>
-                    <h2 className="font-bold text-base">Kavishka Perera</h2>
+                    <h2 className="font-bold text-base">{createdByName}</h2>
                     <p className="text-sm text-gray-700 font-semibold">
                       {plan.planTopic}
                     </p>
@@ -76,7 +116,7 @@ export function LearningPlansDetailCard() {
               </div>
 
               {/* Learning Steps */}
-              <div className="space-y-4">
+              <div className="space-y-4 pb-10">
                 {plan.steps?.map((step, index) => (
                   <div
                     key={index}
@@ -101,7 +141,10 @@ export function LearningPlansDetailCard() {
                     <div className="text-right space-y-2 text-sm font-semibold">
                       <div>{step.completionDuration}</div>
                       {step.status === "not completed" ? (
-                        <button className="text-[10px] bg-[#3B2B1D] text-white px-4 py-1 rounded-full hover:opacity-90 transition">
+                        <button
+                          className="text-[10px] bg-[#3B2B1D] text-white px-4 py-1 rounded-full hover:opacity-90 transition"
+                          onClick={() => handleMarkCompleted(step.stepNumber)}
+                        >
                           Mark as Completed
                         </button>
                       ) : (
