@@ -44,6 +44,8 @@ public class LearningPlan {
 
         private String resourceLink;
 
+        private String status = "not completed";
+
         public int getStepNumber() {
             return stepNumber;
         }
@@ -74,6 +76,14 @@ public class LearningPlan {
 
         public void setCompletionDuration(String completionDuration) {
             this.completionDuration = completionDuration;
+        }
+
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
         }
 
         private String completionDuration;

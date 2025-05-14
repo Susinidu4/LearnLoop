@@ -24,6 +24,9 @@ public class LearningPlansDTO {
     public static class StepDTO {
         private int stepNumber;
         private String topic;
+        private String resourceLink;
+        private String completionDuration;
+        private String status = "not completed";
 
         public int getStepNumber() {
             return stepNumber;
@@ -57,8 +60,14 @@ public class LearningPlansDTO {
             this.completionDuration = completionDuration;
         }
 
-        private String resourceLink;
-        private String completionDuration;
+        public String getStatus() {
+            return status;
+        }
+
+        public void setStatus(String status) {
+            this.status = status;
+        }
+
     }
 
     public String getId() {
