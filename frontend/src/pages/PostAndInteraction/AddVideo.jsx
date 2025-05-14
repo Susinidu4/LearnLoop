@@ -170,28 +170,7 @@ export const AddVideo = () => {
             )}
           </div>
 
-          {/* Video List Section */}
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-semibold text-gray-800">Your Videos</h2>
-              <span className={`inline-block px-2 py-1 text-xs font-medium rounded-full ${
-                refreshVideos ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-              }`}>
-                {refreshVideos ? 'New upload!' : 'Ready for upload'}
-              </span>
-            </div>
-            
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-              <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z" />
-              </svg>
-              <h3 className="mt-2 text-sm font-medium text-gray-900">No videos uploaded yet</h3>
-              <p className="mt-1 text-sm text-gray-500">Upload your first video using the panel on the left</p>
-              <div className="mt-6">
-                <p className="text-xs text-gray-500">User ID: {user.id}</p>
-              </div>
-            </div>
-          </div>
+         
         </div>
       </main>
     </div>
