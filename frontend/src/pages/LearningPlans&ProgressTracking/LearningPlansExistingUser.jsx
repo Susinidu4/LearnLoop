@@ -8,7 +8,7 @@ import { getUserById } from "../../service/Profile & Followers Management/AuthSe
 
 
 // Card Component
-const Card = ({ title, description, author, cardData, imageUrl, userId, userName }) => {
+const Card = ({ title, description, cardData, imageUrl, userName }) => {
   return (
     <Link
       to={{
@@ -140,7 +140,6 @@ export const LeraningPlansExistingUser = () => {
                     cardData={item}
                     imageUrl={userImage}
                     userId={item.userId}
-
                     userName={userName}
 
                   />
