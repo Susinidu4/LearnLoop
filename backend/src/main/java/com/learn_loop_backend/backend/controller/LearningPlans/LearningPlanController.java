@@ -61,6 +61,18 @@ public class LearningPlanController {
         return ResponseEntity.ok(learningPlansDTOList);
     }
 
+    // ✅ GET one learning plan by its ID
+    @GetMapping("/{id}")
+    public ResponseEntity<LearningPlansDTO> getLearningPlanById(@PathVariable String id) {
+        Optional<LearningPlan> optionalPlan = service.getLearningPlanById(id);
+        if (optionalPlan.isPresent()) {
+            LearningPlansDTO dto = service.convertToDTO(optionalPlan.get());
+            return ResponseEntity.ok(dto);
+        } else {
+            return ResponseEntity.status(404).body(null);
+        }
+    }
+
     // DELETE Learning Plan by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteLearningPlan(@PathVariable String id) {
@@ -71,6 +83,22 @@ public class LearningPlanController {
             return ResponseEntity.status(404).body("Learning plan not found with id: " + id);
         }
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateLearningPlan(
+            @PathVariable String id,
+            @RequestBody LearningPlan updatedPlan) {
+        try {
+            LearningPlan savedPlan = service.updateLearningPlan(id, updatedPlan);
+            LearningPlansDTO dto = service.convertToDTO(savedPlan);
+            return ResponseEntity.ok(dto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body("Learning plan not found with id: " + id);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to update learning plan: " + e.getMessage());
+        }
+    }
+
 
 }
 

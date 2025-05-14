@@ -9,6 +9,7 @@ import { Notification } from "./pages/Comments,Likes & Notification Management/N
 import { FAQ } from "./pages/Other/FAQ";
 import { AboutUs } from "./pages/Other/AboutUs";
 import { PostDetailPage } from "./pages/PostAndInteraction/PostDetailPage"; 
+import { LearningPlansDetailCard } from "./components/LearningPlansDetailCard";
 
 //Oshi
 import { AddPost } from "./pages/PostAndInteraction/AddPost"
@@ -49,6 +50,9 @@ function App() {
         <Route path="/FAQ" element={<FAQ/>}/>
         <Route path="/aboutUs" element={<AboutUs/>}/>
         <Route path="/postdetails/:postId" element={<PostDetailPage />} />
+        <Route path="/learning-plan/:id" element={<LearningPlansDetailCard />} />
+
+        
 
         {/* oshini */}
         <Route path="/addpost" element={<AddPost/>}/>

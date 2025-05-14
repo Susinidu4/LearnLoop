@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cloudinary.utils.ObjectUtils;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,6 +54,11 @@ public class LearningPlanService {
         return learningPlans.stream().map(this::convertToDTO).collect(Collectors.toList());
     }
 
+    // READ by Learning plans ID
+    public Optional<LearningPlan> getLearningPlanById(String id) {
+        return repository.findById(id);
+    }
+
     // DELETE by id
     public void deleteLearningPlan(String id) {
         Optional<LearningPlan> plan = repository.findById(id);
@@ -61,6 +67,26 @@ public class LearningPlanService {
         } else {
             throw new RuntimeException("Learning plan not found with id: " + id);
         }
+    }
+
+    // Update by id
+    public LearningPlan updateLearningPlan(String id, LearningPlan updatedPlan) {
+        Optional<LearningPlan> existingOptional = repository.findById(id);
+        if (existingOptional.isEmpty()) {
+            throw new RuntimeException("Learning plan not found with id: " + id);
+        }
+
+        LearningPlan existingPlan = existingOptional.get();
+
+        // Update fields
+        existingPlan.setPlanTopic(updatedPlan.getPlanTopic());
+        existingPlan.setDescription(updatedPlan.getDescription());
+        existingPlan.setStepCount(updatedPlan.getStepCount());
+        existingPlan.setCompletionDuration(updatedPlan.getCompletionDuration());
+        existingPlan.setSteps(updatedPlan.getSteps());
+        existingPlan.setUpdatedAt(new Date());
+
+        return repository.save(existingPlan);
     }
 
     // CONVERT LearningPlan to DTO
@@ -83,6 +109,7 @@ public class LearningPlanService {
             stepDTO.setTopic(step.getTopic());
             stepDTO.setResourceLink(step.getResourceLink());
             stepDTO.setCompletionDuration(step.getCompletionDuration());
+            stepDTO.setStatus(step.getStatus());
             return stepDTO;
         }).collect(Collectors.toList()));
 
