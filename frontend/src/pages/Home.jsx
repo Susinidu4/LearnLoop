@@ -25,8 +25,6 @@ export const Home = () => {
               <FaSearch className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-600" />
             </div>
 
-            {/* <h1 className={GlobalStyle.headingLarge}></h1> */}
-            {/* Your content goes here */}
             <HomePost/>
 
           </main>
