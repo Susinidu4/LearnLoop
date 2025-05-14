@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"; 
+import React, { useEffect, useState } from "react";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
@@ -13,7 +13,8 @@ export const Notification = () => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const fetchedNotifications = await NotificationService.getUserNotifications(receiverUserId);
+        const fetchedNotifications =
+          await NotificationService.getUserNotifications(receiverUserId);
         setNotifications(fetchedNotifications);
       } catch (error) {
         console.error("Error fetching notifications:", error);
@@ -26,7 +27,9 @@ export const Notification = () => {
   // Delete a notification by ID
   const deleteNotification = async (notificationId) => {
     try {
-      const response = await NotificationService.deleteNotification(notificationId);
+      const response = await NotificationService.deleteNotification(
+        notificationId
+      );
       // Since your backend returns 200 without data, we don’t need to check response.status
       setNotifications((prev) =>
         prev.filter((notification) => notification.id !== notificationId)
@@ -36,7 +39,7 @@ export const Notification = () => {
     }
   };
 
-  const NotificationCard = ({ senderName, action, time, notificationId }) => (
+  const NotificationCard = ({ senderName,  date, time, notificationId }) => (
     <div className={`${GlobalStyle.caseCountBar} m-2`}>
       <div className="flex items-center justify-between p-1">
         <div className="flex items-center gap-4">
@@ -48,7 +51,8 @@ export const Notification = () => {
           </p>
         </div>
         <div className="flex items-center space-x-3">
-          <span className="text-sm">{time}</span>
+          <span className="text-sm text-gray-600">{date}</span>
+          <span className="text-sm text-gray-600">{time}</span>
           <div
             className="bg-[#AE8456] rounded-full p-1 hover:bg-[#543310] transition-colors duration-200 cursor-pointer"
             onClick={() => deleteNotification(notificationId)}
@@ -65,7 +69,9 @@ export const Notification = () => {
       <SideBar />
       <div className="flex flex-col w-full ml-16">
         <Header />
-        <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
+        <div
+          className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}
+        >
           <main className="p-6">
             <div className={`${GlobalStyle.cardContainer} w-300 ml-auto`}>
               <div className="h-[550px] overflow-y-auto pr-1 pl-10 scrollbar-thin scrollbar-thumb-[#5e4123] scrollbar-track-transparent">
@@ -74,12 +80,25 @@ export const Notification = () => {
                     <NotificationCard
                       key={note.id}
                       senderName={note.message}
-                      time={new Date(note.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                      date={new Date(note.createdAt).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        }
+                      )}
+                      time={new Date(note.createdAt).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
                       notificationId={note.id}
                     />
                   ))
                 ) : (
-                  <p className="text-center text-gray-600 mt-10">No notifications available.</p>
+                  <p className="text-center text-gray-600 mt-10">
+                    No notifications available.
+                  </p>
                 )}
               </div>
               <img

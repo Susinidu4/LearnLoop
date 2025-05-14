@@ -87,7 +87,7 @@ export const PostDetailPage = () => {
             type: "COMMENT",
             message: `${
               loggedInUser?.name || "Someone"
-            } commented on your post`,
+            } commented on your post!`,
           });
         }
       } else {
@@ -327,19 +327,21 @@ export const PostDetailPage = () => {
                   </div>
 
                   <div className="flex items-center gap-3 mt-4">
-                     <div className="w-10 h-10 rounded-full bg-[#8B6F5A] overflow-hidden">
-    {profileImages[loggedInUserId] ? (
-      <img 
-        src={profileImages[loggedInUserId]} 
-        alt={`Your profile`}
-        className="w-full h-full object-cover"
-      />
-    ) : (
-      <div className="w-full h-full flex items-center justify-center text-white">
-        {loggedInUser?.name ? loggedInUser.name.charAt(0).toUpperCase() : 'Y'}
-      </div>
-    )}
-  </div>
+                    <div className="w-10 h-10 rounded-full bg-[#8B6F5A] overflow-hidden">
+                      {profileImages[loggedInUserId] ? (
+                        <img
+                          src={profileImages[loggedInUserId]}
+                          alt={`Your profile`}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-white">
+                          {loggedInUser?.name
+                            ? loggedInUser.name.charAt(0).toUpperCase()
+                            : "Y"}
+                        </div>
+                      )}
+                    </div>
                     <input
                       type="text"
                       value={newComment}
