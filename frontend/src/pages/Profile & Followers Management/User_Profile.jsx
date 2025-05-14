@@ -7,6 +7,7 @@ import { LearningProgress } from '../../components/LearningProgress'
 import { SideBar } from '../../components/SideBar'
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import { MyPostCard } from '../../components/MyPostCard'
+import { MyVideos } from '../PostAndInteraction/MyVideos'
 
 
 export const User_Profile = () => {
@@ -27,6 +28,9 @@ export const User_Profile = () => {
                 title="Boost Your Skills : Explore and Learn more coding skills"
                 author="Kavishka Perera"
               />
+            )}
+            {activeTab === 'Videos' && (
+             <MyVideos/>
             )}
             {activeTab === 'Learning Plans' && (
               <LearningPlansCard/>

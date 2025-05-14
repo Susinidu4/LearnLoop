@@ -8,7 +8,7 @@ import { MdInfo, MdPrivacyTip } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
 import GlobalStyle from "../assets/prototype/GlobalStyle";
 
-const SidebarIcon = ({ icon, onClick, isActive, title }) => {
+const SidebarIcon = ({ icon, onClick, isActive, title, showDropdown, children }) => {
   return (
     <div className="relative group">
       <div
@@ -23,6 +23,11 @@ const SidebarIcon = ({ icon, onClick, isActive, title }) => {
       >
         {icon}
       </div>
+      {showDropdown && (
+        <div className="absolute left-14 top-0 w-48 bg-[#2F1B06] p-2 rounded-xl shadow-lg space-y-2 z-20">
+          {children}
+        </div>
+      )}
     </div>
   );
 };
@@ -33,10 +38,17 @@ export const SideBar = () => {
   const location = useLocation();
 
   const [showMenu, setShowMenu] = useState(false);
+  const [showCreateMenu, setShowCreateMenu] = useState(false);
   const menuRef = useRef();
+  const createMenuRef = useRef();
 
   const handleMenuClick = () => {
     setShowMenu((prev) => !prev);
+  };
+
+  const handleCreateClick = () => {
+    setShowCreateMenu((prev) => !prev);
+  setShowMenu(false); // Close the other menu if open
   };
 
   useEffect(() => {
@@ -44,16 +56,17 @@ export const SideBar = () => {
       if (menuRef.current && !menuRef.current.contains(event.target)) {
         setShowMenu(false);
       }
+      if (createMenuRef.current && !createMenuRef.current.contains(event.target)) {
+        setShowCreateMenu(false);
+      }
     };
 
-    if (showMenu) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
+    document.addEventListener("mousedown", handleClickOutside);
 
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, [showMenu]);
+  }, []);
 
   return (
     <aside
@@ -89,12 +102,34 @@ export const SideBar = () => {
         
         {user && (
           <>
-            <SidebarIcon
-              icon={<FaPlus size={20} />}
-              onClick={() => navigate("/addpost")}
-              isActive={location.pathname === "/addpost"}
-              title="Create"
-            />
+            <div ref={createMenuRef}>
+              <SidebarIcon
+                icon={<FaPlus size={20} />}
+                onClick={handleCreateClick}
+                isActive={location.pathname === "/addpost" || location.pathname === "/addvideo"}
+                title="Create"
+                showDropdown={showCreateMenu}
+              >
+                <button
+                  onClick={() => {
+                    navigate("/addpost");
+                    setShowCreateMenu(false);
+                  }}
+                  className="flex items-center gap-2 w-full bg-[#543310] text-white px-3 py-2 rounded-lg hover:bg-[#CFB397] text-sm"
+                >
+                  Add Post
+                </button>
+                <button
+                  onClick={() => {
+                    navigate("/addvideo");
+                    setShowCreateMenu(false);
+                  }}
+                  className="flex items-center gap-2 w-full bg-[#543310] text-white px-3 py-2 rounded-lg hover:bg-[#CFB397] text-sm"
+                >
+                  Add Video
+                </button>
+              </SidebarIcon>
+            </div>
             <SidebarIcon
               icon={<GiRead size={20} />}
               onClick={() => navigate("/LeaningPlansExistingUser")}

@@ -33,6 +33,9 @@ import { MyFollowers } from "./pages/Profile & Followers Management/MyFollowers"
 import { MyFollowings } from "./pages/Profile & Followers Management/MyFollowings";
 import { UserUpdatePage } from "./pages/Profile & Followers Management/UserUpdatePage";
 import { FollowerProfile } from "./pages/Profile & Followers Management/FollowerProfile";
+import { AddVideo } from "./pages/PostAndInteraction/AddVideo";
+import { AllVideos } from "./pages/PostAndInteraction/AllVideos";
+
 
 
 
@@ -55,6 +58,9 @@ function App() {
         <Route path="/homepost" element={<HomePost/>}/>
         <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>  
         <Route path="/homesignout" element={<HomeSignOut/>}/>  
+        <Route path="/addvideo" element={<AddVideo/>}/>  
+        <Route path="/allvideos" element={<AllVideos/>}/>
+       
 
         {/* yasindu */}
         <Route path="/userlogin" element={<User_Login/>}/>
