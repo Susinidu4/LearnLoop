@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { Header } from '../../components/Header';
+import { SideBar } from '../../components/SideBar';
 
 export const AddVideo = () => {
   const user = JSON.parse(localStorage.getItem('user'));
@@ -64,18 +66,13 @@ export const AddVideo = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-blue-600 text-white shadow-md">
-        <div className="container mx-auto px-4 py-6">
-          <h1 className="text-3xl font-bold">Video Upload Platform</h1>
-          <p className="text-blue-100 mt-1">User ID: {user.id}</p>
-        </div>
-      </header>
-
+   <div>
+    <Header/>
+     <div className="min-h-screen bg-gray-50">
+    <SideBar/>
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <main className="mt-20 container mx-auto px-4 py-8">
+        <div className="">
           {/* Upload Section */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-2xl font-semibold text-gray-800 mb-6">Upload Video</h2>
@@ -174,5 +171,6 @@ export const AddVideo = () => {
         </div>
       </main>
     </div>
+   </div>
   );
 };

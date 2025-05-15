@@ -6,6 +6,7 @@ import { GiRead } from "react-icons/gi";
 import { TbWorldSearch } from "react-icons/tb";
 import { MdInfo, MdPrivacyTip } from "react-icons/md";
 import { FaUsers } from "react-icons/fa";
+import { BiSolidVideos } from "react-icons/bi";
 import GlobalStyle from "../assets/prototype/GlobalStyle";
 
 const SidebarIcon = ({ icon, onClick, isActive, title, showDropdown, children }) => {
@@ -135,7 +136,9 @@ export const SideBar = () => {
               onClick={() => navigate("/LeaningPlansExistingUser")}
               isActive={location.pathname === "/LeaningPlansExistingUser"}
               title="Learning Plans"
+              
             />
+             
             <SidebarIcon
               icon={<FaUsers size={20} />}
               onClick={() => navigate("/users")}

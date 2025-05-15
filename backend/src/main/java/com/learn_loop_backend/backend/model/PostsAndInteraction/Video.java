@@ -1,8 +1,13 @@
 package com.learn_loop_backend.backend.model.PostsAndInteraction;
 
+import com.learn_loop_backend.backend.model.Comments_Likes_Notification_Managemen.VideoComments;
+import com.learn_loop_backend.backend.model.Comments_Likes_Notification_Managemen.VideoLikes;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Document(collection = "videos")
 public class Video {
@@ -15,9 +20,14 @@ public class Video {
     private long bytes;
     private Date createdAt;
     private String userId; // If you have user authentication
+    private List<VideoLikes> likes;
+    private List<VideoComments> comments;
 
     // Constructors
-    public Video() {}
+    public Video() {
+        this.likes = new ArrayList<>();
+        this.comments = new ArrayList<>();
+    }
 
     public Video(String title, String publicId, String url, String format, long bytes) {
         this.title = title;
@@ -45,4 +55,20 @@ public class Video {
     public void setCreatedAt(Date createdAt) { this.createdAt = createdAt; }
     public String getUserId() { return userId; }
     public void setUserId(String userId) { this.userId = userId; }
+
+    public List<VideoLikes> getLikes() {
+        return likes;
+    }
+
+    public void setLikes(List<VideoLikes> likes) {
+        this.likes = likes;
+    }
+
+    public List<VideoComments> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<VideoComments> comments) {
+        this.comments = comments;
+    }
 }
