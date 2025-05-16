@@ -1,46 +1,46 @@
-import React, { useState } from 'react'
-import { Header } from '../../components/Header'
-import { ProfileHeader } from '../../components/ProfileHeader'
-import { TabNavigation } from '../../components/TabNavigation'
-import { LearningPlansCard } from '../../components/LearningPlansCard'
-import { LearningProgress } from '../../components/LearningProgress'
-import { SideBar } from '../../components/SideBar'
+import React, { useState } from "react";
+import { Header } from "../../components/Header";
+import { ProfileHeader } from "../../components/ProfileHeader";
+import { TabNavigation } from "../../components/TabNavigation";
+import { LearningPlansCard } from "../../components/LearningPlansCard";
+import { LearningProgress } from "../../components/LearningProgress";
+import { SideBar } from "../../components/SideBar";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
-import { MyPostCard } from '../../components/MyPostCard'
-import { MyVideos } from '../PostAndInteraction/MyVideos'
-
+import { MyPostCard } from "../../components/MyPostCard";
+import { MyVideos } from "../PostAndInteraction/MyVideos";
 
 export const User_Profile = () => {
-  const [activeTab, setActiveTab] = useState('Posts')
-  const user = JSON.parse(localStorage.getItem('user'))
+  const [activeTab, setActiveTab] = useState("Posts");
+  const user = JSON.parse(localStorage.getItem("user"));
   return (
-    <div className="flex h-screen w-full bg-[#F7EDE5]">
+    <div className="flex">
       <SideBar />
-      <div className={`flex flex-col flex-1 overflow-y-auto ${GlobalStyle.fontPoppins}`}>
+      <div className="flex flex-col w-full ml-16">
         <Header />
-        <main className="flex-1 bg-[#F7EDE5] p-4 overflow-y-auto">
-          <div className="max-w-4xl mx-auto">
-            <ProfileHeader />
-            <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
-            {activeTab === 'Posts' && (
-              <MyPostCard
-                userId={user.id}
-                title="Boost Your Skills : Explore and Learn more coding skills"
-                author="Kavishka Perera"
+        <div
+          className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}
+        >
+          <main className="flex-1 bg-[#F7EDE5] p-4 overflow-y-auto">
+            <div className="max-w-4xl mx-auto">
+              <ProfileHeader />
+              <TabNavigation
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
               />
-            )}
-            {activeTab === 'Videos' && (
-             <MyVideos/>
-            )}
-            {activeTab === 'Learning Plans' && (
-              <LearningPlansCard/>
-            )}
-            {activeTab === 'Learning Progress' && (
-              <LearningProgress/>
-            )}
-          </div>
-        </main>
+              {activeTab === "Posts" && (
+                <MyPostCard
+                  userId={user.id}
+                  title="Boost Your Skills : Explore and Learn more coding skills"
+                  author="Kavishka Perera"
+                />
+              )}
+              {activeTab === "Videos" && <MyVideos />}
+              {activeTab === "Learning Plans" && <LearningPlansCard />}
+              {activeTab === "Learning Progress" && <LearningProgress />}
+            </div>
+          </main>
+        </div>
       </div>
     </div>
-  )
-}
+  );
+};
