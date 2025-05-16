@@ -30,57 +30,62 @@ export const MyPostCard = ({ userId }) => {
     }
   };
 
- const fetchProfileImages = async (userIds, comments = []) => {
-  try {
-    const images = {};
-    // Combine post user IDs and commenter user IDs
-    const allUserIds = [
-      ...new Set([
-        ...userIds,
-        ...(comments || []).flatMap((comment) => comment?.userId || [])
-      ]),
-    ];
-
-    for (const userId of allUserIds) {
-      try {
-        const imageUrl = await ProfileService.getProfileImage(userId);
-        if (imageUrl) {
-          images[userId] = imageUrl;
-        }
-      } catch (error) {
-        console.error(`Error fetching profile image for user ${userId}:`, error);
-      }
-    }
-    setProfileImages(images);
-  } catch (error) {
-    console.error("Error in fetchProfileImages:", error);
-  }
-};
-
- useEffect(() => {
-  const fetchPosts = async () => {
+  const fetchProfileImages = async (userIds, comments = []) => {
     try {
-      const userPosts = await PostService.getPostsByUser(userId);
-      setPosts(userPosts);
-      setLoading(false);
+      const images = {};
+      // Combine post user IDs and commenter user IDs
+      const allUserIds = [
+        ...new Set([
+          ...userIds,
+          ...(comments || []).flatMap((comment) => comment?.userId || []),
+        ]),
+      ];
 
-      // Extract unique user IDs from posts and comments
-      const userIds = [...new Set(userPosts.map((post) => post.userId))];
-      const allComments = userPosts.flatMap(post => post.comments || []);
-      const commenterIds = [...new Set(allComments.map(comment => comment.userId))];
-
-      // Call with both userIds and allComments
-      fetchProfileImages([...userIds, ...commenterIds], allComments);
-      fetchUserDetails([...userIds, ...commenterIds]);
-    } catch (err) {
-      console.error("Failed to fetch posts:", err);
-      setError("Failed to fetch posts. Please try again later.");
-      setLoading(false);
+      for (const userId of allUserIds) {
+        try {
+          const imageUrl = await ProfileService.getProfileImage(userId);
+          if (imageUrl) {
+            images[userId] = imageUrl;
+          }
+        } catch (error) {
+          console.error(
+            `Error fetching profile image for user ${userId}:`,
+            error
+          );
+        }
+      }
+      setProfileImages(images);
+    } catch (error) {
+      console.error("Error in fetchProfileImages:", error);
     }
   };
 
-  fetchPosts();
-}, [userId]);
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const userPosts = await PostService.getPostsByUser(userId);
+        setPosts(userPosts);
+        setLoading(false);
+
+        // Extract unique user IDs from posts and comments
+        const userIds = [...new Set(userPosts.map((post) => post.userId))];
+        const allComments = userPosts.flatMap((post) => post.comments || []);
+        const commenterIds = [
+          ...new Set(allComments.map((comment) => comment.userId)),
+        ];
+
+        // Call with both userIds and allComments
+        fetchProfileImages([...userIds, ...commenterIds], allComments);
+        fetchUserDetails([...userIds, ...commenterIds]);
+      } catch (err) {
+        console.error("Failed to fetch posts:", err);
+        setError("Failed to fetch posts. Please try again later.");
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, [userId]);
   const toggleComments = (postId) => {
     setExpandedComments((prev) => ({
       ...prev,
@@ -201,10 +206,10 @@ export const MyPostCard = ({ userId }) => {
       {posts.map((post) => (
         <div
           key={post.id}
-          className="bg-white shadow rounded-lg overflow-hidden"
+          className="bg-[#F0E0D1] shadow rounded-lg overflow-hidden"
         >
           {/* Post Header with Edit/Delete Options */}
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-3">
                 <div className="h-10 w-10 rounded-full bg-gray-300 flex items-center justify-center overflow-hidden">
@@ -240,7 +245,7 @@ export const MyPostCard = ({ userId }) => {
                   <div className="flex space-x-2">
                     <button
                       onClick={() => handleEditClick(post)}
-                      className="text-gray-500 hover:text-blue-500"
+                      className="text-gray-500 hover:text-[#543310]"
                       title="Edit post"
                     >
                       <svg
@@ -259,7 +264,7 @@ export const MyPostCard = ({ userId }) => {
                     </button>
                     <button
                       onClick={() => handleDeletePost(post.id)}
-                      className="text-gray-500 hover:text-red-500"
+                      className="text-gray-500 hover:text-[#543310]"
                       title="Delete post"
                     >
                       <svg
@@ -380,6 +385,8 @@ export const MyPostCard = ({ userId }) => {
             </div>
           )}
 
+          <hr className="border-t-[1px] border-[#BAB2AC] my-4" />
+
           {/* Post Media */}
           {post.mediaUrls &&
             post.mediaUrls.length > 0 &&
@@ -445,7 +452,7 @@ export const MyPostCard = ({ userId }) => {
               {post.comments && post.comments.length > 0 && (
                 <button
                   onClick={() => toggleComments(post.id)}
-                  className="text-blue-600 hover:text-blue-800 text-sm font-medium flex items-center"
+                  className="text-[#543310] hover:text-[#C5B9B0] text-sm font-medium flex items-center"
                 >
                   {expandedComments[post.id]
                     ? "Hide comments"
@@ -475,7 +482,7 @@ export const MyPostCard = ({ userId }) => {
             post.comments.length > 0 &&
             expandedComments[post.id] &&
             editingPostId !== post.id && (
-              <div className="bg-gray-50 p-4 border-t border-gray-200">
+              <div className="bg-[#F0E0D1] p-4 border-t border-gray-200">
                 <h4 className="text-sm font-medium text-gray-700 mb-2">
                   Comments
                 </h4>
