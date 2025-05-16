@@ -1,10 +1,35 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import progres from "../assets/images/progres.png";
 
 export function LearningProgress() {
-  const activated = 23;
-  const completed = 5;
-  const inProgress = 18;
+  // State for storing learning progress stats
+  const [progressStats, setProgressStats] = useState({
+    activated: 0,
+    completed: 0,
+    inProgress: 0,
+  });
+
+  // Fetch the learning progress stats from the backend
+  useEffect(() => {
+    const fetchProgressStats = async () => {
+      try {
+        const response = await fetch("http://localhost:5000/api/learning-plans/progress/stats");  // Adjust the API URL if needed
+        if (response.ok) {
+          const data = await response.json();
+          setProgressStats(data);
+        } else {
+          console.error("Failed to fetch progress stats");
+        }
+      } catch (error) {
+        console.error("Error fetching progress stats:", error);
+      }
+    };
+
+    fetchProgressStats();
+  }, []); // Empty array means it runs only once when the component mounts
+
+  // Destructure stats for easier usage
+  const { activated, completed, inProgress } = progressStats;
   const total = activated + completed + inProgress;
 
   const pieData = [

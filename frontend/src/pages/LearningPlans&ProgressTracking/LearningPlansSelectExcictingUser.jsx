@@ -4,30 +4,41 @@ import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import { getUserById } from "../../service/Profile & Followers Management/AuthService";
+import ProfileService from "../../service/Profile & Followers Management/ProfileService";
 
 export const LearningPlansSelectExcistingUser = () => {
-  const { userId } = useParams();
-  const [plans, setPlans] = useState([]);
-  const [userName, setUserName] = useState("");
+  const { planId } = useParams();
+  const [plan, setPlan] = useState(null);
+  const [userName, setUserName] = useState("Unknown User");
+  const [userImage, setUserImage] = useState("/default-avatar.jpg");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        // Fetch the learning plan by ID
         const res = await fetch(
-          `http://localhost:5000/api/learning-plans/user/${userId}`
+          `http://localhost:5000/api/learning-plans/${planId}`
         );
         const data = await res.json();
-        setPlans(data);
+        setPlan(data);
 
-        const user = await getUserById(userId);
-        if (user?.name) setUserName(user.name);
+        // Fetch user data
+        if (data?.userId) {
+          const user = await getUserById(data.userId);
+          if (user?.name) setUserName(user.name);
+
+          const image = await ProfileService.getProfileImage(data.userId);
+          if (image) setUserImage(image);
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("❌ Error fetching learning plan or user data:", error);
       }
     };
 
     fetchData();
-  }, [userId]);
+  }, [planId]);
+
+  if (!plan) return <div className="text-center mt-10">Loading...</div>;
 
   return (
     <div className="flex">
@@ -37,117 +48,87 @@ export const LearningPlansSelectExcistingUser = () => {
         <div
           className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}
         >
-          <main className="p-6">
-            <div className="flex justify-center items-center">
-              <div className="w-full max-w-4xl bg-white shadow-lg rounded-xl overflow-hidden">
-                {/* Header */}
-                <div className="bg-gray-200 p-6">
-                  <div className="flex items-center space-x-4">
-                    {/* Profile Picture */}
-                    <div className="w-12 h-12 bg-[#D3BBA2] rounded-full"></div>
-
-                    {/* Username */}
-                    <h1 className={`${GlobalStyle.headingMedium}`}>
-                      {userName}
-                    </h1>
-                  </div>
-                  {/* Title and Description */}
-                  <div className="mt-4 ml-20">
-                    <p className={`font-bold ${GlobalStyle.headingSmall}`}>
-                      {plans[0]?.planTopic || "No title available"}
-                    </p>
-                    <p className={`${GlobalStyle.headingSmall} text-gray-600`}>
-                      {plans[0]?.description || "No description available"}
-                    </p>
-                  </div>
+          <main className="p-6 flex justify-center">
+            <div className="w-full max-w-4xl bg-white shadow-lg rounded-xl overflow-hidden">
+              {/* Header */}
+              <div className="bg-gray-200 p-6">
+                <div className="flex items-center space-x-4">
+                  {userImage ? (
+                    <img
+                      src={userImage}
+                      alt={userName}
+                      className="w-12 h-12 rounded-full object-cover"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        setUserImage(""); // fallback to the circle
+                      }}
+                    />
+                  ) : (
+                    <div className="w-12 h-12 rounded-full bg-[#C1A47D] flex items-center justify-center text-white text-sm">
+                      {/* Optional Initials or icon */}
+                      {userName ? userName.charAt(0).toUpperCase() : ""}
+                    </div>
+                  )}
+                  <h1 className={`${GlobalStyle.headingMedium}`}>{userName}</h1>
                 </div>
 
-                {/* Banner Image for each plan */}
-                {plans.length > 0 && (
-                  <div
-                    className="bg-[#C1A47D] relative h-68 flex items-center justify-center "
-                    style={{ backgroundImage: `url(${plans.imageUrl})` }}
-                  >
-                    {plans[0].imageUrl ? (
-                      <img
-                        src={plans[0]?.imageUrl}
-                        alt="Plan Banner"
-                        className="object-cover w-full h-full"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = "/default-banner.jpg";
-                        }}
-                      />
-                    ) : (
-                      <img
-                        src="/default-banner.jpg"
-                        alt="Default Banner"
-                        className="object-cover w-full h-full"
-                      />
-                    )}
-                  </div>
-                )}
+                <div className="mt-4 ml-16">
+                  <p className={`font-bold ${GlobalStyle.headingSmall}`}>
+                    {plan.planTopic || "No Title"}
+                  </p>
+                  <p className={`${GlobalStyle.headingSmall} text-gray-600`}>
+                    {plan.description || "No Description"}
+                  </p>
+                </div>
+              </div>
 
-                {/* Divider */}
-                <div className="border-t-2 border-[#E4D6C3]"></div>
+              {/* Banner */}
+              <div className="relative h-64 bg-[#C1A47D]">
+                <img
+                  src={plan.imageUrl || "/default-banner.jpg"}
+                  alt="Banner"
+                  className="object-cover w-full h-full"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "/default-banner.jpg";
+                  }}
+                />
+              </div>
 
-                {/* Plans List */}
-                <div className="p-6 bg-[#D3BBA2]">
-                  <ul>
-                    {plans.length ? (
-                      plans.map((plan, index) => (
-                        <li
-                          key={index}
-                          className="mb-4 border-b border-[#E4D6C3] pb-4"
-                        >
+              {/* Divider */}
+              <div className="border-t-2 border-[#E4D6C3]"></div>
 
-                          {/* All Steps */}
-                          <div className="mt-2 space-y-2">
-                            {plan.steps?.length ? (
-                              plan.steps.map((step, stepIndex) => (
-                                <div
-                                  key={stepIndex}
-                                  className="bg-[#D3BBA2] p-3 rounded-md shadow-sm border border-[#E4D6C3]"
-                                >
-                                  <p className="font-semibold text-sm text-gray-800">
-                                    Step {step.stepNumber}: {step.topic}
-                                  </p>
-                                  <p className="text-sm text-gray-700">
-                                    <span className="font-semibold">
-                                      Resource:
-                                    </span>{" "}
-                                    <a
-                                      href={step.resourceLink}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-blue-600 underline"
-                                    >
-                                      {step.resourceLink}
-                                    </a>
-                                  </p>
-                                  <p className="text-sm text-gray-700">
-                                    <span className="font-semibold">
-                                      Duration:
-                                    </span>{" "}
-                                    {step.completionDuration || "N/A"}
-                                  </p>
-                                </div>
-                              ))
-                            ) : (
-                              <p className="text-sm text-gray-700">
-                                No steps available.
-                              </p>
-                            )}
-                          </div>
-                        </li>
-                      ))
-                    ) : (
-                      <p className="text-center text-gray-700">
-                        No Plans Found
+              {/* Steps */}
+              <div className="p-6 bg-[#D3BBA2]">
+                {plan.steps?.length ? (
+                  plan.steps.map((step, index) => (
+                    <div
+                      key={index}
+                      className=" p-4 rounded-md shadow-sm border border-[#E4D6C3] mb-4"
+                    >
+                      <p className="font-semibold text-gray-800 text-sm">
+                        Step {step.stepNumber}: {step.topic}
                       </p>
-                    )}
-                  </ul>
-                </div>
+                      <p className="text-sm text-gray-700 mt-1">
+                        <span className="font-semibold">Resource:</span>{" "}
+                        <a
+                          href={step.resourceLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 underline"
+                        >
+                          {step.resourceLink}
+                        </a>
+                      </p>
+                      <p className="text-sm text-gray-700 mt-1">
+                        <span className="font-semibold">Duration:</span>{" "}
+                        {step.completionDuration || "N/A"}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-gray-700 text-sm">No steps available.</p>
+                )}
               </div>
             </div>
           </main>

@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface LearningPlanRepository extends MongoRepository<LearningPlan, String> {
     List<LearningPlan> findByUserId(String userId);
+
 }

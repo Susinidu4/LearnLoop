@@ -10,9 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.cloudinary.utils.ObjectUtils;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -89,6 +87,7 @@ public class LearningPlanService {
         return repository.save(existingPlan);
     }
 
+    // Update step status
     public LearningPlan updateStepStatus(String planId, int stepNumber, String status) {
         Optional<LearningPlan> optionalPlan = repository.findById(planId);
         if (optionalPlan.isEmpty()) {
@@ -113,6 +112,36 @@ public class LearningPlanService {
         plan.setUpdatedAt(new Date());
         return repository.save(plan);
     }
+
+    // Learning Plan Progress Stats
+    public Map<String, Integer> getLearningPlanProgressStats() {
+        List<LearningPlan> plans = repository.findAll();
+        int activated = plans.size();
+        int completed = 0;
+        int inProgress = 0;
+
+        for (LearningPlan plan : plans) {
+            List<LearningPlan.Step> steps = plan.getSteps();
+            if (steps == null || steps.isEmpty()) continue;
+
+            long completedSteps = steps.stream()
+                    .filter(step -> "completed".equalsIgnoreCase(step.getStatus()))
+                    .count();
+
+            if (completedSteps == steps.size()) {
+                completed++;
+            } else if (completedSteps > 0) {
+                inProgress++;
+            }
+        }
+
+        Map<String, Integer> result = new HashMap<>();
+        result.put("activated", activated);
+        result.put("completed", completed);
+        result.put("inProgress", inProgress);
+        return result;
+    }
+
 
     // CONVERT LearningPlan to DTO
     public LearningPlansDTO convertToDTO(LearningPlan plan) {

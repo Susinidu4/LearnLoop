@@ -3,6 +3,7 @@ import { MdEdit, MdDelete } from "react-icons/md";
 import ProfileService from "../service/Profile & Followers Management/ProfileService";
 import GlobalStyle from "../assets/prototype/GlobalStyle";
 import { useNavigate } from "react-router-dom";
+import { TfiMoreAlt } from "react-icons/tfi";
 
 export function LearningPlansCard() {
   const [learningPlans, setLearningPlans] = useState([]);
@@ -24,7 +25,9 @@ export function LearningPlansCard() {
       if (!user?.id) return;
 
       try {
-        const res = await fetch(`http://localhost:5000/api/learning-plans/user/${user.id}`);
+        const res = await fetch(
+          `http://localhost:5000/api/learning-plans/user/${user.id}`
+        );
         if (res.ok) {
           const data = await res.json();
           setLearningPlans(data);
@@ -46,9 +49,12 @@ export function LearningPlansCard() {
 
   const handleDelete = async (planId) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/learning-plans/${planId}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(
+        `http://localhost:5000/api/learning-plans/${planId}`,
+        {
+          method: "DELETE",
+        }
+      );
 
       if (res.ok) {
         setLearningPlans((prev) => prev.filter((plan) => plan.id !== planId));
@@ -117,16 +123,19 @@ export function LearningPlansCard() {
     e.preventDefault();
 
     try {
-      const res = await fetch(`http://localhost:5000/api/learning-plans/${editingPlanId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...editForm,
-          userId: user.id,
-        }),
-      });
+      const res = await fetch(
+        `http://localhost:5000/api/learning-plans/${editingPlanId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...editForm,
+            userId: user.id,
+          }),
+        }
+      );
 
       if (res.ok) {
         const updatedPlan = await res.json();
@@ -151,8 +160,7 @@ export function LearningPlansCard() {
         learningPlans.map((plan) => (
           <div
             key={plan.id}
-            onClick={() => navigate(`/learning-plan/${plan.id}`)} // Navigate to detail page
-            className="max-w-4xl mx-auto bg-[#EFEFEF] rounded-xl shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition"
+            className="max-w-4xl mx-auto bg-[#EFEFEF] rounded-xl shadow-md overflow-hidden transition"
           >
             <div className="bg-[#C0AE95] h-40 relative">
               <div
@@ -173,6 +181,15 @@ export function LearningPlansCard() {
                   }}
                 >
                   <MdDelete />
+                </button>
+                <button
+                  className="p-2 rounded-full bg-white shadow-md"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    navigate(`/learning-plan/${plan.id}`);
+                  }}
+                >
+                  <TfiMoreAlt />
                 </button>
               </div>
             </div>
@@ -216,7 +233,9 @@ export function LearningPlansCard() {
                     <input
                       type="text"
                       value={step.topic}
-                      onChange={(e) => handleStepChange(index, "topic", e.target.value)}
+                      onChange={(e) =>
+                        handleStepChange(index, "topic", e.target.value)
+                      }
                       className="p-2 rounded w-full"
                       placeholder={`Step ${index + 1} Topic`}
                       required
@@ -224,7 +243,9 @@ export function LearningPlansCard() {
                     <input
                       type="text"
                       value={step.resourceLink}
-                      onChange={(e) => handleStepChange(index, "resourceLink", e.target.value)}
+                      onChange={(e) =>
+                        handleStepChange(index, "resourceLink", e.target.value)
+                      }
                       className="p-2 rounded w-full"
                       placeholder="Resource Link"
                       required
@@ -233,7 +254,11 @@ export function LearningPlansCard() {
                       type="text"
                       value={step.completionDuration}
                       onChange={(e) =>
-                        handleStepChange(index, "completionDuration", e.target.value)
+                        handleStepChange(
+                          index,
+                          "completionDuration",
+                          e.target.value
+                        )
                       }
                       className="p-2 rounded w-full"
                       placeholder="Step Duration"
@@ -279,7 +304,7 @@ export function LearningPlansCard() {
                   <p className="text-sm text-gray-600">{plan.description}</p>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <div className="w-13 h-11 rounded-full overflow-hidden bg-[#C0AE95]">
+                  <div className="w-11 h-11 rounded-full overflow-hidden bg-[#C0AE95]">
                     {profileImage ? (
                       <img
                         src={profileImage}
