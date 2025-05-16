@@ -43,12 +43,20 @@ public class AuthService {
                 .collect(Collectors.toList());
     }
 
+    // Update the convertToDTO method in AuthService
     private UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
         userDTO.setId(user.getId());
         userDTO.setName(user.getName());
         userDTO.setEmail(user.getEmail());
-        userDTO.setPassword(user.getPassword());
+
+        if (user.getProfile() != null) {
+            ProfileDTO profileDTO = new ProfileDTO();
+            profileDTO.setId(user.getProfile().getId());
+            profileDTO.setImageUrl("/api/v1/profiles/" + user.getId() + "/image");
+            userDTO.setProfile(profileDTO);
+        }
+
         return userDTO;
     }
 
@@ -60,20 +68,39 @@ public class AuthService {
 
     //user login
     public LoginResponseDTO login(LoginRequestDTO loginData) {
-        try{
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginData.getEmail(),loginData.getPassword()));
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(loginData.getEmail(), loginData.getPassword()));
         } catch (Exception e) {
-            return new LoginResponseDTO(null , null , "user not found", "errro");
+            return new LoginResponseDTO(null, null, "Invalid credentials", "error", null);
         }
 
-        Map<String, Object> claims = new HashMap<String,Object>();
+        // Assuming you have a UserService or UserRepository to fetch user details
+        User user = userRepository.findByEmail(loginData.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Convert User entity to UserDTO
+        UserDTO userDTO = new UserDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                null // Don't include password in the response
+        );
+
+        Map<String, Object> claims = new HashMap<>();
         claims.put("role", "User");
-        claims.put("email", "company@gmail.com");
+        claims.put("email", user.getEmail());
+        claims.put("userId", user.getId()); // Include user ID in claims
 
         String token = jwtService.getJWTToken(loginData.getEmail(), claims);
 
-        System.out.println(jwtService.getFieldFormToken(token,"role"));
-        return new LoginResponseDTO(token, LocalDate.now(), null, "token successful");
+        return new LoginResponseDTO(
+                token,
+                LocalDate.now().plusDays(1), // Example: token expires in 1 day
+                null,
+                "Login successful",
+                userDTO
+        );
     }
 
     //user register
@@ -103,7 +130,7 @@ public class AuthService {
     }
 
     // Update user
-    public User updateUser(String id, RegisterRequestDTO userData) {
+    public User updateUser(String id, UpdateUserRequestDTO userData) {
         User existingUser = getUserById(id);
 
         existingUser.setName(userData.getName());
@@ -123,4 +150,6 @@ public class AuthService {
         userRepository.delete(user);
         return "User with id " + id + " has been deleted successfully";
     }
+
+
 }

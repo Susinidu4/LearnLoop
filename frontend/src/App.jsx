@@ -8,10 +8,11 @@ import '@fontsource/poppins';
 import { Notification } from "./pages/Comments,Likes & Notification Management/Notification";
 import { FAQ } from "./pages/Other/FAQ";
 import { AboutUs } from "./pages/Other/AboutUs";
+import { PostDetailPage } from "./pages/PostAndInteraction/PostDetailPage"; 
+import { LearningPlansDetailCard } from "./components/LearningPlansDetailCard";
 
 //Oshi
 import { AddPost } from "./pages/PostAndInteraction/AddPost"
-import { UserViewPost } from "./pages/PostAndInteraction/UserViewPost"
 import { HomePost } from "./pages/PostAndInteraction/HomePost";
 import { PrivacyPolicy } from "./pages/Other/PrivacyPolicy";
 
@@ -25,7 +26,15 @@ import { Explore } from "./pages/Other/Explore";
 import { User_Login } from "./pages/Profile & Followers Management/User_Login";
 import { User_Register } from "./pages/Profile & Followers Management/User_Register";
 import { User_Profile } from "./pages/Profile & Followers Management/User_Profile";
+
 import { HomeSignOut } from "./pages/HomeSignOut";
+import { UsersPage } from "./pages/Profile & Followers Management/UsersPage";
+import { PostsGallery } from "./pages/Other/PostsGallery";
+import { MyFollowers } from "./pages/Profile & Followers Management/MyFollowers";
+import { MyFollowings } from "./pages/Profile & Followers Management/MyFollowings";
+import { UserUpdatePage } from "./pages/Profile & Followers Management/UserUpdatePage";
+import { FollowerProfile } from "./pages/Profile & Followers Management/FollowerProfile";
+
 
 
 
@@ -40,10 +49,11 @@ function App() {
         <Route path="/notification" element={<Notification/>}/>
         <Route path="/FAQ" element={<FAQ/>}/>
         <Route path="/aboutUs" element={<AboutUs/>}/>
+        <Route path="/postdetails/:postId" element={<PostDetailPage />} />
+        <Route path="/learning-plan/:id" element={<LearningPlansDetailCard />} />
 
         {/* oshini */}
         <Route path="/addpost" element={<AddPost/>}/>
-        <Route path="/userviewpost/:id" element={<UserViewPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
         <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>  
         <Route path="/homesignout" element={<HomeSignOut/>}/>  
@@ -52,10 +62,16 @@ function App() {
         <Route path="/userlogin" element={<User_Login/>}/>
         <Route path="/userregister" element={<User_Register/>}/>
         <Route path="/userprofile" element={<User_Profile/>}/>
+        <Route path="/users" element={<UsersPage/>}/>
+        <Route path="/posts" element={<PostsGallery/>}/>
+        <Route path="/myfollowers" element={<MyFollowers/>}/>
+        <Route path="/myfollowings" element={<MyFollowings/>}/>
+        <Route path="/updateuser" element={<UserUpdatePage/>}/>
+        <Route path="/followerprofile/:id" element={<FollowerProfile/>}/>
         
         {/* Ishara */}
         <Route path="/LeaningPlansExistingUser" element={<LeraningPlansExistingUser/>}/>
-        <Route path="/LearningPlansSelectExcistingUser" element={<LearningPlansSelectExcistingUser/>}/>
+        <Route path="/LearningPlansSelectExcistingUser/:planId" element={<LearningPlansSelectExcistingUser/>}/>
         <Route path="/AddLearningPlans" element={<AddLearningPlans/>}/>
         <Route path="/Explore" element={<Explore/>}/>
         

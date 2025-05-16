@@ -8,13 +8,12 @@ public class UserDTO {
     private String id;
     private String name;
     private String email;
-    private String password;
 
     public UserDTO(String id, String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
-        this.password = password;
+
     }
 
     public UserDTO() {
@@ -45,11 +44,17 @@ public class UserDTO {
         this.email = email;
     }
 
-    public String getPassword() {
-        return password;
+    // Add this to your existing UserDTO class
+    private ProfileDTO profile;
+
+    // Add getter and setter
+    public ProfileDTO getProfile() {
+        return profile;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setProfile(ProfileDTO profile) {
+        this.profile = profile;
     }
+
+
 }

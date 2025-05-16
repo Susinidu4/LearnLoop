@@ -1,62 +1,66 @@
 package com.learn_loop_backend.backend.controller.profile_follower_management;
 
 import com.learn_loop_backend.backend.DTO.profile_follower_management.FollowRequestDTO;
-import com.learn_loop_backend.backend.model.profile_follower_management.User;
+import com.learn_loop_backend.backend.model.profile_follower_management.Followers;
 import com.learn_loop_backend.backend.service.profile_follower_management.FollowerService;
-import org.springframework.http.HttpStatus;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/followers")
 public class FollowerController {
 
-    private final FollowerService followerService;
+    @Autowired
+    private FollowerService followerService;
 
-    public FollowerController(FollowerService followerService) {
-        this.followerService = followerService;
+    // Follow a user
+    @PostMapping
+    public ResponseEntity<Followers> followUser(@RequestBody FollowRequestDTO followRequestDTO) {
+        Followers followers = followerService.followUser(followRequestDTO);
+        return ResponseEntity.ok(followers);
     }
 
-
-    @PostMapping("/follow")
-    public ResponseEntity<String> followUser(@RequestBody FollowRequestDTO followRequest) {
-        try {
-            String result = followerService.followUser(followRequest);
-            return ResponseEntity.ok(result);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    // Get all followers of a user
+    @GetMapping("/followers/{userId}")
+    public ResponseEntity<List<Followers>> getFollowers(@PathVariable String userId) {
+        List<Followers> followers = followerService.getFollowersOfUser(userId);
+        return ResponseEntity.ok(followers);
     }
 
-    @PostMapping("/unfollow")
-    public ResponseEntity<String> unfollowUser(@RequestBody FollowRequestDTO followRequest) {
-        try {
-            String result = followerService.unfollowUser(followRequest);
-            return ResponseEntity.ok(result);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    // Get all users a person is following
+    @GetMapping("/following/{userId}")
+    public ResponseEntity<List<Followers>> getFollowing(@PathVariable String userId) {
+        List<Followers> following = followerService.getFollowingByUser(userId);
+        return ResponseEntity.ok(following);
     }
 
-    @GetMapping("/{userId}/followers")
-    public ResponseEntity<List<User>> getFollowers(@PathVariable String userId) {
-        try {
-            List<User> followers = followerService.getFollowers(userId);
-            return ResponseEntity.ok(followers);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    // Check if a user is following another user
+    @GetMapping("/check")
+    public ResponseEntity<Boolean> isFollowing(
+            @RequestParam String followerId,
+            @RequestParam String followingId) {
+        boolean isFollowing = followerService.isFollowing(followerId, followingId);
+        return ResponseEntity.ok(isFollowing);
     }
 
-    @GetMapping("/{userId}/following")
-    public ResponseEntity<List<User>> getFollowing(@PathVariable String userId) {
-        try {
-            List<User> following = followerService.getFollowing(userId);
-            return ResponseEntity.ok(following);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+    // Unfollow a user
+    @DeleteMapping
+    public ResponseEntity<Void> unfollowUser(
+            @RequestParam String followerId,
+            @RequestParam String followingId) {
+        followerService.unfollowUser(followerId, followingId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Update follow relationship (rarely needed)
+    @PutMapping("/{id}")
+    public ResponseEntity<Followers> updateFollowRelationship(
+            @PathVariable String id,
+            @RequestBody FollowRequestDTO followRequestDTO) {
+        Followers updated = followerService.updateFollowRelationship(id, followRequestDTO);
+        return ResponseEntity.ok(updated);
     }
 }

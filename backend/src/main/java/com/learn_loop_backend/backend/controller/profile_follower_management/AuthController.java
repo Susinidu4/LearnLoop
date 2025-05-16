@@ -5,7 +5,9 @@ package com.learn_loop_backend.backend.controller.profile_follower_management;
 
 import com.learn_loop_backend.backend.DTO.profile_follower_management.*;
 import com.learn_loop_backend.backend.model.profile_follower_management.User;
+import com.learn_loop_backend.backend.repository.profile_follower_management.UserRepository;
 import com.learn_loop_backend.backend.service.profile_follower_management.AuthService;
+import com.learn_loop_backend.backend.service.profile_follower_management.JWTService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,10 +19,13 @@ import java.util.List;
 public class AuthController {
 
     private final AuthService authService;
+    private final JWTService jwtService;
+    private final UserRepository userRepository;
 
-
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, JWTService jwtService, UserRepository userRepository) {
         this.authService = authService;
+        this.jwtService = jwtService;
+        this.userRepository = userRepository;
     }
 
 
@@ -42,14 +47,12 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public LoginResponseDTO login(@RequestBody LoginRequestDTO loginData ) {
-
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody LoginRequestDTO loginData) {
         LoginResponseDTO res = authService.login(loginData);
         if (res.getError() != null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res).getBody();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(res);
         }
-
-        return ResponseEntity.status(HttpStatus.OK).body(res).getBody();
+        return ResponseEntity.status(HttpStatus.OK).body(res);
     }
 
     @PostMapping("/register")
@@ -76,7 +79,7 @@ public class AuthController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody RegisterRequestDTO userData) {
+    public ResponseEntity<User> updateUser(@PathVariable String id, @RequestBody UpdateUserRequestDTO userData) {
         try {
             User updatedUser = authService.updateUser(id, userData);
             return ResponseEntity.ok(updatedUser);
@@ -94,6 +97,8 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+
+
 
 
 }

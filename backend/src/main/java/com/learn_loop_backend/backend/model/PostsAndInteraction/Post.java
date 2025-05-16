@@ -1,5 +1,7 @@
-package com.learn_loop_backend.backend.model.Comments_Likes_Notification_Managemen;
+package com.learn_loop_backend.backend.model.PostsAndInteraction;
 
+import com.learn_loop_backend.backend.model.Comments_Likes_Notification_Managemen.Comment;
+import com.learn_loop_backend.backend.model.Comments_Likes_Notification_Managemen.Like;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,29 +10,27 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Data
 @Document(collection = "posts")
+@Data
 public class Post {
     @Id
     private String id;
     private String userId;
     private String description;
     private String category;
-    private List<String> mediaPaths;
+    private List<String> mediaUrls; // URLs of uploaded media files
     private Date createdAt;
     private Date updatedAt;
     private List<Like> likes = new ArrayList<>();  // Initialize here
     private List<Comment> comments = new ArrayList<>();  // Initialize here
 
-    public Post(String userId, String description, String category, List<String> mediaPaths, Date createdAt, Date updatedAt, List<Like> likes, List<Comment> comments) {
+    public Post(String userId, String description, String category, List<String> mediaUrls, Date createdAt, Date updatedAt) {
         this.userId = userId;
         this.description = description;
         this.category = category;
-        this.mediaPaths = mediaPaths;
+        this.mediaUrls = mediaUrls;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.likes = likes;
-        this.comments = comments;
     }
 
     public Post() {
@@ -38,13 +38,7 @@ public class Post {
         this.comments = new ArrayList<>();
     }
 
-    public String getId() {
-        return id;
-    }
 
-    public void setId(String id) {
-        this.id = id;
-    }
 
     public String getUserId() {
         return userId;
@@ -70,12 +64,12 @@ public class Post {
         this.category = category;
     }
 
-    public List<String> getMediaPaths() {
-        return mediaPaths;
+    public List<String> getMediaUrls() {
+        return mediaUrls;
     }
 
-    public void setMediaPaths(List<String> mediaPaths) {
-        this.mediaPaths = mediaPaths;
+    public void setMediaUrls(List<String> mediaUrls) {
+        this.mediaUrls = mediaUrls;
     }
 
     public Date getCreatedAt() {
@@ -94,14 +88,6 @@ public class Post {
         this.updatedAt = updatedAt;
     }
 
-    public List<Like> getLikes() {
-        return likes;
-    }
-
-    public void setLikes(List<Like> likes) {
-        this.likes = likes;
-    }
-
     public List<Comment> getComments() {
         return comments;
     }
@@ -110,5 +96,11 @@ public class Post {
         this.comments = comments;
     }
 
+    public List<Like> getLikes() {
+        return likes;
+    }
 
+    public void setLikes(List<Like> likes) {
+        this.likes = likes;
+    }
 }
