@@ -5,6 +5,8 @@ import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import { FaUpload } from "react-icons/fa";
 import postGirl from "../../assets/Images/postgirl.png";
 import axios from "axios";
+import { useEffect } from "react";
+import ProfileService from "../../service/Profile & Followers Management/ProfileService";
 
 export const AddPost = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
@@ -13,6 +15,22 @@ export const AddPost = () => {
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const user = JSON.parse(localStorage.getItem("user"));
+  const [profileImageUrl, setProfileImageUrl] = useState(null);
+
+  useEffect(() => {
+    const fetchProfileImage = async () => {
+      if (user?.id) {
+        try {
+          const url = await ProfileService.getProfileImage(user.id);
+          setProfileImageUrl(url);
+        } catch (error) {
+          console.error("Failed to load profile image", error);
+        }
+      }
+    };
+
+    fetchProfileImage();
+  }, [user]);
 
   const handleFileChange = async (e) => {
     const files = Array.from(e.target.files);
@@ -63,7 +81,7 @@ export const AddPost = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!description || !category || selectedFiles.length === 0) {
       setError("Please fill all fields and select at least one file.");
       return;
@@ -77,16 +95,20 @@ export const AddPost = () => {
       formData.append("userId", user.id);
       formData.append("description", description);
       formData.append("category", category);
-      
+
       selectedFiles.forEach((file) => {
         formData.append("files", file);
       });
 
-      const response = await axios.post("http://localhost:5000/api/posts-interaction", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await axios.post(
+        "http://localhost:5000/api/posts-interaction",
+        formData,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       // Reset form on success
       setDescription("");
@@ -105,17 +127,29 @@ export const AddPost = () => {
       <SideBar />
       <div className="flex flex-col w-full ml-16">
         <Header />
-        <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
+        <div
+          className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}
+        >
           <main className="p-6">
             <div className="relative flex flex-col bg-[#C8A381] p-6 rounded-2xl shadow-lg w-[950px] h-[600px] mx-auto">
               {/* User Info */}
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
-                  <h1 className={GlobalStyle.headingMedium}>{user?.name || "User"}</h1>
+                  {profileImageUrl ? (
+                    <img
+                      src={profileImageUrl}
+                      alt="Profile"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-10 h-10 rounded-full bg-[#8B6F5A]"></div>
+                  )}
+                  <h1 className={GlobalStyle.headingMedium}>
+                    {user?.name || "User"}
+                  </h1>
                 </div>
               </div>
-              <br/>
+              <br />
               {/* Description */}
               <div className="mb-6 w-[850px]">
                 <label className={GlobalStyle.remarkTopic}>Description</label>
@@ -127,7 +161,7 @@ export const AddPost = () => {
                   rows="3"
                 ></textarea>
               </div>
-              <br/>
+              <br />
               {/* Category Dropdown */}
               <div className="w-[850px] mb-4">
                 <label className={GlobalStyle.remarkTopic}>Category</label>
@@ -144,7 +178,7 @@ export const AddPost = () => {
                   <option value="photography">Photography</option>
                 </select>
               </div>
-              <br/>
+              <br />
               {/* Snap Upload */}
               <div className="w-[850px] mb-4">
                 <label className={GlobalStyle.remarkTopic}>Snaps</label>
@@ -168,15 +202,19 @@ export const AddPost = () => {
                     </div>
                   </div>
                 </label>
-                {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
+                {error && (
+                  <div className="text-red-500 text-sm mt-2">{error}</div>
+                )}
               </div>
-              <br/>
+              <br />
               {/* Post Button */}
               <div className="flex gap-4">
-                <button 
+                <button
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className={`${GlobalStyle.buttonPrimary} ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
+                  className={`${GlobalStyle.buttonPrimary} ${
+                    isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                  }`}
                 >
                   {isSubmitting ? "Posting..." : "Post"}
                 </button>
