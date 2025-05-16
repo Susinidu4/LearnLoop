@@ -13,6 +13,7 @@ export const PostDetailPage = () => {
   const { postId } = useParams();
   const [post, setPost] = useState(null);
   const [user, setUser] = useState({});
+  const [userDetails, setUserDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [comments, setComments] = useState([]);
@@ -26,34 +27,60 @@ export const PostDetailPage = () => {
   const loggedInUserId = loggedInUser ? loggedInUser.id : null;
 
   useEffect(() => {
-    const fetchPost = async () => {
-      try {
-        const fetchedPost = await PostService.getPostById(postId);
-        setPost(fetchedPost);
+  const fetchPost = async () => {
+    try {
+      const fetchedPost = await PostService.getPostById(postId);
+      setPost(fetchedPost);
 
-        // Get user details and profile image
-        const userData = await getUserById(fetchedPost.userId);
-        setUser(userData);
+      // Get post author details and profile image
+      const userData = await getUserById(fetchedPost.userId);
+      setUser(userData);
 
-        // Fetch profile image
-        const imageUrl = await ProfileService.getProfileImage(
-          fetchedPost.userId
-        );
-        setProfileImages((prev) => ({
-          ...prev,
-          [fetchedPost.userId]: imageUrl,
-        }));
+      // Fetch profile images for post author and all commenters
+      const userIds = new Set();
+      userIds.add(fetchedPost.userId);
+      
+      // Add all commenter user IDs
+      fetchedPost.comments?.forEach(comment => userIds.add(comment.userId));
 
-        setComments(fetchedPost.comments || []);
-      } catch (err) {
-        setError("Failed to load post details");
-      } finally {
-        setLoading(false);
+      // Fetch profile images
+      const images = {};
+      for (const userId of userIds) {
+        try {
+          const imageUrl = await ProfileService.getProfileImage(userId);
+          if (imageUrl) {
+            images[userId] = imageUrl;
+          }
+        } catch (error) {
+          console.error(`Error fetching profile image for user ${userId}:`, error);
+        }
       }
-    };
+      setProfileImages(images);
 
-    fetchPost();
-  }, [postId]);
+      // Fetch user details for all commenters
+      const userDetails = {};
+      for (const userId of userIds) {
+        try {
+          const user = await getUserById(userId);
+          if (user) {
+            userDetails[userId] = user;
+          }
+        } catch (error) {
+          console.error(`Error fetching user details for ${userId}:`, error);
+        }
+      }
+      setUserDetails(userDetails); // You'll need to add this state: const [userDetails, setUserDetails] = useState({});
+
+      setComments(fetchedPost.comments || []);
+    } catch (err) {
+      setError("Failed to load post details");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchPost();
+}, [postId]);
 
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) return;
@@ -237,93 +264,104 @@ export const PostDetailPage = () => {
                 <div className="mt-6">
                   <div className="h-[200px] overflow-y-scroll bg-[#8B6F5A] p-4 rounded-lg">
                     {comments.map((comment) => {
-                      const isCommentOwner = comment.userId === loggedInUserId;
-                      const isPostOwner = post.userId === loggedInUserId;
+  const isCommentOwner = comment.userId === loggedInUserId;
+  const isPostOwner = post.userId === loggedInUserId;
+  const commenter = userDetails[comment.userId] || { name: `User ${comment.userId.slice(-4)}` };
 
-                      return (
-                        <div
-                          key={comment.id}
-                          className="flex justify-between items-center bg-[#D9C3AC] rounded-lg p-4 mb-6 min-h-[40px]"
-                        >
-                          <div className="flex-grow ml-4">
-                            {editingCommentId === comment.id ? (
-                              <div className="flex flex-col gap-2">
-                                <input
-                                  type="text"
-                                  value={editedCommentContent}
-                                  onChange={(e) =>
-                                    setEditedCommentContent(e.target.value)
-                                  }
-                                  className="border rounded p-1"
-                                />
-                                <div className="flex gap-2">
-                                  <button
-                                    className="text-sm bg-[#8B5E3C] text-white px-2 py-1 rounded"
-                                    onClick={() =>
-                                      handleEditComment(comment.id)
-                                    }
-                                  >
-                                    Save
-                                  </button>
-                                  <button
-                                    className="text-sm text-black border px-2 py-1 rounded"
-                                    onClick={() => setEditingCommentId(null)}
-                                  >
-                                    Cancel
-                                  </button>
-                                </div>
-                              </div>
-                            ) : (
-                              <>
-                                <p className="font-medium text-gray-800 break-words">
-                                  {comment.content}
-                                </p>
-                                <p className="text-xs text-gray-600 mt-1">
-                                  on{" "}
-                                  {new Date(
-                                    comment.commentedAt
-                                  ).toLocaleString()}
-                                </p>
-                              </>
-                            )}
-                          </div>
+  return (
+    <div
+      key={comment.id}
+      className="flex justify-between items-center bg-[#D9C3AC] rounded-lg p-4 mb-6 min-h-[40px]"
+    >
+      <div className="flex items-start gap-3">
+        {/* Commenter avatar */}
+        <div className="w-10 h-10 rounded-full bg-[#8B6F5A] overflow-hidden flex-shrink-0">
+          {profileImages[comment.userId] ? (
+            <img
+              src={profileImages[comment.userId]}
+              alt={`${commenter.name}'s profile`}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-white">
+              {commenter.name.charAt(0).toUpperCase()}
+            </div>
+          )}
+        </div>
+        
+        <div className="flex-grow">
+          <div className="flex items-center gap-2">
+            <p className="font-semibold text-gray-800">{commenter.name}</p>
+            <p className="text-xs text-gray-600">
+              {new Date(comment.commentedAt).toLocaleString()}
+            </p>
+          </div>
+          
+          {editingCommentId === comment.id ? (
+            <div className="flex flex-col gap-2 mt-2">
+              <input
+                type="text"
+                value={editedCommentContent}
+                onChange={(e) => setEditedCommentContent(e.target.value)}
+                className="border rounded p-1 w-full"
+              />
+              <div className="flex gap-2">
+                <button
+                  className="text-sm bg-[#8B5E3C] text-white px-2 py-1 rounded"
+                  onClick={() => handleEditComment(comment.id)}
+                >
+                  Save
+                </button>
+                <button
+                  className="text-sm text-black border px-2 py-1 rounded"
+                  onClick={() => setEditingCommentId(null)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-800 break-words mt-1">
+              {comment.content}
+            </p>
+          )}
+        </div>
+      </div>
 
-                          {editingCommentId !== comment.id && (
-                            <div className="flex items-center gap-3">
-                              <button
-                                className={`text-[#8B5E3C] ${
-                                  !isCommentOwner ? "opacity-50" : ""
-                                }`}
-                                onClick={() => {
-                                  if (isCommentOwner) {
-                                    setEditingCommentId(comment.id);
-                                    setEditedCommentContent(comment.content);
-                                  }
-                                }}
-                                disabled={!isCommentOwner}
-                              >
-                                <MdEdit />
-                              </button>
-                              <button
-                                className={`text-[#8B5E3C] ${
-                                  !isCommentOwner && !isPostOwner
-                                    ? "opacity-50"
-                                    : ""
-                                }`}
-                                onClick={() => {
-                                  if (isCommentOwner || isPostOwner) {
-                                    handleDeleteComment(comment.id);
-                                  }
-                                }}
-                                disabled={!isCommentOwner && !isPostOwner}
-                              >
-                                <MdDelete />
-                              </button>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
+      {editingCommentId !== comment.id && (
+        <div className="flex items-center gap-3">
+          <button
+            className={`text-[#8B5E3C] ${
+              !isCommentOwner ? "opacity-50" : ""
+            }`}
+            onClick={() => {
+              if (isCommentOwner) {
+                setEditingCommentId(comment.id);
+                setEditedCommentContent(comment.content);
+              }
+            }}
+            disabled={!isCommentOwner}
+          >
+            <MdEdit />
+          </button>
+          <button
+            className={`text-[#8B5E3C] ${
+              !isCommentOwner && !isPostOwner ? "opacity-50" : ""
+            }`}
+            onClick={() => {
+              if (isCommentOwner || isPostOwner) {
+                handleDeleteComment(comment.id);
+              }
+            }}
+            disabled={!isCommentOwner && !isPostOwner}
+          >
+            <MdDelete />
+          </button>
+        </div>
+      )}
+    </div>
+  );
+})}
                   </div>
 
                   <div className="flex items-center gap-3 mt-4">

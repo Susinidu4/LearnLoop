@@ -3,12 +3,14 @@ import { PencilIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import ProfileService from "../service/Profile & Followers Management/ProfileService";
 import FollowerService from "../service/Profile & Followers Management/FollowService";
+import PostService from "../service/Post-And-Interaction/PostService";
 
 export function ProfileHeader() {
   const user = JSON.parse(localStorage.getItem("user"));
   const [followersCount, setFollowersCount] = useState(0);
   const [followingCount, setFollowingCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [postCount, setPostCount] = useState(0);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const fileInputRef = useRef(null);
 
@@ -23,6 +25,10 @@ export function ProfileHeader() {
           // Get following count
           const following = await FollowerService.getFollowing(user.id);
           setFollowingCount(following.length);
+
+          // Get posts count
+          const posts = await PostService.getPostsByUser(user.id);
+          setPostCount(posts.length);
 
           // Load profile image
           await loadProfileImage();
@@ -78,9 +84,9 @@ export function ProfileHeader() {
         ref={fileInputRef}
         onChange={handleFileChange}
         accept="image/*"
-        style={{ display: 'none' }}
+        style={{ display: "none" }}
       />
-      
+
       {/* Cover image */}
       <div className="h-48 bg-[#d9c4a3] rounded-lg mb-16 relative">
         {/* Profile image */}
@@ -98,7 +104,7 @@ export function ProfileHeader() {
               </div>
             )}
           </div>
-          
+
           {/* User info - now positioned directly below the profile picture */}
           <div className="text-center mt-3 w-full">
             <h1 className="text-2xl font-bold">{user.name}</h1>
@@ -107,7 +113,7 @@ export function ProfileHeader() {
         </div>
 
         {/* Edit button */}
-        <button 
+        <button
           className="absolute bottom-4 right-4 bg-[#c19e67] p-2 rounded-full"
           onClick={handleEditClick}
         >
@@ -118,24 +124,24 @@ export function ProfileHeader() {
       {/* Profile stats */}
       <div className="flex justify-center space-x-8 mb-6">
         <div className="flex flex-col items-center">
-        <Link to={`/myfollowers`} > 
-        <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
-           <span className="font-bold">{followingCount}</span>
-          </div>
-        </Link>
+          <Link to={`/myfollowers`}>
+            <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
+              <span className="font-bold">{followingCount}</span>
+            </div>
+          </Link>
           <span className="text-sm">Followers</span>
         </div>
         <div className="flex flex-col items-center">
-          <Link to={`/myfollowings`} >
-          <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
-            <span className="font-bold">{followersCount}</span>
-          </div>
+          <Link to={`/myfollowings`}>
+            <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
+              <span className="font-bold">{followersCount}</span>
+            </div>
           </Link>
           <span className="text-sm">Following</span>
         </div>
         <div className="flex flex-col items-center">
           <div className="bg-gray-200 rounded-full w-16 h-16 flex items-center justify-center mb-1">
-            <span className="font-bold">12</span>
+            <span className="font-bold">{postCount}</span>
           </div>
           <span className="text-sm">Posts</span>
         </div>
