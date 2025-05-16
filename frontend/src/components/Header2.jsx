@@ -8,7 +8,7 @@ import { FaUser } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
 import { Link } from "react-router-dom";
 
-export const Header = () => {
+export const Header2 = () => {
   const navigate = useNavigate(); // for navigation
   const user = JSON.parse(localStorage.getItem("user"));
 
