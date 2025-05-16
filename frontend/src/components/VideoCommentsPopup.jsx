@@ -1,11 +1,54 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import VideoCommentsAndLikeService from '../service/Like-Comment-Notification-Management/VideoCommentsAndLike';
 import { format } from 'date-fns';
+import ProfileService from '../service/Profile & Followers Management/ProfileService';
+import { getUserById } from '../service/Profile & Followers Management/AuthService';
 
 export const VideoCommentsPopup = ({ video, user, onClose, onCommentDeleted }) => {
   const [newComment, setNewComment] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [profileImages, setProfileImages] = useState({});
+  const [userDetails, setUserDetails] = useState({});
+
+  // Fetch profile images and user details for all commenters
+  useEffect(() => {
+    const fetchCommenterData = async () => {
+      if (!video.comments) return;
+      
+      const uniqueUserIds = [...new Set(video.comments.map(comment => comment.userId))];
+      
+      // Fetch profile images
+      const images = {};
+      for (const userId of uniqueUserIds) {
+        try {
+          const imageUrl = await ProfileService.getProfileImage(userId);
+          if (imageUrl) {
+            images[userId] = imageUrl;
+          }
+        } catch (err) {
+          console.error(`Error fetching profile image for user ${userId}:`, err);
+        }
+      }
+      setProfileImages(images);
+      
+      // Fetch user details
+      const details = {};
+      for (const userId of uniqueUserIds) {
+        try {
+          const userData = await getUserById(userId);
+          if (userData) {
+            details[userId] = userData;
+          }
+        } catch (err) {
+          console.error(`Error fetching user details for ${userId}:`, err);
+        }
+      }
+      setUserDetails(details);
+    };
+
+    fetchCommenterData();
+  }, [video.comments]);
 
   const handleAddComment = async () => {
     if (!newComment.trim()) {
@@ -60,32 +103,48 @@ export const VideoCommentsPopup = ({ video, user, onClose, onCommentDeleted }) =
           {video.comments?.length === 0 ? (
             <p className="text-center text-gray-500 italic">No comments yet. Be the first to comment!</p>
           ) : (
-            video.comments.map(comment => (
-              <div key={comment.id} className="flex space-x-4 items-start">
-                <div className="h-10 w-10 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-bold">
-                  {comment.userId.charAt(0).toUpperCase()}
-                </div>
-                <div className="flex-1">
-                  <div className="flex justify-between items-start">
-                    <p className="font-semibold text-gray-800">
-                      User {comment.userId.substring(0, 6)}
-                    </p>
-                    <span className="text-xs text-gray-500">
-                      {format(new Date(comment.commentedAt), 'MMM d, yyyy h:mm a')}
-                    </span>
+            video.comments.map(comment => {
+              const commenter = userDetails[comment.userId] || { name: `User ${comment.userId.substring(0, 6)}` };
+              
+              return (
+                <div key={comment.id} className="flex space-x-4 items-start">
+                  {/* Commenter avatar */}
+                  <div className="h-10 w-10 rounded-full bg-blue-100 overflow-hidden flex-shrink-0">
+                    {profileImages[comment.userId] ? (
+                      <img
+                        src={profileImages[comment.userId]}
+                        alt={`${commenter.name}'s profile`}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-blue-800 font-bold">
+                        {commenter.name.charAt(0).toUpperCase()}
+                      </div>
+                    )}
                   </div>
-                  <p className="text-gray-700 mt-1 text-sm">{comment.content}</p>
-                  {(user.id === comment.userId || user.id === video.userId) && (
-                    <button
-                      onClick={() => handleDeleteComment(comment.id)}
-                      className="text-xs text-red-500 hover:underline mt-1"
-                    >
-                      Delete
-                    </button>
-                  )}
+                  
+                  <div className="flex-1">
+                    <div className="flex justify-between items-start">
+                      <p className="font-semibold text-gray-800">
+                        {commenter.name}
+                      </p>
+                      <span className="text-xs text-gray-500">
+                        {format(new Date(comment.commentedAt), 'MMM d, yyyy h:mm a')}
+                      </span>
+                    </div>
+                    <p className="text-gray-700 mt-1 text-sm">{comment.content}</p>
+                    {(user.id === comment.userId || user.id === video.userId) && (
+                      <button
+                        onClick={() => handleDeleteComment(comment.id)}
+                        className="text-xs text-red-500 hover:underline mt-1"
+                      >
+                        Delete
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))
+              );
+            })
           )}
         </div>
 

@@ -31,6 +31,7 @@ export function LearningPlansCard() {
         if (res.ok) {
           const data = await res.json();
           setLearningPlans(data);
+          console.log("Learning plans fetched:", data);
         } else {
           console.error("Failed to fetch learning plans:", res.status);
         }
