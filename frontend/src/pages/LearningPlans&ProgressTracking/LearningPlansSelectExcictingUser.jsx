@@ -83,7 +83,7 @@ export const LearningPlansSelectExcistingUser = () => {
               </div>
 
               {/* Banner */}
-              <div className="relative h-64 bg-[#C1A47D]">
+              <div className="relative h-64 bg-[#F0E0D1]">
                 <img
                   src={plan.imageUrl || "/default-banner.jpg"}
                   alt="Banner"
@@ -96,10 +96,10 @@ export const LearningPlansSelectExcistingUser = () => {
               </div>
 
               {/* Divider */}
-              <div className="border-t-2 border-[#E4D6C3]"></div>
+              <div className="border-t-2 border-[#BAB2AC]"></div>
 
               {/* Steps */}
-              <div className="p-6 bg-[#D3BBA2]">
+              <div className="p-6 bg-[#F0E0D1]">
                 {plan.steps?.length ? (
                   plan.steps.map((step, index) => (
                     <div
