@@ -3,12 +3,14 @@ import { useParams } from "react-router-dom";
 import { Header } from "../components/Header";
 import { SideBar } from "../components/SideBar";
 import GlobalStyle from "../assets/prototype/GlobalStyle/";
-import { getUserById } from "../service/Profile & Followers Management/AuthService"
+import { getUserById } from "../service/Profile & Followers Management/AuthService";
+import ProfileService from "../service/Profile & Followers Management/ProfileService";
 
 export function LearningPlansDetailCard() {
   const { id } = useParams();
   const [plan, setPlan] = useState(null);
   const [createdByName, setCreatedByName] = useState("Loading...");
+  const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
     const fetchPlanAndUser = async () => {
@@ -24,11 +26,17 @@ export function LearningPlansDetailCard() {
         const data = await res.json();
         setPlan(data);
 
-        // Fetch the creator's name using plan.createdBy
+        // Fetch the creator's name and profile image
         if (data.userId) {
           try {
             const user = await getUserById(data.userId);
             setCreatedByName(user.name || "Unknown User");
+
+            // Fetch profile image
+            const imageUrl = await ProfileService.getProfileImage(data.userId);
+            if (imageUrl) {
+              setProfileImage(imageUrl);
+            }
           } catch (userErr) {
             console.error("Failed to fetch user", userErr);
             setCreatedByName("Unknown User");
@@ -86,7 +94,19 @@ export function LearningPlansDetailCard() {
             >
               <div className="flex items-center justify-between bg-gray-200 p-4 rounded-t-2xl shadow">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 rounded-full bg-[#9C8259]" />
+                  <div className="w-10 h-10 rounded-full bg-[#9C8259] overflow-hidden">
+                    {profileImage ? (
+                      <img
+                        src={profileImage}
+                        alt="Profile"
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-[#9C8259] flex items-center justify-center text-white text-xs">
+                        {createdByName.charAt(0).toUpperCase()}
+                      </div>
+                    )}
+                  </div>
                   <div>
                     <h2 className="font-bold text-base">{createdByName}</h2>
                     <p className="text-sm text-gray-700 font-semibold">
@@ -107,6 +127,16 @@ export function LearningPlansDetailCard() {
                   />
                 </div>
               )}
+
+              {plan.imageUrl && (
+  <div className="image-section w-full h-64 overflow-hidden">
+    <img
+      src={plan.imageUrl}
+      alt="Learning Plan"
+      className="w-full h-full object-cover"
+    />
+  </div>
+)}
 
               <div className="border-t border-white my-6" />
 

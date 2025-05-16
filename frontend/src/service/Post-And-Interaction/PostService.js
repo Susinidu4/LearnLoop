@@ -96,7 +96,7 @@ const PostService = {
     }
   },
 
-  // ✅ Delete post
+  // Delete post
   deletePost: async (postId) => {
     try {
       await axios.delete(`${API_BASE_URL}/${postId}`);

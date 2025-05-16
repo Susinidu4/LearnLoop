@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
 import { FaCircleUser } from "react-icons/fa6";
-import { MdKeyboardArrowDown } from "react-icons/md";
+// import { MdKeyboardArrowDown } from "react-icons/md";
 import Logo from "../assets/images/logo.png";
 import { FaUser } from "react-icons/fa";
 import { IoLogOut } from "react-icons/io5";
@@ -45,7 +45,7 @@ export const Header2 = () => {
           {/* User Profile */}
           <div className="flex items-center gap-6 cursor-pointer hover:text-[#CFB397] transition duration-300" onClick={handleProfileClick}>
             <FaCircleUser size={40} title="Profile" />
-            <MdKeyboardArrowDown size={24} title="Profile" />
+            {/* <MdKeyboardArrowDown size={24} title="Profile" /> */}
           </div>
 
           <div className="flex items-center gap-6 cursor-pointer hover:text-[#CFB397] transition duration-300" onClick={handleProfileClick}>
@@ -57,7 +57,7 @@ export const Header2 = () => {
       ) : (
         <Link to="/userlogin" className="flex items-center gap-6 cursor-pointer hover:text-[#CFB397] transition duration-300">
           <FaUser size={40} title="userlogin" />
-          <MdKeyboardArrowDown size={24} title="userlogin" />
+          {/* <MdKeyboardArrowDown size={24} title="userlogin" /> */}
         </Link>
 
       )}

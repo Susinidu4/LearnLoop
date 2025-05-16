@@ -34,7 +34,7 @@ export const PrivacyPolicy = () => {
           {/* Page Content */}
           <div className="relative">
             <main className="max-w-5xl mx-auto z-20">
-              <div className={`${GlobalStyle.cardContainer} w-full`}>
+              <div className={`${GlobalStyle.cardContainer} p-20 w-full`}>
                 <div className="prose prose-sm sm:prose-base lg:prose-lg max-w-none leading-relaxed">
                   <section className="space-y-4">
                     <h1 className={GlobalStyle.headingMedium}>
@@ -141,7 +141,7 @@ export const PrivacyPolicy = () => {
             <img
               src={postGirl}
               alt="Girl Illustration"
-              className="absolute right-0 bottom-0 w-60 md:w-72 lg:w-[28rem] opacity-100 z-10 pointer-events-none"
+              className="absolute right-[-100px] bottom-0 w-60 md:w-72 lg:w-[28rem] opacity-100 z-10 pointer-events-none"
             />
           </div>
         </div>

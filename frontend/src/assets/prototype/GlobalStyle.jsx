@@ -21,16 +21,15 @@ const GlobalStyle = {
   
     // Select/Dropdown Styles
     selectBox: "py-1 border-2 opacity-80 border-[#543310] rounded-lg text-left w-full focus:bg-[#F7EDE5] focus:border-[#2F1B06]",
-
   
     // Card Styles
-    cardContainer: "p-4 rounded-lg shadow-xl mb-6 bg-[#CFB397] bg-opacity-15 w-6/12",
+    cardContainer: "p-4 rounded-lg shadow-xl mb-6 bg-[#F0E0D1] bg-opacity-15 w-6/12",
 
     //Mini card styles
     miniCardContainer: "p-6 rounded-lg shadow-2xl mb-6 bg-[#E2D0BD] bg-opacity-15 w-65 h-60 hover:shadow-3xl hover:scale-105 transform transition-all duration-300 ease-in-out",
   
     // case count bar
-    caseCountBar: "flex flex-col space-y-4 p-4 bg-[#CFB397] border-2 border-[#74512D] rounded-3xl mb-4 shadow-lg bg-opacity-40",
+    caseCountBar: "flex flex-col space-y-4 p-4 bg-[#C5B9B0] border-2 border-[#74512D] rounded-3xl mb-4 shadow-lg bg-opacity-40",
     countBarSubTopicContainer: "flex flex-wrap gap-16 justify-center items-center",
     countBarMainBox: "shadow-md py-3 px-8 rounded-3xl flex flex-col items-center bg-[#E2D0BD] text-white w-full sm:w-auto",
     countBarSubBox: "shadow-md py-3 px-8 rounded-3xl flex flex-col items-center bg-[#E2D0BD] w-full sm:w-auto",

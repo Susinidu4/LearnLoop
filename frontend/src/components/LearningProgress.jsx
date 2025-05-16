@@ -63,7 +63,7 @@ export function LearningProgress() {
   };
 
   return (
-    <div className="bg-[#c9b293] rounded-3xl p-10 w-full max-w-5xl relative">
+    <div className="bg-[#F0E0D1] rounded-3xl p-10 w-full max-w-5xl relative">
       <div className="flex flex-col md:flex-row gap-6">
         {/* Stats */}
         <div className="flex flex-col gap-6">
