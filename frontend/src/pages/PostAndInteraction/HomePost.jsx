@@ -19,7 +19,6 @@ export const HomePost = () => {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const navigate = useNavigate();
   const currentUserId = JSON.parse(localStorage.getItem("user"))?.id;
 
   useEffect(() => {
@@ -63,6 +62,9 @@ export const HomePost = () => {
             };
           }
         }
+        );
+
+        const userDetailsMap = Object.assign({}, ...(await Promise.all(userDetailsPromises)));
         setUserDetails(userDetailsMap);
 
 
