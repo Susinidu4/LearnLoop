@@ -40,10 +40,10 @@ export const Notification = () => {
   };
 
   const NotificationCard = ({ senderName,  date, time, notificationId }) => (
-    <div className={`${GlobalStyle.caseCountBar} m-2`}>
+    <div className={`${GlobalStyle.caseCountBar}  m-2`}>
       <div className="flex items-center justify-between p-1">
         <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-[#AE8456] flex items-center justify-center">
+          <div className="w-12 h-12 rounded-full bg-[#614F45] flex items-center justify-center">
             <span className="text-white text-xs">Avatar</span>
           </div>
           <p className="text-sm text-black">
@@ -54,10 +54,10 @@ export const Notification = () => {
           <span className="text-sm text-gray-600">{date}</span>
           <span className="text-sm text-gray-600">{time}</span>
           <div
-            className="bg-[#AE8456] rounded-full p-1 hover:bg-[#543310] transition-colors duration-200 cursor-pointer"
+            className="bg-[#614F45] rounded-full p-1 hover:bg-[#F7EDE5] transition-colors duration-200 cursor-pointer"
             onClick={() => deleteNotification(notificationId)}
           >
-            <Check className="text-white w-4 h-4 hover:text-[#f0e6d2]" />
+            <Check className="text-white w-4 h-4 hover:text-black" />
           </div>
         </div>
       </div>
