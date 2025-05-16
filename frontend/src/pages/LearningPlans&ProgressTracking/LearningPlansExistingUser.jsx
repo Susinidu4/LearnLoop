@@ -6,15 +6,12 @@ import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import ProfileService from "../../service/Profile & Followers Management/ProfileService";
 import { getUserById } from "../../service/Profile & Followers Management/AuthService";
 
-
 // Card Component
-const Card = ({ title, description, author, cardData, imageUrl, userId, userName }) => {
+const Card = ({ title, description, cardData, imageUrl, userName }) => {
   return (
     <Link
-      to={{
-        pathname: `/LearningPlansSelectExcistingUser/${cardData.userId}`,
-        state: { cardData },
-      }}
+      to={`/LearningPlansSelectExcistingUser/${cardData.id}`}
+      state={{ cardData }}
     >
       <div className="rounded-2xl overflow-hidden shadow-md bg-[#CFB397]">
         {/* Display the uploaded banner image */}
@@ -25,7 +22,9 @@ const Card = ({ title, description, author, cardData, imageUrl, userId, userName
         <div className="bg-[#d9d9d9] p-4 flex items-center justify-between">
           <div>
             <h2 className="font-bold text-sm sm:text-base">{title}</h2>
-            <p className="text-xs sm:text-sm text-gray-700 mt-1">{description}</p>
+            <p className="text-xs sm:text-sm text-gray-700 mt-1">
+              {description}
+            </p>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 rounded-full bg-[#9f7f50]">
@@ -62,8 +61,9 @@ export const LeraningPlansExistingUser = () => {
         const response = await fetch("http://localhost:5000/api/learning-plans");
         const data = await response.json();
         setLearningPlans(data);
+        console.log("✅ Learning Plans Fetched:", data);
       } catch (error) {
-        console.error("Error fetching learning plans:", error);
+        console.error("❌ Error fetching learning plans:", error);
       }
     };
 
@@ -74,30 +74,32 @@ export const LeraningPlansExistingUser = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        const userIds = learningPlans.map((plan) => plan.userId);
+        const uniqueUserIds = [...new Set(userIds)];
+
+        const usersPromises = uniqueUserIds.map((id) => getUserById(id));
+        const imagesPromises = uniqueUserIds.map((id) =>
+          ProfileService.getProfileImage(id)
+        );
+
+        const users = await Promise.all(usersPromises);
+        const images = await Promise.all(imagesPromises);
+
         const names = {};
-        const images = {};
-        
-        // Process each learning plan to fetch user data
-        for (const plan of learningPlans) {
-          try {
-            // Fetch user name
-            const user = await getUserById(plan.userId);
-            names[plan.userId] = user.name;
-            
-            // Fetch profile image
-            const imageUrl = await ProfileService.getProfileImage(plan.userId);
-            images[plan.userId] = imageUrl || "/default-avatar.jpg";
-          } catch (error) {
-            console.error(`Error fetching data for user ${plan.userId}:`, error);
-            names[plan.userId] = "Unknown User";
-            images[plan.userId] = "/default-avatar.jpg";
-          }
-        }
-        
+        const imgs = {};
+
+        uniqueUserIds.forEach((id, i) => {
+          names[id] = users[i]?.name || "Unknown User";
+          imgs[id] = images[i] || "/default-avatar.jpg";
+        });
+
         setUserNames(names);
-        setUserImages(images);
+        setUserImages(imgs);
+
+        console.log("✅ User Names Fetched:", names);
+        console.log("✅ User Images Fetched:", imgs);
       } catch (error) {
-        console.error("Error fetching user data:", error);
+        console.error("❌ Error fetching user data:", error);
       }
     };
 
@@ -130,7 +132,14 @@ export const LeraningPlansExistingUser = () => {
               {learningPlans.map((item, index) => {
                 const userName = userNames[item.userId] || "Unknown User";
                 const userImage = userImages[item.userId] || "/default-avatar.jpg";
-                
+
+                // 🔍 Log each learning plan + user info
+                console.log(`📦 Card ${index + 1}:`, {
+                  plan: item,
+                  userName: userName,
+                  userImage: userImage,
+                });
+
                 return (
                   <Card
                     key={index}
@@ -140,9 +149,7 @@ export const LeraningPlansExistingUser = () => {
                     cardData={item}
                     imageUrl={userImage}
                     userId={item.userId}
-
                     userName={userName}
-
                   />
                 );
               })}

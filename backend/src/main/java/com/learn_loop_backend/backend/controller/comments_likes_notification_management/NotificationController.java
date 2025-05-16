@@ -23,4 +23,11 @@ public class NotificationController {
     public List<NotificationDTO> getUserNotifications(@PathVariable String receiverUserId) {
         return notificationService.getNotifications(receiverUserId);
     }
+
+    // DELETE endpoint to delete a notification by ID
+    @DeleteMapping("/{notificationId}")
+    public void deleteNotification(@PathVariable String notificationId) {
+        notificationService.deleteNotification(notificationId);  // Call the service method to delete the notification
+    }
+
 }
