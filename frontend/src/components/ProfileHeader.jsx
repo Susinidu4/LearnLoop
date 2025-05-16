@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { PencilIcon } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import ProfileService from "../service/Profile & Followers Management/ProfileService";
 import FollowerService from "../service/Profile & Followers Management/FollowService";
 import profileBanner from "../assets/images/profileBanner.png";
@@ -14,24 +14,21 @@ export function ProfileHeader() {
   const [postCount, setPostCount] = useState(0);
   const [profileImageUrl, setProfileImageUrl] = useState(null);
   const fileInputRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         if (user && user.id) {
-          // Get followers count
           const followers = await FollowerService.getFollowers(user.id);
           setFollowersCount(followers.length);
 
-          // Get following count
           const following = await FollowerService.getFollowing(user.id);
           setFollowingCount(following.length);
 
-          // Get posts count
           const posts = await PostService.getPostsByUser(user.id);
           setPostCount(posts.length);
 
-          // Load profile image
           await loadProfileImage();
         }
       } catch (error) {
@@ -54,6 +51,10 @@ export function ProfileHeader() {
   };
 
   const handleEditClick = () => {
+    navigate("/updateuser");
+  };
+
+  const handleProfilePicClick = () => {
     fileInputRef.current.click();
   };
 
@@ -79,7 +80,6 @@ export function ProfileHeader() {
 
   return (
     <div className="mb-6 py-8">
-      {/* Hidden file input */}
       <input
         type="file"
         ref={fileInputRef}
@@ -88,15 +88,18 @@ export function ProfileHeader() {
         style={{ display: "none" }}
       />
 
-      {/* Cover image */}
       <div className="h-48 bg-[#d9c4a3] rounded-lg mb-16 relative">
         <img
           src={profileBanner}
           alt="Cover"
           className="w-full h-full object-cover rounded-lg"
         />
-        {/* Profile image */}
-        <div className="absolute -bottom-28 left-5 flex flex-col items-center">
+
+        {/* Profile Image Clickable */}
+        <div
+          className="absolute -bottom-28 left-5 flex flex-col items-center cursor-pointer"
+          onClick={handleProfilePicClick}
+        >
           <div className="w-40 h-40 rounded-full border-4 border-[#633D2B] overflow-hidden">
             {profileImageUrl ? (
               <img
@@ -110,16 +113,13 @@ export function ProfileHeader() {
               </div>
             )}
           </div>
-
-          {/* User info - now positioned directly below the profile picture */}
           <div className="text-center mt-3 w-full">
             <h1 className="text-2xl font-bold">{user.name}</h1>
             <p className="text-gray-600">Developer</p>
           </div>
         </div>
 
-        {/* Edit button */}
-
+        {/* Pencil Icon - navigates to /updateuser */}
         <button
           className="absolute bottom-2 right-2 p-2 rounded-full"
           onClick={handleEditClick}
@@ -128,7 +128,7 @@ export function ProfileHeader() {
         </button>
       </div>
 
-      {/* Profile stats */}
+      {/* Stats Section */}
       <div className="flex justify-end space-x-8 mb-6 -mt-10">
         <div className="flex flex-col items-center">
           <Link to={`/myfollowers`}>
