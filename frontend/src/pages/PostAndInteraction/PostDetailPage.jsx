@@ -157,7 +157,7 @@ export const PostDetailPage = () => {
         >
           <main className="p-6">
             <div className={`${GlobalStyle.countBarSubTopicContainer} pt-2`}>
-              <div className="bg-[#CFB397] shadow-md rounded-lg w-full max-w-4xl mx-auto mb-8 p-8">
+              <div className="bg-[#F0E0D1] shadow-md rounded-lg w-full max-w-4xl mx-auto mb-8 p-8">
                 <div className="flex justify-between items-start mb-6">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 rounded-full bg-[#8B6F5A] overflow-hidden">
@@ -183,6 +183,8 @@ export const PostDetailPage = () => {
                   {post.description}
                 </p>
 
+                <hr className="border-t-[1px] border-[#BAB2AC] my-4" />
+
                 {post.mediaUrls?.length > 0 && (
                   <div className="flex justify-center gap-6 mb-6">
                     {post.mediaUrls.map((url, i) => (
@@ -199,6 +201,8 @@ export const PostDetailPage = () => {
                     ))}
                   </div>
                 )}
+
+                <hr className="border-t-[1px] border-[#BAB2AC] my-4" />
 
                 <div className="flex gap-8 mt-6">
                   <div className="flex items-center gap-2">
@@ -235,7 +239,7 @@ export const PostDetailPage = () => {
                 </div>
 
                 <div className="mt-6">
-                  <div className="h-[200px] overflow-y-scroll bg-[#8B6F5A] p-4 rounded-lg">
+                  <div className="h-[200px] overflow-y-scroll bg-[#F0E0D1] p-4 rounded-lg">
                     {comments.map((comment) => {
                       const isCommentOwner = comment.userId === loggedInUserId;
                       const isPostOwner = post.userId === loggedInUserId;
@@ -243,7 +247,7 @@ export const PostDetailPage = () => {
                       return (
                         <div
                           key={comment.id}
-                          className="flex justify-between items-center bg-[#D9C3AC] rounded-lg p-4 mb-6 min-h-[40px]"
+                          className="flex justify-between items-center bg-[#C9BDB4] rounded-lg p-4 mb-6 min-h-[40px]"
                         >
                           <div className="flex-grow ml-4">
                             {editingCommentId === comment.id ? (
@@ -351,7 +355,7 @@ export const PostDetailPage = () => {
                     />
                     <div className="flex gap-4">
                       <button
-                        className={`${GlobalStyle.buttonPrimary} rounded-lg`}
+                        className={`${GlobalStyle.buttonSecondary} rounded-lg`}
                         onClick={handleCommentSubmit}
                       >
                         Submit

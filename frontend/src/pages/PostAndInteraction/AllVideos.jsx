@@ -1,23 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import VideoService from '../../service/Post-And-Interaction/VideoService';
-import VideoCommentsAndLikeService from '../../service/Like-Comment-Notification-Management/VideoCommentsAndLike'
-import { Header } from '../../components/Header';
-import { SideBar } from '../../components/SideBar';
+import React, { useState, useEffect } from "react";
+import VideoService from "../../service/Post-And-Interaction/VideoService";
+import VideoCommentsAndLikeService from "../../service/Like-Comment-Notification-Management/VideoCommentsAndLike";
+import { FaSearch } from "react-icons/fa";
+
 export const AllVideos = () => {
   const [videos, setVideos] = useState([]);
+  const [filteredVideos, setFilteredVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeCommentVideoId, setActiveCommentVideoId] = useState(null);
-  const [commentText, setCommentText] = useState('');
-  const user = JSON.parse(localStorage.getItem('user')); // Replace with your actual user ID management
+  const [commentText, setCommentText] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const user = JSON.parse(localStorage.getItem("user")); // Replace with your actual user ID management
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
         const data = await VideoService.getAllVideos();
         setVideos(data);
+        setFilteredVideos(data); // Initially set filtered videos to all videos
       } catch (err) {
-        setError(err.message || 'Failed to load videos');
+        setError(err.message || "Failed to load videos");
       } finally {
         setLoading(false);
       }
@@ -26,69 +29,88 @@ export const AllVideos = () => {
     fetchVideos();
   }, []);
 
+  useEffect(() => {
+    const filtered = videos.filter((video) =>
+      video.userId.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredVideos(filtered);
+  }, [searchTerm, videos]);
+
   const formatBytes = (bytes, decimals = 2) => {
-    if (bytes === 0) return '0 Bytes';
+    if (bytes === 0) return "0 Bytes";
     const k = 1024;
     const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const sizes = ["Bytes", "KB", "MB", "GB"];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + " " + sizes[i];
   };
 
   const handleLike = async (videoId) => {
     try {
-      const updatedVideo = await VideoCommentsAndLikeService.likePost(videoId, user.id);
-      setVideos(videos.map(video => 
-        video.id === videoId ? updatedVideo : video
-      ));
+      const updatedVideo = await VideoCommentsAndLikeService.likePost(
+        videoId,
+        user.id
+      );
+      setVideos(
+        videos.map((video) => (video.id === videoId ? updatedVideo : video))
+      );
     } catch (error) {
-      console.error('Error liking video:', error);
+      console.error("Error liking video:", error);
     }
   };
 
   const handleUnlike = async (videoId) => {
     try {
-      const updatedVideo = await VideoCommentsAndLikeService.unlikePost(videoId, user.id);
-      setVideos(videos.map(video => 
-        video.id === videoId ? updatedVideo : video
-      ));
+      const updatedVideo = await VideoCommentsAndLikeService.unlikePost(
+        videoId,
+        user.id
+      );
+      setVideos(
+        videos.map((video) => (video.id === videoId ? updatedVideo : video))
+      );
     } catch (error) {
-      console.error('Error unliking video:', error);
+      console.error("Error unliking video:", error);
     }
   };
 
   const handleAddComment = async (videoId) => {
     if (!commentText.trim()) return;
-    
+
     try {
       const commentData = {
         userId: user.id,
-        content: commentText
+        content: commentText,
       };
-      const updatedVideo = await VideoCommentsAndLikeService.addComment(videoId, commentData);
-      setVideos(videos.map(video => 
-        video.id === videoId ? updatedVideo : video
-      ));
-      setCommentText('');
+      const updatedVideo = await VideoCommentsAndLikeService.addComment(
+        videoId,
+        commentData
+      );
+      setVideos(
+        videos.map((video) => (video.id === videoId ? updatedVideo : video))
+      );
+      setCommentText("");
       setActiveCommentVideoId(null);
     } catch (error) {
-      console.error('Error adding comment:', error);
+      console.error("Error adding comment:", error);
     }
   };
 
   const handleDeleteComment = async (videoId, commentId) => {
     try {
-      const updatedVideo = await VideoCommentsAndLikeService.deleteComment(videoId, commentId);
-      setVideos(videos.map(video => 
-        video.id === videoId ? updatedVideo : video
-      ));
+      const updatedVideo = await VideoCommentsAndLikeService.deleteComment(
+        videoId,
+        commentId
+      );
+      setVideos(
+        videos.map((video) => (video.id === videoId ? updatedVideo : video))
+      );
     } catch (error) {
-      console.error('Error deleting comment:', error);
+      console.error("Error deleting comment:", error);
     }
   };
 
   const isLiked = (video, userId) => {
-    return video.likes?.some(like => like.userId === userId) || false;
+    return video.likes?.some((like) => like.userId === userId) || false;
   };
 
   if (loading) {
@@ -102,7 +124,10 @@ export const AllVideos = () => {
 
   if (error) {
     return (
-      <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
+      <div
+        className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4"
+        role="alert"
+      >
         <p className="font-bold">Error</p>
         <p>{error}</p>
       </div>
@@ -111,20 +136,29 @@ export const AllVideos = () => {
 
   return (
     <div>
-      <Header />
-      <div className="container mx-auto px-4 py-8">
-        <SideBar />
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">All Videos</h1>
-      
-      {videos.length === 0 ? (
+      {/* Search Bar */}
+      <div className="flex justify-center items-center my-4">
+        <div className="relative w-full max-w-2xl">
+          <input
+            type="text"
+            placeholder="Search by name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full p-3 rounded-full border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#402006]"
+          />
+          <FaSearch className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-600" />
+        </div>
+      </div>
+
+      {filteredVideos.length === 0 ? (
         <div className="text-center py-12">
           <p className="text-gray-500 text-lg">No videos found.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {videos.map(video => (
-            <div 
-              key={video.id} 
+          {filteredVideos.map((video) => (
+            <div
+              key={video.id}
               className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
             >
               <div className="bg-black">
@@ -133,18 +167,24 @@ export const AllVideos = () => {
                   Your browser does not support the video tag.
                 </video>
               </div>
-              
+
               <div className="p-4">
-                <h3 className="text-xl font-semibold text-gray-800 mb-3 line-clamp-1">{video.title}</h3>
-                
+                <h3 className="text-xl font-semibold text-gray-800 mb-3 line-clamp-1">
+                  {video.title}
+                </h3>
+
                 <div className="space-y-2 text-sm text-gray-600">
                   <div className="flex">
                     <span className="font-medium w-24">Format:</span>
-                    <span className="text-gray-800">{video.format.toUpperCase()}</span>
+                    <span className="text-gray-800">
+                      {video.format.toUpperCase()}
+                    </span>
                   </div>
                   <div className="flex">
                     <span className="font-medium w-24">Size:</span>
-                    <span className="text-gray-800">{formatBytes(video.bytes)}</span>
+                    <span className="text-gray-800">
+                      {formatBytes(video.bytes)}
+                    </span>
                   </div>
                   <div className="flex">
                     <span className="font-medium w-24">Uploaded by:</span>
@@ -155,15 +195,15 @@ export const AllVideos = () => {
                 {/* Like Button */}
                 <div className="mt-4 flex items-center">
                   <button
-                    onClick={() => 
-                      isLiked(video, user.id) 
-                        ? handleUnlike(video.id) 
+                    onClick={() =>
+                      isLiked(video, user.id)
+                        ? handleUnlike(video.id)
                         : handleLike(video.id)
                     }
                     className={`flex items-center px-3 py-1 rounded-md ${
                       isLiked(video, user.id)
-                        ? 'bg-red-100 text-red-600'
-                        : 'bg-gray-100 text-gray-600'
+                        ? "bg-red-100 text-red-600"
+                        : "bg-gray-100 text-gray-600"
                     } hover:bg-opacity-80 transition-colors`}
                   >
                     <svg
@@ -182,11 +222,13 @@ export const AllVideos = () => {
                     </svg>
                     {video.likes?.length || 0}
                   </button>
-                  
+
                   <button
-                    onClick={() => setActiveCommentVideoId(
-                      activeCommentVideoId === video.id ? null : video.id
-                    )}
+                    onClick={() =>
+                      setActiveCommentVideoId(
+                        activeCommentVideoId === video.id ? null : video.id
+                      )
+                    }
                     className="ml-2 flex items-center px-3 py-1 bg-gray-100 text-gray-600 rounded-md hover:bg-opacity-80 transition-colors"
                   >
                     <svg
@@ -233,14 +275,19 @@ export const AllVideos = () => {
                         </button>
                       </div>
                     </div>
-                    
+
                     {/* Comments List */}
                     <div className="space-y-3 max-h-40 overflow-y-auto">
-                      {video.comments?.map(comment => (
-                        <div key={comment.id} className="p-2 bg-gray-50 rounded-md">
+                      {video.comments?.map((comment) => (
+                        <div
+                          key={comment.id}
+                          className="p-2 bg-gray-50 rounded-md"
+                        >
                           <div className="flex justify-between items-start">
                             <div>
-                              <p className="font-medium text-sm">{comment.userId}</p>
+                              <p className="font-medium text-sm">
+                                {comment.userId}
+                              </p>
                               <p className="text-gray-700">{comment.content}</p>
                               <p className="text-xs text-gray-500">
                                 {new Date(comment.commentedAt).toLocaleString()}
@@ -248,7 +295,9 @@ export const AllVideos = () => {
                             </div>
                             {comment.userId === user.id && (
                               <button
-                                onClick={() => handleDeleteComment(video.id, comment.id)}
+                                onClick={() =>
+                                  handleDeleteComment(video.id, comment.id)
+                                }
                                 className="text-red-500 hover:text-red-700"
                               >
                                 <svg
@@ -274,9 +323,9 @@ export const AllVideos = () => {
                   </div>
                 )}
 
-                <a 
-                  href={video.url} 
-                  target="_blank" 
+                <a
+                  href={video.url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors duration-200 text-center w-full"
                 >
@@ -287,7 +336,6 @@ export const AllVideos = () => {
           ))}
         </div>
       )}
-    </div>
     </div>
   );
 };

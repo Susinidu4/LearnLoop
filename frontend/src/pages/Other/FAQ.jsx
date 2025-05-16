@@ -11,27 +11,27 @@ export const FAQ = () => {
     {
       question: "What is LearnLoop?",
       answer:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+        "LearnLoop is a web-based Skill Sharing and Learning Platform designed to connect individuals who want to learn or teach skills such as coding, cooking, photography, and DIY crafts. The platform allows users to create posts with media content, track their learning progress, interact with others through likes and comments, and build structured learning plans.",
     },
     {
-      question: "How do I edit or delete my Web ad?",
+      question: "Who can use LearnLoop?",
       answer:
-        "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
+        "Anyone interested in teaching or learning skills can use LearnLoop — whether you're a beginner, hobbyist, or expert.",
     },
     {
-      question: "How do I create a new course?",
+      question: "Is LearnLoop free to use",
       answer:
-        "To create a new course, go to the 'Courses' section in your dashboard and click 'Create New Course'. Fill in the required details and submit the form.",
+        "Yes, LearnLoop is completely free to use. You can browse posts, follow users, create content, and manage your learning plans without any cost.",
     },
     {
-      question: "Can I invite collaborators to my course?",
+      question: "How do I sign up?",
       answer:
-        "Yes, you can invite collaborators by navigating to the course settings and selecting 'Invite Collaborators'. Enter their email addresses and assign appropriate permissions.",
+        "You can sign up using your existing Google or Facebook account through our secure OAuth 2.0 authentication system.",
     },
     {
-      question: "What payment methods do you accept?",
+      question: "Can I edit or delete my posts and comments?",
       answer:
-        "We accept all major credit cards, PayPal, and bank transfers for premium subscriptions and course purchases.",
+        "Yes, you can edit or delete your own posts and comments. As a post owner, you can also delete comments made by others on your posts.",
     },
   ];
 
@@ -83,7 +83,7 @@ export const FAQ = () => {
                   className={`${GlobalStyle.caseCountBar} bg-[#F7EDE5]`}
                 >
                   <button
-                    className={`flex justify-between items-center w-full p-6 text-left hover:bg-[#CFB397] transition-colors rounded-2xl ${
+                    className={`flex justify-between items-center w-full p-6 text-left hover:bg-[#F0E0D1] transition-colors rounded-2xl ${
                       activeIndex === index ? "bg-gray-50" : ""
                     }`}
                     onClick={() => toggleFAQ(index)}

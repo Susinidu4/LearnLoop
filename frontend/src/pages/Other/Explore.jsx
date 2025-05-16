@@ -151,7 +151,7 @@ export const Explore = () => {
                 </div>
 
                 {/* Show illustration only when no category is selected and no search */}
-                {!selectedCategory && !searchQuery && (
+                {/* {!selectedCategory && !searchQuery && (
                   <div className="mt-10">
                     <img
                       src={explore}
@@ -159,7 +159,7 @@ export const Explore = () => {
                       className="w-80 h-auto"
                     />
                   </div>
-                )}
+                )} */}
 
                 {/* Posts Grid */}
                 {displayPosts.length > 0 && (
@@ -167,7 +167,7 @@ export const Explore = () => {
                     {displayPosts.map((post) => (
                       <div
                         key={post.id}
-                        className="bg-[#fff7ee] rounded-2xl shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1 p-4 flex flex-col"
+                        className="bg-[#F0E0D1] rounded-2xl shadow-md hover:shadow-xl transition duration-300 transform hover:-translate-y-1 p-4 flex flex-col"
                       >
                         {/* Image Gallery */}
                         {post.mediaUrls && post.mediaUrls.length > 0 ? (
