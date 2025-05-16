@@ -17,6 +17,7 @@
     "@mui/material": "^7.1.0",
     "@tailwindcss/vite": "^4.0.15",
     "axios": "^1.9.0",
+    "date-fns": "^4.1.0",
     "lucide-react": "^0.487.0",
     "prop-types": "^15.8.1",
     "react": "^19.0.0",

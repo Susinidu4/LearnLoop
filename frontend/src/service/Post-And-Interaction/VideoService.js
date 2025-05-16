@@ -40,7 +40,7 @@ const VideoService = {
   },
 
   // Get videos for a specific user
-  getUserVideos: async (userId) => {
+   getUserVideos: async (userId) => {
     try {
       const response = await axios.get(`${API_BASE_URL}`, {
         headers: {
