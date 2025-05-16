@@ -3,6 +3,7 @@ import { PencilIcon } from "lucide-react";
 import { Link } from "react-router-dom";
 import ProfileService from "../service/Profile & Followers Management/ProfileService";
 import FollowerService from "../service/Profile & Followers Management/FollowService";
+import profileBanner from "../assets/images/profileBanner.png"; 
 
 export function ProfileHeader() {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -83,9 +84,14 @@ export function ProfileHeader() {
       
       {/* Cover image */}
       <div className="h-48 bg-[#d9c4a3] rounded-lg mb-16 relative">
+        <img
+          src={profileBanner}
+          alt="Cover"
+          className="w-full h-full object-cover rounded-lg"
+        />
         {/* Profile image */}
         <div className="absolute -bottom-28 left-5 flex flex-col items-center">
-          <div className="w-28 h-28 rounded-full border-4 border-[#c19e67] overflow-hidden">
+          <div className="w-28 h-28 rounded-full border-4 border-[#633D2B] overflow-hidden">
             {profileImageUrl ? (
               <img
                 src={profileImageUrl}
@@ -108,7 +114,7 @@ export function ProfileHeader() {
 
         {/* Edit button */}
         <button 
-          className="absolute bottom-4 right-4 bg-[#c19e67] p-2 rounded-full"
+          className="absolute bottom-2 right-2 p-2 rounded-full"
           onClick={handleEditClick}
         >
           <PencilIcon size={20} color="white" />
