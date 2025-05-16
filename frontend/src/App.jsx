@@ -52,8 +52,6 @@ function App() {
         <Route path="/postdetails/:postId" element={<PostDetailPage />} />
         <Route path="/learning-plan/:id" element={<LearningPlansDetailCard />} />
 
-        
-
         {/* oshini */}
         <Route path="/addpost" element={<AddPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
@@ -73,7 +71,7 @@ function App() {
         
         {/* Ishara */}
         <Route path="/LeaningPlansExistingUser" element={<LeraningPlansExistingUser/>}/>
-        <Route path="/LearningPlansSelectExcistingUser/:userId" element={<LearningPlansSelectExcistingUser/>}/>
+        <Route path="/LearningPlansSelectExcistingUser/:planId" element={<LearningPlansSelectExcistingUser/>}/>
         <Route path="/AddLearningPlans" element={<AddLearningPlans/>}/>
         <Route path="/Explore" element={<Explore/>}/>
         
