@@ -149,7 +149,7 @@ export const HomePost = () => {
   return (
     <div className={`${GlobalStyle.countBarSubTopicContainer} pt-4`}>
       {/* Search Bar */}
-      <div className="relative w-full max-w-2xl mb-8">
+      <div className="relative w-full max-w-2xl">
         <input
           type="text"
           placeholder="Search by name..."
