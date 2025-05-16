@@ -5,6 +5,7 @@ import GlobalStyle from "../../assets/prototype/GlobalStyle";
 import { Check } from "lucide-react";
 import notificationImage from "../../assets/images/notificationImage.png";
 import NotificationService from "../../service/Like-Comment-Notification-Management/Notification";
+import ProfileService from "../../service/Profile & Followers Management/ProfileService";
 
 export const Notification = () => {
   const [notifications, setNotifications] = useState([]);
@@ -24,13 +25,9 @@ export const Notification = () => {
     fetchNotifications();
   }, [receiverUserId]);
 
-  // Delete a notification by ID
   const deleteNotification = async (notificationId) => {
     try {
-      const response = await NotificationService.deleteNotification(
-        notificationId
-      );
-      // Since your backend returns 200 without data, we don’t need to check response.status
+      await NotificationService.deleteNotification(notificationId);
       setNotifications((prev) =>
         prev.filter((notification) => notification.id !== notificationId)
       );
@@ -39,30 +36,65 @@ export const Notification = () => {
     }
   };
 
-  const NotificationCard = ({ senderName,  date, time, notificationId }) => (
-    <div className={`${GlobalStyle.caseCountBar}  m-2`}>
-      <div className="flex items-center justify-between p-1">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-[#614F45] flex items-center justify-center">
-            <span className="text-white text-xs">Avatar</span>
+  const NotificationCard = ({ senderName, senderUserId, date, time, notificationId }) => {
+    const [profileImage, setProfileImage] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+      const fetchProfileImage = async () => {
+        try {
+          const imageUrl = await ProfileService.getProfileImage(senderUserId);
+          if (imageUrl) {
+            setProfileImage(imageUrl);
+          }
+        } catch (error) {
+          console.error("Error fetching profile image:", error);
+        } finally {
+          setLoading(false);
+        }
+      };
+
+      fetchProfileImage();
+    }, [senderUserId]);
+
+    return (
+      <div className={`${GlobalStyle.caseCountBar} m-2`}>
+        <div className="flex items-center justify-between p-1">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-full overflow-hidden bg-[#614F45] flex items-center justify-center">
+              {loading ? (
+                <span className="text-white text-xs">Loading...</span>
+              ) : profileImage ? (
+                <img 
+                  src={profileImage} 
+                  alt="Sender" 
+                  className="w-full h-full object-cover"
+                  onError={() => setProfileImage(null)} // Fallback if image fails to load
+                />
+              ) : (
+                <span className="text-white text-xs">
+                  {senderName.split(' ')[0].charAt(0).toUpperCase()}
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-black">
+              <span className="font-semibold">{senderName}</span>
+            </p>
           </div>
-          <p className="text-sm text-black">
-            <span className="font-semibold">{senderName}</span>
-          </p>
-        </div>
-        <div className="flex items-center space-x-3">
-          <span className="text-sm text-gray-600">{date}</span>
-          <span className="text-sm text-gray-600">{time}</span>
-          <div
-            className="bg-[#614F45] rounded-full p-1 hover:bg-[#F7EDE5] transition-colors duration-200 cursor-pointer"
-            onClick={() => deleteNotification(notificationId)}
-          >
-            <Check className="text-white w-4 h-4 hover:text-black" />
+          <div className="flex items-center space-x-3">
+            <span className="text-sm text-gray-600">{date}</span>
+            <span className="text-sm text-gray-600">{time}</span>
+            <div
+              className="bg-[#614F45] rounded-full p-1 hover:bg-[#F7EDE5] transition-colors duration-200 cursor-pointer"
+              onClick={() => deleteNotification(notificationId)}
+            >
+              <Check className="text-white w-4 h-4 hover:text-black" />
+            </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="flex">
@@ -80,6 +112,7 @@ export const Notification = () => {
                     <NotificationCard
                       key={note.id}
                       senderName={note.message}
+                      senderUserId={note.senderUserId}
                       date={new Date(note.createdAt).toLocaleDateString(
                         "en-US",
                         {

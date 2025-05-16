@@ -14,8 +14,12 @@ export const AllVideos = () => {
   const [userDetails, setUserDetails] = useState({});
   const [profileImages, setProfileImages] = useState({});
   const [postOwnerDetails, setPostOwnerDetails] = useState({});
+
   const user = JSON.parse(localStorage.getItem("user"));
   const [searchTerm, setSearchTerm] = useState("");
+
+  const [editingComment, setEditingComment] = useState({ videoId: null, commentId: null, content: '' });
+
 
   // Utility function to format bytes
   const formatBytes = (bytes, decimals = 2) => {
@@ -168,6 +172,35 @@ export const AllVideos = () => {
     }
   };
 
+  const handleStartEditComment = (videoId, commentId, currentContent) => {
+    setEditingComment({ videoId, commentId, content: currentContent });
+    setActiveCommentVideoId(videoId);
+  };
+
+  const handleUpdateComment = async () => {
+    if (!editingComment.content.trim()) return;
+    
+    try {
+      const updatedVideo = await VideoCommentsAndLikeService.updateComment(
+        editingComment.videoId,
+        editingComment.commentId,
+        editingComment.content
+      );
+      
+      setVideos(videos.map(video => 
+        video.id === editingComment.videoId ? updatedVideo : video
+      ));
+      
+      setEditingComment({ videoId: null, commentId: null, content: '' });
+    } catch (error) {
+      console.error('Error updating comment:', error);
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingComment({ videoId: null, commentId: null, content: '' });
+  };
+
   const isLiked = (video, userId) => {
     return video.likes?.some((like) => like.userId === userId) || false;
   };
@@ -177,6 +210,9 @@ export const AllVideos = () => {
       {video.comments?.map((comment) => {
         const commentUser = userDetails[comment.userId] || {};
         const commentUserImage = profileImages[comment.userId];
+
+        const isEditing = editingComment.commentId === comment.id;
+        
 
         return (
           <div key={comment.id} className="p-2 m-4 bg-[#D9C3AC] rounded-md">
@@ -197,36 +233,91 @@ export const AllVideos = () => {
                     </span>
                   </div>
                 )}
-                <div>
+                <div className="flex-1">
                   <p className="font-medium text-sm">
                     {commentUser.name || "Unknown User"}
                   </p>
-                  <p className="text-gray-700">{comment.content}</p>
-                  <p className="text-xs text-gray-500">
-                    {new Date(comment.commentedAt).toLocaleString()}
-                  </p>
+                  
+                  {isEditing ? (
+                    <div className="mt-1">
+                      <textarea
+                        value={editingComment.content}
+                        onChange={(e) => setEditingComment({
+                          ...editingComment,
+                          content: e.target.value
+                        })}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        rows="2"
+                      />
+                      <div className="flex justify-end mt-2 space-x-2">
+                        <button
+                          onClick={handleCancelEdit}
+                          className="px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          onClick={handleUpdateComment}
+                          className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                        >
+                          Update
+                        </button>
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-gray-700">{comment.content}</p>
+                      <p className="text-xs text-gray-500">
+                        {new Date(comment.commentedAt).toLocaleString()}
+                      </p>
+                    </>
+                  )}
                 </div>
               </div>
-              {comment.userId === user.id && (
-                <button
-                  onClick={() => handleDeleteComment(video.id, comment.id)}
-                  className="text-[#8B5E3C]"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
+
+              
+              {comment.userId === user.id && !isEditing && (
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => handleStartEditComment(video.id, comment.id, comment.content)}
+                    className="text-blue-500 hover:text-blue-700"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                    />
-                  </svg>
-                </button>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                      />
+                    </svg>
+                  </button>
+                  <button
+                    onClick={() => handleDeleteComment(video.id, comment.id)}
+                    className="text-red-500 hover:text-red-700"
+
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                      />
+                    </svg>
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -403,29 +494,33 @@ export const AllVideos = () => {
 
                     {activeCommentVideoId === video.id && (
                       <div className="mt-4">
-                        <div className="mb-4">
-                          <textarea
-                            value={commentText}
-                            onChange={(e) => setCommentText(e.target.value)}
-                            placeholder="Write a comment..."
-                            className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            rows="2"
-                          />
-                          <div className="flex justify-end mt-2 space-x-2">
-                            <button
-                              onClick={() => setActiveCommentVideoId(null)}
-                              className="px-3 py-1 border text-gray-700 rounded-md "
-                            >
-                              Cancel
-                            </button>
-                            <button
-                              onClick={() => handleAddComment(video.id)}
-                              className="px-3 py-1 bg-[#543310] text-white rounded-md "
-                            >
-                              Post
-                            </button>
+
+                        {!editingComment.commentId && (
+                          <div className="mb-4">
+                            <textarea
+                              value={commentText}
+                              onChange={(e) => setCommentText(e.target.value)}
+                              placeholder="Write a comment..."
+                              className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              rows="2"
+                            />
+                            <div className="flex justify-end mt-2 space-x-2">
+                              <button
+                                onClick={() => setActiveCommentVideoId(null)}
+                                className="px-3 py-1 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300"
+                              >
+                                Cancel
+                              </button>
+                              <button
+                                onClick={() => handleAddComment(video.id)}
+                                className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                              >
+                                Post
+                              </button>
+                            </div>
                           </div>
-                        </div>
+                        )}
+                        
 
                         {renderComments(video)}
                       </div>
