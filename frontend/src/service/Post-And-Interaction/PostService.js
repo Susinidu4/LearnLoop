@@ -9,8 +9,7 @@ const PostService = {
     formData.append('userId', userId);
     formData.append('description', description);
     formData.append('category', category);
-    
-    // Append each file to the form data
+
     for (let i = 0; i < files.length; i++) {
       formData.append('files', files[i]);
     }
@@ -72,14 +71,40 @@ const PostService = {
     }
   },
 
+  // Update post
+  updatePost: async (postId, description, category, files) => {
+    const formData = new FormData();
+    formData.append('description', description);
+    formData.append('category', category);
 
+    if (files && files.length > 0) {
+      for (let i = 0; i < files.length; i++) {
+        formData.append('files', files[i]);
+      }
+    }
 
-  // You can add more methods here for other endpoints like:
-  // - Updating a post
-  // - Deleting a post
-  // - Liking a post
-  // - Adding comments
-  // etc.
+    try {
+      const response = await axios.put(`${API_BASE_URL}/${postId}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error(`Error updating post with ID ${postId}:`, error);
+      throw error;
+    }
+  },
+
+  // Delete post
+  deletePost: async (postId) => {
+    try {
+      await axios.delete(`${API_BASE_URL}/${postId}`);
+    } catch (error) {
+      console.error(`Error deleting post with ID ${postId}:`, error);
+      throw error;
+    }
+  },
 };
 
 export default PostService;

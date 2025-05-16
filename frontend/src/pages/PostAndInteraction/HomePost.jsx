@@ -6,6 +6,8 @@ import { getUserById } from "../../service/Profile & Followers Management/AuthSe
 import NotificationService from "../../service/Like-Comment-Notification-Management/Notification";
 import ProfileService from "../../service/Profile & Followers Management/ProfileService";
 import { FaSearch } from "react-icons/fa";
+import { RiPokerHeartsLine } from "react-icons/ri";
+
 
 export const HomePost = () => {
   const [posts, setPosts] = useState([]);
@@ -13,10 +15,11 @@ export const HomePost = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [likedStates, setLikedStates] = useState([]);
+  const navigate = useNavigate();
+
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const navigate = useNavigate();
   const currentUserId = JSON.parse(localStorage.getItem("user"))?.id;
 
   useEffect(() => {
@@ -31,31 +34,45 @@ export const HomePost = () => {
         );
         setLikedStates(likedStatusArray);
 
-        // Get user data and profile images
+
+        // Get user details and profile images
         const uniqueUserIds = [
           ...new Set(fetchedPosts.map((post) => post.userId)),
         ];
-
-        const userDetailsMap = {};
-        for (const userId of uniqueUserIds) {
+        
+        const userDetailsPromises = uniqueUserIds.map(async (userId) => {
           try {
             const user = await getUserById(userId);
             const profileImage = await ProfileService.getProfileImage(userId);
-            userDetailsMap[userId] = {
-              ...user,
-              profileImage: profileImage || null,
+            return { 
+              [userId]: {
+                ...user,
+                profileImage,
+                initials: user.name.split(' ').map(n => n[0]).join('').toUpperCase()
+              }
             };
-          } catch (err) {
-            userDetailsMap[userId] = {
-              name: `User ${userId}`,
-              profileImage: null,
+          } catch (error) {
+            console.error(`Error fetching user ${userId}:`, error);
+            return { 
+              [userId]: { 
+                name: `User ${userId}`,
+                profileImage: null,
+                initials: 'U' 
+              } 
+
             };
           }
         }
+        );
+
+        const userDetailsMap = Object.assign({}, ...(await Promise.all(userDetailsPromises)));
         setUserDetails(userDetailsMap);
 
-        const currentUser = await getUserById(currentUserId);
-        setLoggedInUser(currentUser);
+
+        // Get current user details
+        const currentUserDetails = await getUserById(currentUserId);
+        setLoggedInUser(currentUserDetails);
+
       } catch (err) {
         setError(err.message);
       } finally {
@@ -78,7 +95,7 @@ export const HomePost = () => {
       const postOwnerId = posts[index].userId;
 
       if (alreadyLiked) {
-        // Unlike
+
         const response = await fetch(
           `http://localhost:5000/api/post/${postId}/likes/${currentUserId}`,
           { method: "DELETE" }
@@ -97,7 +114,7 @@ export const HomePost = () => {
           return updated;
         });
       } else {
-        // Like
+
         const response = await fetch(
           `http://localhost:5000/api/post/${postId}/likes`,
           {
@@ -120,6 +137,7 @@ export const HomePost = () => {
           return updated;
         });
 
+        // Send notification if not the current user's post
         if (postOwnerId && postOwnerId !== currentUserId) {
           await NotificationService.sendNotification({
             postId,
@@ -138,18 +156,22 @@ export const HomePost = () => {
   };
 
   const handleCommentClick = (postId) => {
-    if (postId) navigate(`/postdetails/${postId}`);
+
+    if (postId) {
+      navigate(`/postdetails/${postId}`);
+    } else {
+      console.error("Invalid postId", postId);
+    }
+
   };
 
-  if (loading)
-    return <div className="text-center mt-20 text-lg">Loading posts...</div>;
-  if (error)
-    return <div className="text-center mt-20 text-red-600">{error}</div>;
+  if (loading) return <div className="text-center mt-20 text-lg">Loading posts...</div>;
+  if (error) return <div className="text-center mt-20 text-red-600">{error}</div>;
 
   return (
     <div className={`${GlobalStyle.countBarSubTopicContainer} pt-4`}>
       {/* Search Bar */}
-      <div className="relative w-full max-w-2xl mb-8">
+      <div className="relative w-full max-w-2xl">
         <input
           type="text"
           placeholder="Search by name..."
@@ -163,29 +185,35 @@ export const HomePost = () => {
       {filteredPosts.map((post, index) => {
         const user = userDetails[post.userId] || {
           name: `User ${post.userId}`,
+          profileImage: null,
+          initials: 'U'
         };
 
         return (
           <div
             key={post._id || post.id}
-            className="bg-[#CFB397] shadow-md rounded-lg w-full max-w-4xl mb-8 p-8"
+            className="bg-[#F0E0D1] shadow-xl rounded-2xl w-full max-w-4xl mb-8 p-8"
           >
             {/* Post Header */}
             <div className="flex justify-between items-start mb-6">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-[#8B6F5A] overflow-hidden">
-                  {user.profileImage ? (
-                    <img
-                      src={user.profileImage}
-                      alt={`${user.name}'s profile`}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-white">
-                      {user.name.charAt(0).toUpperCase()}
-                    </div>
-                  )}
-                </div>
+
+                {user.profileImage ? (
+                  <img 
+                    src={user.profileImage} 
+                    alt="Profile" 
+                    className="w-12 h-12 rounded-full object-cover"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = '';
+                    }}
+                  />
+                ) : (
+                  <div className="w-12 h-12 rounded-full bg-[#8B6F5A] flex items-center justify-center text-white font-semibold">
+                    {user.initials}
+                  </div>
+                )}
+
                 <h1 className="text-lg font-semibold text-gray-800">
                   {user.name}
                 </h1>
@@ -194,12 +222,13 @@ export const HomePost = () => {
 
             {/* Description */}
             <p className="text-gray-700 text-base mb-6">{post.description}</p>
+            <hr className="border-t-[1px] border-[#BAB2AC] my-4" />
 
             {/* Images */}
             {post.mediaUrls?.length > 0 && (
               <div className="flex justify-center gap-6 mb-6 flex-wrap">
                 {post.mediaUrls.map((url, i) => (
-                  <div key={i} className="w-80 h-80 rounded-xl overflow-hidden">
+                  <div key={i} className="w-60 h-70 rounded-xl overflow-hidden">
                     <img
                       src={url}
                       alt={`Post media ${i}`}
@@ -209,6 +238,8 @@ export const HomePost = () => {
                 ))}
               </div>
             )}
+
+            <hr className="border-t-[1px] border-[#BAB2AC] my-4" />
 
             {/* Like and Comment */}
             <div className="flex gap-8 cursor-pointer mt-6">

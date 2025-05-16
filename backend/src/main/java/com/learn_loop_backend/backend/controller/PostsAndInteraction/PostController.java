@@ -56,4 +56,28 @@ public class PostController {
         }
     }
 
+    @PutMapping("/{postId}")
+    public ResponseEntity<Post> updatePost(
+            @PathVariable String postId,
+            @RequestParam("description") String description,
+            @RequestParam("category") String category,
+            @RequestParam(value = "files", required = false) MultipartFile[] files) throws IOException {
+
+        Post updatedPost = postService.updatePost(postId, description, category, files);
+        if (updatedPost != null) {
+            return ResponseEntity.ok(updatedPost);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<Void> deletePost(@PathVariable String postId) {
+        boolean deleted = postService.deletePost(postId);
+        if (deleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 }

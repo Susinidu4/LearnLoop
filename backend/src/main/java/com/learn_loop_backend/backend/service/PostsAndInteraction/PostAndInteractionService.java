@@ -54,4 +54,36 @@ public class PostAndInteractionService {
     public Post getPostById(String postId) {
         return postRepository.findById(postId).orElse(null);
     }
+
+    public Post updatePost(String postId, String description, String category, MultipartFile[] files) throws IOException {
+        Optional<Post> optionalPost = postRepository.findById(postId);
+        if (optionalPost.isEmpty()) {
+            return null;
+        }
+
+        Post post = optionalPost.get();
+        post.setDescription(description);
+        post.setCategory(category);
+        post.setUpdatedAt(new Date());
+
+        if (files != null && files.length > 0) {
+            List<String> mediaUrls = new ArrayList<>();
+            for (MultipartFile file : files) {
+                Map uploadResult = cloudinary.uploader().upload(file.getBytes(),
+                        ObjectUtils.asMap("resource_type", "auto"));
+                mediaUrls.add((String) uploadResult.get("url"));
+            }
+            post.setMediaUrls(mediaUrls);
+        }
+
+        return postRepository.save(post);
+    }
+
+    public boolean deletePost(String postId) {
+        if (postRepository.existsById(postId)) {
+            postRepository.deleteById(postId);
+            return true;
+        }
+        return false;
+    }
 }
