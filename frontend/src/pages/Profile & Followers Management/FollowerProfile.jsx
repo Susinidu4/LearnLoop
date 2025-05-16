@@ -4,6 +4,8 @@ import { getUserById } from '../../service/Profile & Followers Management/AuthSe
 import ProfileService from '../../service/Profile & Followers Management/ProfileService';
 import FollowerService from '../../service/Profile & Followers Management/FollowService';
 import { FollowerPostCard } from './FollowerPostCard';
+import { Header } from '../../components/Header';
+import { SideBar } from '../../components/SideBar';
 
 export const FollowerProfile = () => {
     const { id } = useParams();
@@ -104,7 +106,10 @@ export const FollowerProfile = () => {
     );
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div>
+        <Header />
+          <div className="min-h-screen bg-gradient-to-br from-blue-50 to-purple-50 py-12 px-4 sm:px-6 lg:px-8">
+            <SideBar />
             <div className="max-w-3xl mx-auto">
                 <div className="bg-white rounded-xl shadow-xl overflow-hidden">
                     {/* Profile Cover */}
@@ -180,5 +185,6 @@ export const FollowerProfile = () => {
                 </div>
             </div>
         </div>
+      </div>
     );
 };
