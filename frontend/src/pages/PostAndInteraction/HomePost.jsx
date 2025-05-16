@@ -5,15 +5,18 @@ import PostService from "../../service/Post-And-Interaction/PostService";
 import { getUserById } from "../../service/Profile & Followers Management/AuthService";
 import NotificationService from "../../service/Like-Comment-Notification-Management/Notification";
 import ProfileService from "../../service/Profile & Followers Management/ProfileService";
+import { FaSearch } from "react-icons/fa";
 
 export const HomePost = () => {
   const [posts, setPosts] = useState([]);
   const [userDetails, setUserDetails] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [likedStates, setLikedStates] = useState([]); // true or false for each post
-  const navigate = useNavigate();
+  const [likedStates, setLikedStates] = useState([]);
   const [loggedInUser, setLoggedInUser] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const navigate = useNavigate();
   const currentUserId = JSON.parse(localStorage.getItem("user"))?.id;
 
   useEffect(() => {
@@ -22,44 +25,37 @@ export const HomePost = () => {
         const fetchedPosts = await PostService.getAllPosts();
         setPosts(fetchedPosts);
 
-        // Check if current user liked each post
+        // Liked states
         const likedStatusArray = fetchedPosts.map((post) =>
-          post.likes.some((like) => like.userId === currentUserId)
+          post.likes?.some((like) => like.userId === currentUserId)
         );
         setLikedStates(likedStatusArray);
 
-        // Get user details and profile images for posts
+        // Get user data and profile images
         const uniqueUserIds = [
           ...new Set(fetchedPosts.map((post) => post.userId)),
         ];
-        const userDetailsPromises = uniqueUserIds.map(async (userId) => {
+
+        const userDetailsMap = {};
+        for (const userId of uniqueUserIds) {
           try {
             const user = await getUserById(userId);
             const profileImage = await ProfileService.getProfileImage(userId);
-            return {
-              [userId]: {
-                ...user,
-                profileImage: profileImage || null,
-              },
+            userDetailsMap[userId] = {
+              ...user,
+              profileImage: profileImage || null,
             };
-            
-          } catch (error) {
-            console.error(`Error fetching user ${userId}:`, error);
-            return {
-              [userId]: {
-                name: `User ${userId}`,
-                profileImage: null,
-              },
+          } catch (err) {
+            userDetailsMap[userId] = {
+              name: `User ${userId}`,
+              profileImage: null,
             };
           }
-        });
+        }
+        setUserDetails(userDetailsMap);
 
-        const userDetailsResults = await Promise.all(userDetailsPromises);
-        const combinedUserDetails = Object.assign({}, ...userDetailsResults);
-        setUserDetails(combinedUserDetails);
-
-        const currentUserDetails = await getUserById(currentUserId);
-        setLoggedInUser(currentUserDetails);
+        const currentUser = await getUserById(currentUserId);
+        setLoggedInUser(currentUser);
       } catch (err) {
         setError(err.message);
       } finally {
@@ -70,35 +66,38 @@ export const HomePost = () => {
     fetchData();
   }, [currentUserId]);
 
+  const filteredPosts = posts.filter((post) => {
+    const user = userDetails[post.userId];
+    if (!user) return false;
+    return user.name.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
   const handleLikeClick = async (postId, index) => {
     try {
       const alreadyLiked = likedStates[index];
-      const postOwnerId = posts[index].userId; // Assuming `userId` is the post owner's ID
+      const postOwnerId = posts[index].userId;
 
       if (alreadyLiked) {
-        // Unlike the post (DELETE)
+        // Unlike
         const response = await fetch(
           `http://localhost:5000/api/post/${postId}/likes/${currentUserId}`,
           { method: "DELETE" }
         );
         if (!response.ok) throw new Error("Failed to unlike post");
 
-        // Update UI
-        setLikedStates((prev) => {
-          const updated = [...prev];
-          updated[index] = false;
-          return updated;
-        });
+        setLikedStates((prev) =>
+          prev.map((liked, i) => (i === index ? false : liked))
+        );
 
         setPosts((prev) => {
-          const updatedPosts = [...prev];
-          updatedPosts[index].likes = updatedPosts[index].likes.filter(
+          const updated = [...prev];
+          updated[index].likes = updated[index].likes.filter(
             (like) => like.userId !== currentUserId
           );
-          return updatedPosts;
+          return updated;
         });
       } else {
-        // Like the post (POST)
+        // Like
         const response = await fetch(
           `http://localhost:5000/api/post/${postId}/likes`,
           {
@@ -109,23 +108,19 @@ export const HomePost = () => {
         );
         if (!response.ok) throw new Error("Failed to like post");
 
-        // Update UI
         const newLike = { userId: currentUserId, likedAt: new Date() };
 
-        setLikedStates((prev) => {
+        setLikedStates((prev) =>
+          prev.map((liked, i) => (i === index ? true : liked))
+        );
+
+        setPosts((prev) => {
           const updated = [...prev];
-          updated[index] = true;
+          updated[index].likes = [...updated[index].likes, newLike];
           return updated;
         });
 
-        setPosts((prev) => {
-          const updatedPosts = [...prev];
-          updatedPosts[index].likes = [...updatedPosts[index].likes, newLike];
-          return updatedPosts;
-        });
-
         if (postOwnerId && postOwnerId !== currentUserId) {
-          // Send notification to post owner if it's not the current user
           await NotificationService.sendNotification({
             postId,
             receiverUserId: postOwnerId,
@@ -142,13 +137,8 @@ export const HomePost = () => {
     }
   };
 
-  // Updated handleCommentClick
   const handleCommentClick = (postId) => {
-    if (postId) {
-      navigate(`/postdetails/${postId}`); // Navigate to the post details page
-    } else {
-      console.error("Invalid postId", postId); // Debugging
-    }
+    if (postId) navigate(`/postdetails/${postId}`);
   };
 
   if (loading)
@@ -158,7 +148,19 @@ export const HomePost = () => {
 
   return (
     <div className={`${GlobalStyle.countBarSubTopicContainer} pt-4`}>
-      {posts.map((post, index) => {
+      {/* Search Bar */}
+      <div className="relative w-full max-w-2xl mb-8">
+        <input
+          type="text"
+          placeholder="Search by name..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full p-3 rounded-full border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#402006]"
+        />
+        <FaSearch className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-600" />
+      </div>
+
+      {filteredPosts.map((post, index) => {
         const user = userDetails[post.userId] || {
           name: `User ${post.userId}`,
         };
@@ -190,12 +192,12 @@ export const HomePost = () => {
               </div>
             </div>
 
-            {/* Post Description */}
+            {/* Description */}
             <p className="text-gray-700 text-base mb-6">{post.description}</p>
 
-            {/* Post Images */}
+            {/* Images */}
             {post.mediaUrls?.length > 0 && (
-              <div className="flex justify-center gap-6 mb-6">
+              <div className="flex justify-center gap-6 mb-6 flex-wrap">
                 {post.mediaUrls.map((url, i) => (
                   <div key={i} className="w-80 h-80 rounded-xl overflow-hidden">
                     <img
@@ -208,17 +210,17 @@ export const HomePost = () => {
               </div>
             )}
 
-            {/* Like & Comment Buttons */}
+            {/* Like and Comment */}
             <div className="flex gap-8 cursor-pointer mt-6">
-              {/* Like Button */}
+              {/* Like */}
               <div
                 className="flex items-center gap-2"
                 onClick={() => handleLikeClick(post._id || post.id, index)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  fill={likedStates[index] ? "red" : "none"} // Red fill if liked
-                  stroke={likedStates[index] ? "none" : "currentColor"} // Outline if not liked
+                  fill={likedStates[index] ? "red" : "none"}
+                  stroke={likedStates[index] ? "none" : "currentColor"}
                   viewBox="0 0 24 24"
                   strokeWidth={1.5}
                   className="w-7 h-7 transition-all duration-300 ease-in-out"
@@ -232,10 +234,10 @@ export const HomePost = () => {
                 <span className="text-sm">{post.likes?.length || 0}</span>
               </div>
 
-              {/* Comment Button */}
+              {/* Comment */}
               <div
                 className="flex items-center gap-2"
-                onClick={() => handleCommentClick(post._id || post.id)} // Correctly pass the post ID
+                onClick={() => handleCommentClick(post._id || post.id)}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

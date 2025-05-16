@@ -10,6 +10,7 @@ import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.List;
 
@@ -113,6 +114,12 @@ public class LearningPlanController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to update learning plan: " + e.getMessage());
         }
+    }
+
+    @GetMapping("/progress/stats")
+    public ResponseEntity<Map<String, Integer>> getLearningProgressStats() {
+        Map<String, Integer> stats = service.getLearningPlanProgressStats();
+        return ResponseEntity.ok(stats);
     }
 
 
