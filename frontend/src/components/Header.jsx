@@ -69,7 +69,7 @@ export const Header = () => {
           className="flex items-center gap-6 cursor-pointer hover:text-[#CFB397] transition duration-300"
         >
           <FaUser size={40} title="userlogin" />
-          <MdKeyboardArrowDown size={24} title="userlogin" />
+          {/* <MdKeyboardArrowDown size={24} title="userlogin" /> */}
         </Link>
       )}
     </header>
