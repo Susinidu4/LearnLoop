@@ -21,7 +21,6 @@ const GlobalStyle = {
   
     // Select/Dropdown Styles
     selectBox: "py-1 border-2 opacity-80 border-[#543310] rounded-lg text-left w-full focus:bg-[#F7EDE5] focus:border-[#2F1B06]",
-
   
     // Card Styles
     cardContainer: "p-4 rounded-lg shadow-xl mb-6 bg-[#F0E0D1] bg-opacity-15 w-6/12",
