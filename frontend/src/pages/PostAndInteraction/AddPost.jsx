@@ -107,7 +107,7 @@ export const AddPost = () => {
         <Header />
         <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
           <main className="p-6">
-            <div className="relative flex flex-col bg-[#C8A381] p-6 rounded-2xl shadow-lg w-[950px] h-[600px] mx-auto">
+            <div className="relative flex flex-col bg-[#F0E0D1] p-6 rounded-2xl shadow-lg w-[950px] h-[600px] mx-auto">
               {/* User Info */}
               <div className="flex justify-between items-start mb-4">
                 <div className="flex items-center gap-3">
@@ -176,7 +176,7 @@ export const AddPost = () => {
                 <button 
                   onClick={handleSubmit}
                   disabled={isSubmitting}
-                  className={`${GlobalStyle.buttonPrimary} ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
+                  className={`${GlobalStyle.buttonSecondary} ${isSubmitting ? "opacity-50 cursor-not-allowed" : ""}`}
                 >
                   {isSubmitting ? "Posting..." : "Post"}
                 </button>
@@ -188,7 +188,7 @@ export const AddPost = () => {
               <img
                 src={postGirl}
                 alt="Post Girl"
-                className="w-[535px] h-auto"
+                className="w-[350px] h-auto"
               />
             </div>
           </main>

@@ -1,3 +1,6 @@
+
+import { FaSearch } from "react-icons/fa";
+
 import React, { useState, useEffect } from 'react';
 import VideoService from '../../service/Post-And-Interaction/VideoService';
 import VideoCommentsAndLikeService from '../../service/Like-Comment-Notification-Management/VideoCommentsAndLike';
@@ -6,21 +9,29 @@ import ProfileService from '../../service/Profile & Followers Management/Profile
 import { Header } from '../../components/Header';
 import { SideBar } from '../../components/SideBar';
 
+
 export const AllVideos = () => {
   const [videos, setVideos] = useState([]);
+  const [filteredVideos, setFilteredVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeCommentVideoId, setActiveCommentVideoId] = useState(null);
-  const [commentText, setCommentText] = useState('');
+  const [commentText, setCommentText] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const user = JSON.parse(localStorage.getItem("user")); // Replace with your actual user ID management
   const [userDetails, setUserDetails] = useState({});
   const [profileImages, setProfileImages] = useState({});
-  const user = JSON.parse(localStorage.getItem('user'));
+
+
 
   useEffect(() => {
     const fetchVideos = async () => {
       try {
         const data = await VideoService.getAllVideos();
         setVideos(data);
+
+        setFilteredVideos(data); // Initially set filtered videos to all videos
+
         
         // Extract all unique user IDs from comments
         const userIds = new Set();
@@ -59,8 +70,9 @@ export const AllVideos = () => {
         
         setUserDetails(userDetailsMap);
         setProfileImages(profileImagesMap);
+
       } catch (err) {
-        setError(err.message || 'Failed to load videos');
+        setError(err.message || "Failed to load videos");
       } finally {
         setLoading(false);
       }
@@ -69,7 +81,15 @@ export const AllVideos = () => {
     fetchVideos();
   }, []);
 
+  useEffect(() => {
+    const filtered = videos.filter((video) =>
+      video.userId.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setFilteredVideos(filtered);
+  }, [searchTerm, videos]);
+
   const formatBytes = (bytes, decimals = 2) => {
+
   if (bytes === 0) return '0 Bytes';
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
@@ -77,36 +97,44 @@ export const AllVideos = () => {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
+
   const handleLike = async (videoId) => {
     try {
-      const updatedVideo = await VideoCommentsAndLikeService.likePost(videoId, user.id);
-      setVideos(videos.map(video => 
-        video.id === videoId ? updatedVideo : video
-      ));
+      const updatedVideo = await VideoCommentsAndLikeService.likePost(
+        videoId,
+        user.id
+      );
+      setVideos(
+        videos.map((video) => (video.id === videoId ? updatedVideo : video))
+      );
     } catch (error) {
-      console.error('Error liking video:', error);
+      console.error("Error liking video:", error);
     }
   };
 
   const handleUnlike = async (videoId) => {
     try {
-      const updatedVideo = await VideoCommentsAndLikeService.unlikePost(videoId, user.id);
-      setVideos(videos.map(video => 
-        video.id === videoId ? updatedVideo : video
-      ));
+      const updatedVideo = await VideoCommentsAndLikeService.unlikePost(
+        videoId,
+        user.id
+      );
+      setVideos(
+        videos.map((video) => (video.id === videoId ? updatedVideo : video))
+      );
     } catch (error) {
-      console.error('Error unliking video:', error);
+      console.error("Error unliking video:", error);
     }
   };
 
   const handleAddComment = async (videoId) => {
     if (!commentText.trim()) return;
-    
+
     try {
       const commentData = {
         userId: user.id,
-        content: commentText
+        content: commentText,
       };
+
       const updatedVideo = await VideoCommentsAndLikeService.addComment(videoId, commentData);
       setVideos(videos.map(video => 
         video.id === videoId ? updatedVideo : video
@@ -125,25 +153,29 @@ export const AllVideos = () => {
       }
       
       setCommentText('');
+
       setActiveCommentVideoId(null);
     } catch (error) {
-      console.error('Error adding comment:', error);
+      console.error("Error adding comment:", error);
     }
   };
 
   const handleDeleteComment = async (videoId, commentId) => {
     try {
-      const updatedVideo = await VideoCommentsAndLikeService.deleteComment(videoId, commentId);
-      setVideos(videos.map(video => 
-        video.id === videoId ? updatedVideo : video
-      ));
+      const updatedVideo = await VideoCommentsAndLikeService.deleteComment(
+        videoId,
+        commentId
+      );
+      setVideos(
+        videos.map((video) => (video.id === videoId ? updatedVideo : video))
+      );
     } catch (error) {
-      console.error('Error deleting comment:', error);
+      console.error("Error deleting comment:", error);
     }
   };
 
   const isLiked = (video, userId) => {
-    return video.likes?.some(like => like.userId === userId) || false;
+    return video.likes?.some((like) => like.userId === userId) || false;
   };
 
   const renderComments = (video) => (
@@ -218,7 +250,10 @@ export const AllVideos = () => {
 
   if (error) {
     return (
-      <div className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4" role="alert">
+      <div
+        className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4"
+        role="alert"
+      >
         <p className="font-bold">Error</p>
         <p>{error}</p>
       </div>
@@ -226,19 +261,34 @@ export const AllVideos = () => {
   }
 
   return (
-   <div className="min-h-screen bg-gray-100">
-  <div className="flex flex-col">
-    <main className="flex-1 p-4 md:p-10">
-      <h1 className="text-4xl font-bold text-gray-800 text-center mb-10">🎥 All Videos</h1>
 
-      {videos.length === 0 ? (
-        <div className="text-center py-20">
-          <p className="text-gray-500 text-lg">No videos found. Please upload one!</p>
+    <div>
+      {/* Search Bar */}
+      <div className="flex justify-center items-center my-4">
+        <div className="relative w-full max-w-2xl">
+          <input
+            type="text"
+            placeholder="Search by name..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full p-3 rounded-full border border-gray-300 shadow-md focus:outline-none focus:ring-2 focus:ring-[#402006]"
+          />
+          <FaSearch className="absolute right-5 top-1/2 transform -translate-y-1/2 text-gray-600" />
+        </div>
+      </div>
+
+      {filteredVideos.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-gray-500 text-lg">No videos found.</p>
         </div>
       ) : (
-        <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-          {videos.map(video => (
-            <div key={video.id} className="bg-white rounded-2xl shadow hover:shadow-lg transition-all duration-300 overflow-hidden border border-gray-200">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredVideos.map((video) => (
+            <div
+              key={video.id}
+              className="bg-white rounded-lg shadow-md overflow-hidden transition-transform duration-300 hover:shadow-lg hover:-translate-y-1"
+            >
+
               <div className="bg-black">
                 <video controls className="w-full h-56 object-cover">
                   <source src={video.url} type={`video/${video.format}`} />
@@ -246,17 +296,25 @@ export const AllVideos = () => {
                 </video>
               </div>
 
-              <div className="p-5 space-y-4">
-                <h3 className="text-xl font-semibold text-gray-800 truncate">{video.title}</h3>
 
-                <div className="text-sm text-gray-600 space-y-1">
-                  <div className="flex justify-between">
-                    <span className="font-medium">Format:</span>
-                    <span className="text-gray-700">{video.format.toUpperCase()}</span>
+              <div className="p-4">
+                <h3 className="text-xl font-semibold text-gray-800 mb-3 line-clamp-1">
+                  {video.title}
+                </h3>
+
+                <div className="space-y-2 text-sm text-gray-600">
+                  <div className="flex">
+                    <span className="font-medium w-24">Format:</span>
+                    <span className="text-gray-800">
+                      {video.format.toUpperCase()}
+                    </span>
                   </div>
-                  <div className="flex justify-between">
-                    <span className="font-medium">Size:</span>
-                    <span className="text-gray-700">{formatBytes(video.bytes)}</span>
+                  <div className="flex">
+                    <span className="font-medium w-24">Size:</span>
+                    <span className="text-gray-800">
+                      {formatBytes(video.bytes)}
+                    </span>
+
                   </div>
                   <div className="flex justify-between">
                     <span className="font-medium">Uploaded by:</span>
@@ -266,19 +324,31 @@ export const AllVideos = () => {
 
                 <div className="flex items-center gap-3 mt-4">
                   <button
-                    onClick={() => isLiked(video, user.id) ? handleUnlike(video.id) : handleLike(video.id)}
-                    className={`flex items-center px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                      isLiked(video, user.id) 
-                        ? 'bg-red-100 text-red-600 hover:bg-red-200' 
-                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                    }`}
+
+                    onClick={() =>
+                      isLiked(video, user.id)
+                        ? handleUnlike(video.id)
+                        : handleLike(video.id)
+                    }
+                    className={`flex items-center px-3 py-1 rounded-md ${
+                      isLiked(video, user.id)
+                        ? "bg-red-100 text-red-600"
+                        : "bg-gray-100 text-gray-600"
+                    } hover:bg-opacity-80 transition-colors`}
+
                   >
                     ❤️ {video.likes?.length || 0}
                   </button>
 
                   <button
-                    onClick={() => setActiveCommentVideoId(activeCommentVideoId === video.id ? null : video.id)}
-                    className="flex items-center px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-600 text-sm font-medium rounded-full transition"
+
+                    onClick={() =>
+                      setActiveCommentVideoId(
+                        activeCommentVideoId === video.id ? null : video.id
+                      )
+                    }
+                    className="ml-2 flex items-center px-3 py-1 bg-gray-100 text-gray-600 rounded-md hover:bg-opacity-80 transition-colors"
+
                   >
                     💬 {video.comments?.length || 0}
                   </button>
@@ -308,16 +378,58 @@ export const AllVideos = () => {
                       </button>
                     </div>
 
-                    {/* Comment list */}
-                    <div className="mt-4 max-h-48 overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-gray-300">
-                      {renderComments(video)}
+
+                    {/* Comments List */}
+                    <div className="space-y-3 max-h-40 overflow-y-auto">
+                      {video.comments?.map((comment) => (
+                        <div
+                          key={comment.id}
+                          className="p-2 bg-gray-50 rounded-md"
+                        >
+                          <div className="flex justify-between items-start">
+                            <div>
+                              <p className="font-medium text-sm">
+                                {comment.userId}
+                              </p>
+                              <p className="text-gray-700">{comment.content}</p>
+                              <p className="text-xs text-gray-500">
+                                {new Date(comment.commentedAt).toLocaleString()}
+                              </p>
+                            </div>
+                            {comment.userId === user.id && (
+                              <button
+                                onClick={() =>
+                                  handleDeleteComment(video.id, comment.id)
+                                }
+                                className="text-red-500 hover:text-red-700"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-4 w-4"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+
                     </div>
                   </div>
                 )}
 
-                <a 
-                  href={video.url} 
-                  target="_blank" 
+                <a
+                  href={video.url}
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="block text-center mt-6 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition"
                 >
@@ -328,9 +440,8 @@ export const AllVideos = () => {
           ))}
         </div>
       )}
-    </main>
-  </div>
-</div>
+
+    </div>
 
   );
 };
