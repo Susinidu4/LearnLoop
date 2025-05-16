@@ -1,7 +1,7 @@
 const GlobalStyle = {
   
     // General Font Settings
-    fontPoppins: "font-poppins", 
+    fontPoppins: "font-[poppins]", 
   
     // Text Styles
     headingLarge: "text-[30px] font-bold",

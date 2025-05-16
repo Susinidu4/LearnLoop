@@ -9,6 +9,7 @@ import { Notification } from "./pages/Comments,Likes & Notification Management/N
 import { FAQ } from "./pages/Other/FAQ";
 import { AboutUs } from "./pages/Other/AboutUs";
 import { PostDetailPage } from "./pages/PostAndInteraction/PostDetailPage"; 
+import { LearningPlansDetailCard } from "./components/LearningPlansDetailCard";
 
 //Oshi
 import { AddPost } from "./pages/PostAndInteraction/AddPost"
@@ -33,6 +34,9 @@ import { MyFollowers } from "./pages/Profile & Followers Management/MyFollowers"
 import { MyFollowings } from "./pages/Profile & Followers Management/MyFollowings";
 import { UserUpdatePage } from "./pages/Profile & Followers Management/UserUpdatePage";
 import { FollowerProfile } from "./pages/Profile & Followers Management/FollowerProfile";
+import { AddVideo } from "./pages/PostAndInteraction/AddVideo";
+import { AllVideos } from "./pages/PostAndInteraction/AllVideos";
+
 
 
 
@@ -49,12 +53,16 @@ function App() {
         <Route path="/FAQ" element={<FAQ/>}/>
         <Route path="/aboutUs" element={<AboutUs/>}/>
         <Route path="/postdetails/:postId" element={<PostDetailPage />} />
+        <Route path="/learning-plan/:id" element={<LearningPlansDetailCard />} />
 
         {/* oshini */}
         <Route path="/addpost" element={<AddPost/>}/>
         <Route path="/homepost" element={<HomePost/>}/>
         <Route path="/privacypolicy" element={<PrivacyPolicy/>}/>  
         <Route path="/homesignout" element={<HomeSignOut/>}/>  
+        <Route path="/addvideo" element={<AddVideo/>}/>  
+        <Route path="/allvideos" element={<AllVideos/>}/>
+       
 
         {/* yasindu */}
         <Route path="/userlogin" element={<User_Login/>}/>
@@ -69,7 +77,7 @@ function App() {
         
         {/* Ishara */}
         <Route path="/LeaningPlansExistingUser" element={<LeraningPlansExistingUser/>}/>
-        <Route path="/LearningPlansSelectExcistingUser/:userId" element={<LearningPlansSelectExcistingUser/>}/>
+        <Route path="/LearningPlansSelectExcistingUser/:planId" element={<LearningPlansSelectExcistingUser/>}/>
         <Route path="/AddLearningPlans" element={<AddLearningPlans/>}/>
         <Route path="/Explore" element={<Explore/>}/>
         

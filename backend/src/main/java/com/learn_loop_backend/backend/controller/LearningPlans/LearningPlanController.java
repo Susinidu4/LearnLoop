@@ -10,6 +10,7 @@ import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Map;
 import java.util.Optional;
 import java.util.List;
 
@@ -61,6 +62,18 @@ public class LearningPlanController {
         return ResponseEntity.ok(learningPlansDTOList);
     }
 
+    // GET one learning plan by its ID
+    @GetMapping("/{id}")
+    public ResponseEntity<LearningPlansDTO> getLearningPlanById(@PathVariable String id) {
+        Optional<LearningPlan> optionalPlan = service.getLearningPlanById(id);
+        if (optionalPlan.isPresent()) {
+            LearningPlansDTO dto = service.convertToDTO(optionalPlan.get());
+            return ResponseEntity.ok(dto);
+        } else {
+            return ResponseEntity.status(404).body(null);
+        }
+    }
+
     // DELETE Learning Plan by ID
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteLearningPlan(@PathVariable String id) {
@@ -71,6 +84,44 @@ public class LearningPlanController {
             return ResponseEntity.status(404).body("Learning plan not found with id: " + id);
         }
     }
+
+    @PutMapping("/{planId}/steps/{stepNumber}/status")
+    public ResponseEntity<?> updateStepStatus(
+            @PathVariable String planId,
+            @PathVariable int stepNumber,
+            @RequestParam String status) {
+
+        try {
+            LearningPlan updatedPlan = service.updateStepStatus(planId, stepNumber, status);
+            return ResponseEntity.ok().body("Step status updated successfully.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to update step status: " + e.getMessage());
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> updateLearningPlan(
+            @PathVariable String id,
+            @RequestBody LearningPlan updatedPlan) {
+        try {
+            LearningPlan savedPlan = service.updateLearningPlan(id, updatedPlan);
+            LearningPlansDTO dto = service.convertToDTO(savedPlan);
+            return ResponseEntity.ok(dto);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(404).body("Learning plan not found with id: " + id);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to update learning plan: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/progress/stats")
+    public ResponseEntity<Map<String, Integer>> getLearningProgressStats() {
+        Map<String, Integer> stats = service.getLearningPlanProgressStats();
+        return ResponseEntity.ok(stats);
+    }
+
 
 }
 

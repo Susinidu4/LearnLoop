@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 export function TabNavigation({ activeTab, setActiveTab }) {
-  const tabs = ['Posts', 'Learning Plans', 'Learning Progress'];
+  const tabs = ['Posts','Videos',  'Learning Plans', 'Learning Progress'];
   
   return (
     <div className="border-b border-gray-300 mb-6">
