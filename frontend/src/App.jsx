@@ -12,7 +12,6 @@ import { PostDetailPage } from "./pages/PostAndInteraction/PostDetailPage";
 import { LearningPlansDetailCard } from "./components/LearningPlansDetailCard";
 
 //Oshi
-import { AddPost } from "./pages/PostAndInteraction/AddPost"
 import { HomePost } from "./pages/PostAndInteraction/HomePost";
 import { PrivacyPolicy } from "./pages/Other/PrivacyPolicy";
 
@@ -36,6 +35,7 @@ import { UserUpdatePage } from "./pages/Profile & Followers Management/UserUpdat
 import { FollowerProfile } from "./pages/Profile & Followers Management/FollowerProfile";
 import { AddVideo } from "./pages/PostAndInteraction/AddVideo";
 import { AllVideos } from "./pages/PostAndInteraction/AllVideos";
+import { AddPost } from "./pages/PostAndInteraction/AddPost";
 
 
 

@@ -31,6 +31,7 @@ export function LearningPlansCard() {
         if (res.ok) {
           const data = await res.json();
           setLearningPlans(data);
+          console.log("Learning plans fetched:", data);
         } else {
           console.error("Failed to fetch learning plans:", res.status);
         }
@@ -162,37 +163,46 @@ export function LearningPlansCard() {
             key={plan.id}
             className="max-w-4xl mx-auto bg-[#EFEFEF] rounded-xl shadow-md overflow-hidden transition"
           >
-            <div className="bg-[#C0AE95] h-40 relative">
-              <div
-                className="absolute top-3 right-3 flex space-x-2"
-                onClick={(e) => e.stopPropagation()} // Stop click bubbling for buttons
-              >
-                <button
-                  className="p-2 rounded-full bg-white shadow-md"
-                  onClick={(e) => handleEditClick(e, plan)}
-                >
-                  <MdEdit />
-                </button>
-                <button
-                  className="p-2 rounded-full bg-white shadow-md"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDelete(plan.id);
-                  }}
-                >
-                  <MdDelete />
-                </button>
-                <button
-                  className="p-2 rounded-full bg-white shadow-md"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    navigate(`/learning-plan/${plan.id}`);
-                  }}
-                >
-                  <TfiMoreAlt />
-                </button>
-              </div>
-            </div>
+           <div className="bg-[#C0AE95] h-40 relative">
+  {/* Display the plan image if available */}
+  {plan.imageUrl && (
+    <img 
+      src={plan.imageUrl} 
+      alt={plan.planTopic}
+      className="w-full h-full object-cover"
+    />
+  )}
+  
+  <div
+    className="absolute top-3 right-3 flex space-x-2"
+    onClick={(e) => e.stopPropagation()} // Stop click bubbling for buttons
+  >
+    <button
+      className="p-2 rounded-full bg-white shadow-md"
+      onClick={(e) => handleEditClick(e, plan)}
+    >
+      <MdEdit />
+    </button>
+    <button
+      className="p-2 rounded-full bg-white shadow-md"
+      onClick={(e) => {
+        e.stopPropagation();
+        handleDelete(plan.id);
+      }}
+    >
+      <MdDelete />
+    </button>
+    <button
+      className="p-2 rounded-full bg-white shadow-md"
+      onClick={(e) => {
+        e.stopPropagation();
+        navigate(`/learning-plan/${plan.id}`);
+      }}
+    >
+      <TfiMoreAlt />
+    </button>
+  </div>
+</div>
 
             {editingPlanId === plan.id ? (
               <form

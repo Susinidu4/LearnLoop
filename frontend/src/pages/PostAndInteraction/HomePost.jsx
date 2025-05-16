@@ -6,6 +6,7 @@ import { getUserById } from "../../service/Profile & Followers Management/AuthSe
 import NotificationService from "../../service/Like-Comment-Notification-Management/Notification";
 import ProfileService from "../../service/Profile & Followers Management/ProfileService";
 import { FaSearch } from "react-icons/fa";
+import { RiPokerHeartsLine } from "react-icons/ri";
 
 
 export const HomePost = () => {
@@ -170,7 +171,7 @@ export const HomePost = () => {
   return (
     <div className={`${GlobalStyle.countBarSubTopicContainer} pt-4`}>
       {/* Search Bar */}
-      <div className="relative w-full max-w-2xl mb-8">
+      <div className="relative w-full max-w-2xl">
         <input
           type="text"
           placeholder="Search by name..."
@@ -191,7 +192,7 @@ export const HomePost = () => {
         return (
           <div
             key={post._id || post.id}
-            className="bg-[#CFB397] shadow-md rounded-lg w-full max-w-4xl mb-8 p-8"
+            className="bg-[#F0E0D1] shadow-xl rounded-2xl w-full max-w-4xl mb-8 p-8"
           >
             {/* Post Header */}
             <div className="flex justify-between items-start mb-6">
@@ -221,12 +222,13 @@ export const HomePost = () => {
 
             {/* Description */}
             <p className="text-gray-700 text-base mb-6">{post.description}</p>
+            <hr className="border-t-[1px] border-[#BAB2AC] my-4" />
 
             {/* Images */}
             {post.mediaUrls?.length > 0 && (
               <div className="flex justify-center gap-6 mb-6 flex-wrap">
                 {post.mediaUrls.map((url, i) => (
-                  <div key={i} className="w-80 h-80 rounded-xl overflow-hidden">
+                  <div key={i} className="w-60 h-70 rounded-xl overflow-hidden">
                     <img
                       src={url}
                       alt={`Post media ${i}`}
@@ -236,6 +238,8 @@ export const HomePost = () => {
                 ))}
               </div>
             )}
+
+            <hr className="border-t-[1px] border-[#BAB2AC] my-4" />
 
             {/* Like and Comment */}
             <div className="flex gap-8 cursor-pointer mt-6">

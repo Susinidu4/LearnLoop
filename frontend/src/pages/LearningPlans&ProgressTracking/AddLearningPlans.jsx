@@ -112,11 +112,11 @@ export const AddLearningPlans = () => {
         >
           <main className="p-4 sm:p-6 md:p-8 lg:p-12">
             <div
-              className={`${GlobalStyle.cardContainer} w-full flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8 lg:p-12 max-w-3xl mx-auto shadow-lg rounded-lg`}
+              className={`${GlobalStyle.cardContainer} w-full bg-[#F0E0D1] flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 md:p-8 lg:p-12 max-w-3xl mx-auto shadow-lg rounded-lg`}
             >
               <div>
                 <div className="flex items-center gap-4 pt-4">
-                  <div className="w-18 h-18 rounded-full bg-[#AE8456] flex items-center justify-center overflow-hidden">
+                  <div className="w-15 h-15 rounded-full bg-[#AE8456] flex items-center justify-center overflow-hidden">
                     <img
                       src={profileImageUrl || avatar1}
                       alt="avatar"
@@ -132,7 +132,7 @@ export const AddLearningPlans = () => {
                   </p>
                 </div>
 
-                <div className="mb-6">
+                <div className="mb-6 mt-6">
                   <label className={GlobalStyle.remarkTopic}>Plan Topic</label>
                   <input
                     type="text"
@@ -292,7 +292,7 @@ export const AddLearningPlans = () => {
                 <div className="flex gap-4 justify-end w-full">
                   <button
                     onClick={handleSubmit}
-                    className={GlobalStyle.buttonPrimary}
+                    className={GlobalStyle.buttonSecondary}
                   >
                     Submit
                   </button>
