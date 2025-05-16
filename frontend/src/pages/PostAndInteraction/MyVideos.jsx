@@ -135,16 +135,8 @@ export const MyVideos = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#F7EDE5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-extrabold text-gray-900 sm:text-5xl sm:tracking-tight lg:text-6xl">
-            My Video Library
-          </h1>
-          <p className="mt-5 max-w-xl mx-auto text-xl text-gray-500">
-            Manage and organize your uploaded videos
-          </p>
-        </div>
 
         {selectedVideo && (
           <VideoCommentsPopup
@@ -202,7 +194,7 @@ export const MyVideos = () => {
             {videos.map((video) => (
               <div
                 key={video.id}
-                className="bg-white rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-gray-200"
+                className="bg-[#F0E0D1] rounded-xl shadow-md overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-gray-200"
               >
                 <div className="relative pb-[56.25%] bg-black">
                   <video
