@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { getUserById } from '../../service/Profile & Followers Management/AuthService';
 import ProfileService from '../../service/Profile & Followers Management/ProfileService';
 import FollowerService from '../../service/Profile & Followers Management/FollowService';
+import PostService from '../../service/Post-And-Interaction/PostService'; 
 import { FollowerPostCard } from './FollowerPostCard';
 import { Header } from '../../components/Header';
 import { SideBar } from '../../components/SideBar';
@@ -16,8 +17,9 @@ export const FollowerProfile = () => {
     const [error, setError] = useState(null);
     const [followersCount, setFollowersCount] = useState(0);
     const [followingCount, setFollowingCount] = useState(0);
+    const [postCount, setPostCount] = useState(0); // Add postCount state
     const [isFollowing, setIsFollowing] = useState(false);
-    const [currentUserId] = useState(myData?.id); // Replace with your actual current user ID
+    const [currentUserId] = useState(myData?.id);
 
     useEffect(() => {
         const fetchUserData = async () => {
@@ -42,7 +44,6 @@ export const FollowerProfile = () => {
                 try {
                     const followers = await FollowerService.getFollowers(id);
                     setFollowersCount(followers.length);
-                    console.log('Followers:', followers);
                 } catch (followersError) {
                     console.error('Error fetching followers:', followersError);
                 }
@@ -51,14 +52,21 @@ export const FollowerProfile = () => {
                 try {
                     const following = await FollowerService.getFollowing(id);
                     setFollowingCount(following.length);
-                    console.log('Following:', following);
                 } catch (followingError) {
                     console.error('Error fetching following:', followingError);
                 }
                 
+                // Fetch post count
+                try {
+                    const posts = await PostService.getPostsByUser(id);
+                    setPostCount(posts.length);
+                } catch (postError) {
+                    console.error('Error fetching posts:', postError);
+                }
+                
                 // Check if current user is following this profile
                 try {
-                    const followStatus = await FollowerService.checkIsFollowing(id,currentUserId);
+                    const followStatus = await FollowerService.checkIsFollowing(id, currentUserId);
                     setIsFollowing(followStatus);
                 } catch (followStatusError) {
                     console.error('Error checking follow status:', followStatusError);
@@ -71,19 +79,17 @@ export const FollowerProfile = () => {
             }
         };
 
-
-
         fetchUserData();
     }, [id, currentUserId]);
 
     const handleFollowToggle = async () => {
         try {
             if (isFollowing) {
-                await FollowerService.unfollowUser(id,currentUserId);
-                window.location.reload();    
+                await FollowerService.unfollowUser(id, currentUserId);
+                setFollowersCount(prev => prev - 1);
             } else {
-                await FollowerService.followUser(id,currentUserId);
-                window.location.reload();
+                await FollowerService.followUser(id, currentUserId);
+                setFollowersCount(prev => prev + 1);
             }
             setIsFollowing(!isFollowing);
         } catch (error) {
@@ -148,15 +154,15 @@ export const FollowerProfile = () => {
                                 {/* Stats and Follow Button */}
                                 <div className="mt-4 flex flex-wrap items-center gap-4 justify-center sm:justify-start">
                                     <div className="text-center">
-                                        <p className="text-xl font-bold text-gray-900">{followingCount}</p>
+                                        <p className="text-xl font-bold text-gray-900">{followersCount}</p>
                                         <p className="text-sm text-gray-500">Followers</p>
                                     </div>
                                     <div className="text-center">
-                                        <p className="text-xl font-bold text-gray-900">{followersCount}</p>
+                                        <p className="text-xl font-bold text-gray-900">{followingCount}</p>
                                         <p className="text-sm text-gray-500">Following</p>
                                     </div>
                                     <div className="text-center">
-                                        <p className="text-xl font-bold text-gray-900">124</p>
+                                        <p className="text-xl font-bold text-gray-900">{postCount}</p>
                                         <p className="text-sm text-gray-500">Posts</p>
                                     </div>
                                     

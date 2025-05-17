@@ -1,23 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import PostService from '../../service/Post-And-Interaction/PostService';
+import { getUserById } from '../../service/Profile & Followers Management/AuthService';
+import ProfileService from '../../service/Profile & Followers Management/ProfileService';
 
 export const FollowerPostCard = ({ uid }) => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [expandedComments, setExpandedComments] = useState({});
+  const [userData, setUserData] = useState({}); // Store user data
+  const [profileImages, setProfileImages] = useState({}); // Store profile images
 
   useEffect(() => {
-    const fetchPosts = async () => {
+    const fetchPostsAndUserData = async () => {
       try {
+        setLoading(true);
+        
+        // Fetch posts first
         const userPosts = await PostService.getPostsByUser(uid);
         setPosts(userPosts);
-        // Initialize all comments as collapsed
+
+        // Initialize expanded comments state
         const initialExpandedState = {};
         userPosts.forEach(post => {
           initialExpandedState[post.id] = false;
         });
         setExpandedComments(initialExpandedState);
+
+        // Then fetch user data and profile image
+        try {
+          const user = await getUserById(uid);
+          setUserData(user);
+
+          const image = await ProfileService.getProfileImage(uid);
+          if (image) {
+            setProfileImages(prev => ({
+              ...prev,
+              [uid]: image
+            }));
+          }
+        } catch (userError) {
+          console.error('Error fetching user data:', userError);
+        }
+
       } catch (err) {
         setError(err.message);
         console.error('Error fetching posts:', err);
@@ -26,7 +51,7 @@ export const FollowerPostCard = ({ uid }) => {
       }
     };
 
-    fetchPosts();
+    fetchPostsAndUserData();
   }, [uid]);
 
   const toggleComments = (postId) => {
@@ -44,14 +69,27 @@ export const FollowerPostCard = ({ uid }) => {
     <div className="space-y-6">
       {posts.map((post) => (
         <div key={post.id} className="bg-white rounded-lg shadow-md overflow-hidden">
-          {/* Post Header */}
+          {/* Post Header - Updated with user data */}
           <div className="p-4 border-b">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
-                {post.userId.substring(0, 2).toUpperCase()}
-              </div>
+              {profileImages[uid] ? (
+                <img 
+                  src={profileImages[uid]} 
+                  alt={`${userData.name}'s profile`}
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              ) : (
+                <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center">
+                  {userData.name ? userData.name.substring(0, 2).toUpperCase() : 'US'}
+                </div>
+              )}
               <div>
-                <h3 className="font-semibold">User ID: {post.userId}</h3>
+                <h3 className="font-semibold">
+                  {userData.name || `User ${uid.substring(0, 6)}`}
+                  {userData.username && (
+                    <span className="text-gray-500 text-sm ml-2">@{userData.username}</span>
+                  )}
+                </h3>
                 <p className="text-gray-500 text-sm">
                   {new Date(post.createdAt).toLocaleDateString()}
                 </p>
