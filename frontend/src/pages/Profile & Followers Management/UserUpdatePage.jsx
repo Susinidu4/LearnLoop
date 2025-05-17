@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUserById, updateUser } from '../../service/Profile & Followers Management/AuthService';
+import GlobalStyle from '../../assets/prototype/GlobalStyle';
+import { Header } from '../../components/Header';
+import { SideBar } from '../../components/SideBar';
 
 export const UserUpdatePage = () => {
   const myData = JSON.parse(localStorage.getItem('user'));
@@ -15,6 +18,11 @@ export const UserUpdatePage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [passwordStrength, setPasswordStrength] = useState({
+    score: 0,
+    message: '',
+    isValid: false
+  });
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -42,6 +50,86 @@ export const UserUpdatePage = () => {
       ...prev,
       [name]: value
     }));
+
+    // Check password strength when newPassword changes
+    if (name === 'newPassword') {
+      checkPasswordStrength(value);
+    }
+  };
+
+  const checkPasswordStrength = (password) => {
+    // Reset if empty
+    if (!password) {
+      setPasswordStrength({
+        score: 0,
+        message: '',
+        isValid: false
+      });
+      return;
+    }
+
+    // Initialize variables
+    let score = 0;
+    let messages = [];
+    let isValid = true;
+
+    // Check length (minimum 8 characters)
+    if (password.length < 8) {
+      messages.push('Password must be at least 8 characters long');
+      isValid = false;
+    } else if (password.length >= 12) {
+      score += 1;
+    }
+
+    // Check for uppercase letters
+    if (!/[A-Z]/.test(password)) {
+      messages.push('Include at least one uppercase letter');
+      isValid = false;
+    } else {
+      score += 1;
+    }
+
+    // Check for lowercase letters
+    if (!/[a-z]/.test(password)) {
+      messages.push('Include at least one lowercase letter');
+      isValid = false;
+    } else {
+      score += 1;
+    }
+
+    // Check for numbers
+    if (!/[0-9]/.test(password)) {
+      messages.push('Include at least one number');
+      isValid = false;
+    } else {
+      score += 1;
+    }
+
+    // Check for special characters
+    if (!/[^A-Za-z0-9]/.test(password)) {
+      messages.push('Include at least one special character');
+      isValid = false;
+    } else {
+      score += 1;
+    }
+
+    // Determine strength message
+    let strengthMessage = '';
+    if (score === 0) {
+      strengthMessage = '';
+    } else if (score <= 2) {
+      strengthMessage = 'Weak';
+    } else if (score <= 3) {
+      strengthMessage = 'Moderate';
+    } else {
+      strengthMessage = 'Strong';
+    }
+
+    setPasswordStrength({
+      score,
+      message: messages.join(' • '),
+      isValid: isValid && password.length >= 8
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -59,10 +147,18 @@ export const UserUpdatePage = () => {
     }
 
     // Only validate passwords if new password is provided
-    if (user.newPassword && user.newPassword !== user.confirmNewPassword) {
-      setError('New passwords do not match');
-      setSubmitting(false);
-      return;
+    if (user.newPassword) {
+      if (!passwordStrength.isValid) {
+        setError('Password does not meet strength requirements: ' + passwordStrength.message);
+        setSubmitting(false);
+        return;
+      }
+
+      if (user.newPassword !== user.confirmNewPassword) {
+        setError('New passwords do not match');
+        setSubmitting(false);
+        return;
+      }
     }
 
     try {
@@ -87,6 +183,13 @@ export const UserUpdatePage = () => {
         newPassword: '',
         confirmNewPassword: ''
       }));
+
+      // Reset password strength
+      setPasswordStrength({
+        score: 0,
+        message: '',
+        isValid: false
+      });
 
       // If password was changed, redirect to login after 2 seconds
       if (user.newPassword) {
@@ -119,8 +222,10 @@ export const UserUpdatePage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className={`${GlobalStyle.fontPoppins} bg-[#F7EDE5] min-h-screen pt-24`}>
+      <Header />
       <div className="max-w-3xl mx-auto">
+        <SideBar />
         <div className="text-center mb-10">
           <h1 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
             Update Your Profile
@@ -130,7 +235,7 @@ export const UserUpdatePage = () => {
           </p>
         </div>
 
-        <div className="bg-white shadow-xl rounded-lg overflow-hidden">
+        <div className="bg-[#e1ceb5] shadow-xl rounded-lg overflow-hidden">
           <div className="p-6 sm:p-8">
             {error && (
               <div className="mb-6 bg-red-50 border-l-4 border-red-500 p-4">
@@ -231,6 +336,30 @@ export const UserUpdatePage = () => {
                       placeholder="••••••••"
                     />
                   </div>
+                  {user.newPassword && (
+                    <div className="mt-2">
+                      <div className="flex items-center">
+                        <div className="w-full bg-gray-200 rounded-full h-2.5">
+                          <div 
+                            className={`h-2.5 rounded-full ${
+                              passwordStrength.score <= 2 ? 'bg-red-500' :
+                              passwordStrength.score <= 3 ? 'bg-yellow-500' :
+                              'bg-green-500'
+                            }`}
+                            style={{ width: `${(passwordStrength.score / 5) * 100}%` }}
+                          ></div>
+                        </div>
+                        <span className="ml-2 text-xs font-medium text-gray-700">
+                          {passwordStrength.score === 0 ? '' : 
+                           passwordStrength.score <= 2 ? 'Weak' :
+                           passwordStrength.score <= 3 ? 'Moderate' : 'Strong'}
+                        </span>
+                      </div>
+                      {passwordStrength.message && (
+                        <p className="mt-1 text-xs text-red-600">{passwordStrength.message}</p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {user.newPassword && (
@@ -269,7 +398,7 @@ export const UserUpdatePage = () => {
                 <button
                   type="submit"
                   disabled={submitting}
-                  className={`inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                  className={`inline-flex items-center px-6 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#4a2b0f] hover:bg-white hover:text-[#4a2b0f] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
                     submitting ? 'opacity-75 cursor-not-allowed' : ''
                   }`}
                 >
