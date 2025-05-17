@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 import { Header } from "../../components/Header";
 import { SideBar } from "../../components/SideBar";
-import "../../assets/prototype/GlobalStyle"; // Assuming you have global styles defined here
+import "../../assets/prototype/GlobalStyle";
 import GlobalStyle from "../../assets/prototype/GlobalStyle";
 
 export const AddVideo = () => {
@@ -13,12 +13,41 @@ export const AddVideo = () => {
   const [error, setError] = useState(null);
   const [isUploading, setIsUploading] = useState(false);
   const [refreshVideos, setRefreshVideos] = useState(false);
+  const [videoDuration, setVideoDuration] = useState(0);
+  const videoRef = useRef(null);
 
   const handleFileChange = (e) => {
     if (e.target.files[0]) {
-      setFile(e.target.files[0]);
-      const fileName = e.target.files[0].name;
-      setTitle(fileName.substring(0, fileName.lastIndexOf(".")) || fileName);
+      const selectedFile = e.target.files[0];
+      
+      // Check file type
+      if (!selectedFile.type.startsWith('video/')) {
+        setError("Please select a valid video file");
+        return;
+      }
+
+      // Create video element to check duration
+      const video = document.createElement('video');
+      video.preload = 'metadata';
+      
+      video.onloadedmetadata = () => {
+        window.URL.revokeObjectURL(video.src);
+        const duration = video.duration;
+        setVideoDuration(duration);
+        
+        if (duration > 60) {
+          setError("Video duration must be 60 seconds or less");
+          setFile(null);
+          setTitle("");
+          return;
+        }
+
+        setFile(selectedFile);
+        const fileName = selectedFile.name;
+        setTitle(fileName.substring(0, fileName.lastIndexOf(".")) || fileName);
+      };
+
+      video.src = URL.createObjectURL(selectedFile);
     }
   };
 
@@ -30,6 +59,12 @@ export const AddVideo = () => {
 
     if (!title.trim()) {
       setError("Please enter a title");
+      return;
+    }
+
+    // Double-check duration in case the validation was bypassed
+    if (videoDuration > 60) {
+      setError("Video duration must be 60 seconds or less");
       return;
     }
 
@@ -62,6 +97,7 @@ export const AddVideo = () => {
       setFile(null);
       setTitle("");
       setUploadProgress(0);
+      setVideoDuration(0);
       setRefreshVideos((prev) => !prev);
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Upload failed");
@@ -90,7 +126,7 @@ export const AddVideo = () => {
                     htmlFor="videoFile"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Select Video File:
+                    Select Video File (max 60 seconds):
                   </label>
                   <div className="mt-1 flex items-center">
                     <input
@@ -103,7 +139,7 @@ export const AddVideo = () => {
                         file:mr-4 file:py-2 file:px-4
                         file:rounded-md file:border-0
                         file:text-sm file:font-semibold
-                        file:bg-blue-50 file:text     hover:file:bg-blue-100
+                        file:bg-blue-50 file:text hover:file:bg-blue-100
                         disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                   </div>
@@ -133,20 +169,26 @@ export const AddVideo = () => {
                         Preview:
                       </h4>
                       <video
+                        ref={videoRef}
                         controls
                         src={URL.createObjectURL(file)}
                         className="w-full rounded-md mb-2 max-h-64 object-contain bg-black"
                       />
-                      <p className="text-xs text-gray-500">
-                        File: {file.name} (
-                        {(file.size / (1024 * 1024)).toFixed(2)} MB)
-                      </p>
+                      <div className="flex justify-between text-xs text-gray-500">
+                        <p>
+                          File: {file.name} (
+                          {(file.size / (1024 * 1024)).toFixed(2)} MB)
+                        </p>
+                        <p>
+                          Duration: {Math.floor(videoDuration)} seconds
+                        </p>
+                      </div>
                     </div>
 
                     <div className="flex justify-end">
                       <button
                         onClick={handleUpload}
-                        disabled={isUploading}
+                        disabled={isUploading || videoDuration > 60}
                         className={GlobalStyle.buttonSecondary}
                       >
                         {isUploading ? (
